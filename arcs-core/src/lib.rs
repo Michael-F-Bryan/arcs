@@ -1,3 +1,4 @@
+mod line;
 mod vector;
 
-pub use vector::Vector;
+pub use line::Line;pub use vector::{Orientation, Vector};

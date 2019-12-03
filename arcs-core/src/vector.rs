@@ -16,9 +16,45 @@ impl Vector {
         Vector { x, y }
     }
 
-    pub fn magnitude(self) -> f64 { self.x.hypot(self.y) }
+    pub fn zero() -> Vector { Vector::new(0.0, 0.0) }
+
+    pub fn length(self) -> f64 { self.x.hypot(self.y) }
 
     pub fn angle(self) -> f64 { self.y.atan2(self.x) }
+
+    pub fn unit_vector(self) -> Vector {
+        let magnitude = self.length();
+        if magnitude == 0.0 {
+            Vector::zero()
+        } else {
+            self / magnitude
+        }
+    }
+
+    pub fn orientation(
+        first: Vector,
+        second: Vector,
+        third: Vector,
+    ) -> Orientation {
+        let value = (second.y - first.y) * (third.x - second.x)
+            - (second.x - first.x) * (third.y - second.y);
+
+        if value > 0.0 {
+            Orientation::Clockwise
+        } else if value < 0.0 {
+            Orientation::Anticlockwise
+        } else {
+            Orientation::Collinear
+        }
+    }
+
+    pub fn dot(left: Vector, right: Vector) -> f64 {
+        left.x * right.x + left.y * right.y
+    }
+
+    pub fn lerp(start: Vector, end: Vector, progress: f64) -> Vector {
+        start + (end - start) * progress
+    }
 }
 
 impl Add for Vector {
@@ -67,19 +103,20 @@ impl Div<f64> for Vector {
     type Output = Vector;
 
     fn div(self, other: f64) -> Vector {
-        assert!(other.is_normal(), "Tried to divide by {}", other);
+        debug_assert!(other.is_normal(), "Unable to divide by {}", other);
         Vector::new(self.x / other, self.y / other)
     }
 }
 
-impl Div<Vector> for f64 {
-    type Output = Vector;
-
-    fn div(self, other: Vector) -> Vector { other / self }
-}
-
 impl DivAssign<f64> for Vector {
     fn div_assign(&mut self, other: f64) { *self = *self / other; }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum Orientation {
+    Clockwise,
+    Anticlockwise,
+    Collinear,
 }
 
 #[cfg(test)]
