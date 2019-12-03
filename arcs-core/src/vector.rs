@@ -16,6 +16,10 @@ impl Vector {
         Vector { x, y }
     }
 
+    pub fn from_r_theta(radius: f64, angle: f64) -> Self {
+        Vector::new(radius * angle.cos(), radius * angle.sin())
+    }
+
     pub fn zero() -> Vector { Vector::new(0.0, 0.0) }
 
     pub fn length(self) -> f64 { self.x.hypot(self.y) }
@@ -52,6 +56,10 @@ impl Vector {
         left.x * right.x + left.y * right.y
     }
 
+    pub fn cross(left: Vector, right: Vector) -> f64 {
+        left.x * right.y - right.x * left.y
+    }
+
     pub fn lerp(start: Vector, end: Vector, progress: f64) -> Vector {
         start + (end - start) * progress
     }
@@ -75,6 +83,10 @@ impl Vector {
             / determinant;
 
         Vector::new(x, y)
+    }
+
+    pub fn rotated(self, angle: f64) -> Vector {
+        Vector::from_r_theta(self.length(), self.angle() + angle)
     }
 }
 
@@ -215,4 +227,5 @@ mod tests {
 
         assert_eq!(got, expected);
     }
+
 }
