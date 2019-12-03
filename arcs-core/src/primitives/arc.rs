@@ -1,4 +1,4 @@
-use crate::primitives::{Orientation, Vector};
+use crate::{Orientation, Vector};
 use std::f64::consts::PI;
 
 #[derive(Debug, Copy, Clone, PartialEq)]

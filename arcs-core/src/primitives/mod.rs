@@ -1,7 +1,7 @@
 mod arc;
 mod line;
-mod vector;
+mod point;
 
 pub use arc::Arc;
 pub use line::Line;
-pub use vector::{Orientation, Vector};
+pub use point::Point;
