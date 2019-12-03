@@ -7,7 +7,7 @@ pub struct Line {
 }
 
 impl Line {
-    pub fn new(start: Vector, end: Vector) -> Line { Line { start, end } }
+    pub fn new(start: Vector, end: Vector) -> Self { Line { start, end } }
 
     pub fn displacement(&self) -> Vector { self.end - self.start }
 
