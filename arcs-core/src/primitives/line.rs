@@ -1,4 +1,4 @@
-use crate::Vector;
+use crate::primitives::Vector;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Line {
