@@ -1,0 +1,14 @@
+max_width = 80
+tab_spaces = 4
+fn_single_line = true
+match_block_trailing_comma = true
+normalize_comments = true
+wrap_comments = true
+merge_imports = true
+reorder_impl_items = true
+use_field_init_shorthand = true
+use_try_shorthand = true
+normalize_doc_attributes = true
+report_todo = "Always"
+report_fixme = "Always"
+edition = "2018"
