@@ -24,7 +24,7 @@ impl Vector {
 
     pub fn length(self) -> f64 { self.x.hypot(self.y) }
 
-    pub fn angle(self) -> f64 { self.y.atan2(self.x) }
+    pub fn angle(self) -> f64 { f64::atan2(self.y, self.x) }
 
     pub fn unit_vector(self) -> Vector {
         let magnitude = self.length();

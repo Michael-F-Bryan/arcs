@@ -102,6 +102,31 @@ impl Arc {
 
         (0..steps + 1).map(move |i| self.point_at(i as f64 * delta))
     }
+
+    pub fn contains_angle(self, angle: f64) -> bool {
+        let start_angle = self.start_angle();
+        let end_angle = self.end_angle();
+
+        let (min, max) = if start_angle < end_angle {
+            (start_angle, end_angle)
+        } else {
+            (end_angle, start_angle)
+        };
+
+        let angular_difference = (max - min).abs();
+
+        if (self.is_major_arc() && angular_difference > PI)
+            || (self.is_minor_arc() && angular_difference < PI)
+        {
+            min <= angle && angle <= max
+        } else {
+            min <= angle && angle <= max
+        }
+    }
+
+    pub fn is_minor_arc(&self) -> bool { self.sweep_angle().abs() < PI }
+
+    pub fn is_major_arc(&self) -> bool { !self.is_minor_arc() }
 }
 
 fn sweep_angle_from_3_points(

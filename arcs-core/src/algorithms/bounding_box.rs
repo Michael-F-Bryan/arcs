@@ -1,5 +1,5 @@
 use crate::{
-    primitives::{Line, Point},
+    primitives::{Arc, Line, Point},
     Vector,
 };
 
@@ -85,5 +85,35 @@ impl Bounded for Point {
 impl Bounded for Line {
     fn bounding_box(&self) -> BoundingBox {
         BoundingBox::new(self.start, self.end)
+    }
+}
+
+impl Bounded for Arc {
+    fn bounding_box(&self) -> BoundingBox {
+        use std::f64::consts::{FRAC_PI_2, PI};
+
+        let Vector { x, y } = self.centre();
+        let r = self.radius();
+
+        let mut bounds = BoundingBox::new(self.start(), self.end());
+
+        if self.contains_angle(0.0) {
+            let right = Vector::new(x + r, y);
+            bounds = BoundingBox::new(bounds.bottom_left, right);
+        }
+        if self.contains_angle(FRAC_PI_2) {
+            let top = Vector::new(x, y + r);
+            bounds = BoundingBox::new(bounds.bottom_left, top);
+        }
+        if self.contains_angle(PI) {
+            let left = Vector::new(x - r, y);
+            bounds = BoundingBox::new(bounds.top_right, left);
+        }
+        if self.contains_angle(3.0 * FRAC_PI_2) {
+            let bottom = Vector::new(x, y - r);
+            bounds = BoundingBox::new(bounds.top_right, bottom);
+        }
+
+        bounds
     }
 }
