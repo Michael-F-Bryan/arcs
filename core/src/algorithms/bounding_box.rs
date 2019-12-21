@@ -5,8 +5,8 @@ use crate::{
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct BoundingBox {
-    pub bottom_left: Vector,
-    pub top_right: Vector,
+    bottom_left: Vector,
+    top_right: Vector,
 }
 
 impl BoundingBox {
@@ -61,6 +61,18 @@ impl BoundingBox {
                 None => Some(item),
             })
     }
+
+    pub fn bottom_left(&self) -> Vector { self.bottom_left }
+
+    pub fn bottom_right(&self) -> Vector {
+        self.bottom_left + Vector::new(self.width(), 0.0)
+    }
+
+    pub fn top_right(&self) -> Vector { self.top_right }
+
+    pub fn top_left(&self) -> Vector {
+        self.bottom_left + Vector::new(0.0, self.height())
+    }
 }
 
 pub trait Bounded {
@@ -77,9 +89,11 @@ impl Bounded for BoundingBox {
 }
 
 impl Bounded for Point {
-    fn bounding_box(&self) -> BoundingBox {
-        BoundingBox::new(self.location, self.location)
-    }
+    fn bounding_box(&self) -> BoundingBox { self.location.bounding_box() }
+}
+
+impl Bounded for Vector {
+    fn bounding_box(&self) -> BoundingBox { BoundingBox::new(*self, *self) }
 }
 
 impl Bounded for Line {
@@ -115,5 +129,40 @@ impl Bounded for Arc {
         }
 
         bounds
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bounding_box_around_line() {
+        let start = Vector::zero();
+        let end = Vector::new(3.0, 4.0);
+        let line = Line::new(start, end);
+
+        let bounds = line.bounding_box();
+
+        assert_eq!(bounds.width(), 3.0);
+        assert_eq!(bounds.height(), 4.0);
+        assert_eq!(bounds.bottom_left(), start);
+        assert_eq!(bounds.top_right(), end);
+    }
+
+    #[test]
+    fn bounding_box_around_corners_gives_same_bounding_box() {
+        let original =
+            BoundingBox::new(Vector::zero(), Vector::new(10.0, 10.0));
+        let corners = vec![
+            original.bottom_left(),
+            original.bottom_right(),
+            original.top_left(),
+            original.top_right(),
+        ];
+
+        let got = BoundingBox::around(corners).unwrap();
+
+        assert_eq!(got, original);
     }
 }

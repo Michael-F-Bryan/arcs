@@ -16,8 +16,8 @@ impl Arc {
         start_angle: f64,
         sweep_angle: f64,
     ) -> Self {
-        debug_assert!(0.0 <= sweep_angle && sweep_angle <= 2.0 * PI);
         debug_assert!(0.0 <= start_angle && start_angle <= 2.0 * PI);
+        debug_assert!(-2.0 * PI <= sweep_angle && sweep_angle <= 2.0 * PI);
         debug_assert!(radius > 0.0);
 
         Arc {
@@ -45,13 +45,13 @@ impl Arc {
         Arc::from_centre_radius(centre, radius, start_angle, sweep_angle)
     }
 
-    pub fn centre(self) -> Vector { self.centre }
+    pub const fn centre(self) -> Vector { self.centre }
 
-    pub fn radius(self) -> f64 { self.radius }
+    pub const fn radius(self) -> f64 { self.radius }
 
-    pub fn start_angle(self) -> f64 { self.start_angle }
+    pub const fn start_angle(self) -> f64 { self.start_angle }
 
-    pub fn sweep_angle(self) -> f64 { self.sweep_angle }
+    pub const fn sweep_angle(self) -> f64 { self.sweep_angle }
 
     pub fn end_angle(self) -> f64 { self.start_angle() + self.sweep_angle() }
 
@@ -64,7 +64,7 @@ impl Arc {
     pub fn end(self) -> Vector { self.point_at(self.sweep_angle()) }
 
     pub fn point_at(self, angle: f64) -> Vector {
-        assert!(0.0 <= angle && angle <= self.sweep_angle().abs());
+        assert!(0.0 <= angle && angle <= self.sweep_angle());
 
         self.centre()
             + Vector::from_r_theta(self.radius(), self.start_angle() + angle)

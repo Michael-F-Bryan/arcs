@@ -7,7 +7,7 @@ pub struct Line {
 }
 
 impl Line {
-    pub fn new(start: Vector, end: Vector) -> Self { Line { start, end } }
+    pub const fn new(start: Vector, end: Vector) -> Self { Line { start, end } }
 
     pub fn displacement(&self) -> Vector { self.end - self.start }
 
@@ -28,5 +28,20 @@ impl Line {
         } else {
             area * 2.0 / base_length
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calculate_length() {
+        let start = Vector::new(1.0, 1.0);
+        let displacement = Vector::new(3.0, 4.0);
+        let v = Line::new(start, start + displacement);
+
+        assert_eq!(v.length(), 5.0);
+        assert_eq!(v.displacement(), displacement);
     }
 }

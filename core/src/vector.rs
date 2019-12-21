@@ -13,14 +13,20 @@ impl Vector {
         debug_assert!(x.is_finite(), "Can't create a vector with {}", x);
         debug_assert!(y.is_finite(), "Can't create a vector with {}", y);
 
-        Vector { x, y }
+        Vector::new_unchecked(x, y)
     }
+
+    pub const fn new_unchecked(x: f64, y: f64) -> Self { Vector { x, y } }
 
     pub fn from_r_theta(radius: f64, angle: f64) -> Self {
         Vector::new(radius * angle.cos(), radius * angle.sin())
     }
 
-    pub fn zero() -> Vector { Vector::new(0.0, 0.0) }
+    pub const fn zero() -> Vector { Vector::new_unchecked(0.0, 0.0) }
+
+    pub const fn x_axis() -> Vector { Vector::new_unchecked(1.0, 0.0) }
+
+    pub const fn y_axis() -> Vector { Vector::new_unchecked(0.0, 1.0) }
 
     pub fn length(self) -> f64 { self.x.hypot(self.y) }
 
@@ -136,8 +142,8 @@ impl Div<f64> for Vector {
     type Output = Vector;
 
     fn div(self, other: f64) -> Vector {
-        debug_assert!(other.is_normal(), "Unable to divide by {}", other);
-        Vector::new(self.x / other, self.y / other)
+        assert!(other.is_normal(), "Unable to divide by {}", other);
+        Vector::new_unchecked(self.x / other, self.y / other)
     }
 }
 
@@ -227,5 +233,4 @@ mod tests {
 
         assert_eq!(got, expected);
     }
-
 }
