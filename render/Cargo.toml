@@ -8,9 +8,11 @@ edition = "2018"
 
 [dependencies]
 arcs-core = { path = "../core" }
-web-sys = { version = "0.3.33", optional = true, features = ["HtmlCanvasElement", "CanvasRenderingContext2d"] }
 rgb = "0.8.14"
+web-sys = { version = "0.3.33", optional = true, features = ["HtmlCanvasElement", "CanvasRenderingContext2d"] }
+js-sys = { version = "0.3.33", optional = true }
+wasm-bindgen = { version = "0.2.56", optional = true }
 
 [features]
 default = ["html5-canvas"]
-html5-canvas = ["web-sys"]
+html5-canvas = ["web-sys", "js-sys", "wasm-bindgen"]
