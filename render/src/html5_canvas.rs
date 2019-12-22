@@ -1,3 +1,4 @@
+use anyhow::{Error, Context};
 use crate::{canvas::Canvas, px, Point};
 use rgb::RGBA8;
 use std::convert::TryInto;
@@ -17,15 +18,17 @@ impl Html5Canvas {
         }
     }
 
-    pub fn for_element(elem: HtmlCanvasElement) -> Self {
+    pub fn for_element(elem: HtmlCanvasElement) -> Result<Self, Error> {
         let ctx = elem
             .get_context("2d")
-            .expect("Retrieving the 2D context threw an error")
-            .expect("Unable to retrieve the 2D drawing context")
+            .ok()
+            .context("Retrieving the 2D context threw an error")?
+            .context("Unable to retrieve the 2D drawing context")?
             .dyn_into::<CanvasRenderingContext2d>()
-            .unwrap();
+            .ok()
+            .context("Wasn't a CanvasRenderingContext2d")?;
 
-        Html5Canvas::new(ctx)
+        Ok(Html5Canvas::new(ctx))
     }
 }
 

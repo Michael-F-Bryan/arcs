@@ -12,6 +12,7 @@ rgb = "0.8.14"
 web-sys = { version = "0.3.33", optional = true, features = ["HtmlCanvasElement", "CanvasRenderingContext2d"] }
 js-sys = { version = "0.3.33", optional = true }
 wasm-bindgen = { version = "0.2.56", optional = true }
+anyhow = "1.0.25"
 
 [features]
 default = ["html5-canvas"]

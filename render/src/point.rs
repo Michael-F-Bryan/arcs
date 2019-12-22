@@ -1,7 +1,7 @@
 use crate::px;
 
 /// A 2D location on the screen, in pixels.
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Point {
     pub x: px,
     pub y: px,
