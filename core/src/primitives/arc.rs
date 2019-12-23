@@ -32,17 +32,17 @@ impl Arc {
         start: Vector,
         middle: Vector,
         end: Vector,
-    ) -> Self {
+    ) -> Option<Self> {
         debug_assert!(
             Vector::orientation(start, middle, end) != Orientation::Collinear
         );
 
-        let centre = Vector::centre_of_three_points(start, middle, end);
+        let centre = Vector::centre_of_three_points(start, middle, end)?;
         let radius = (start - centre).length();
         let start_angle = (start - centre).angle();
         let sweep_angle = sweep_angle_from_3_points(start, middle, end);
 
-        Arc::from_centre_radius(centre, radius, start_angle, sweep_angle)
+        Some(Arc::from_centre_radius(centre, radius, start_angle, sweep_angle))
     }
 
     pub const fn centre(self) -> Vector { self.centre }

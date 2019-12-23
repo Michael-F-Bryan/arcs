@@ -1,3 +1,5 @@
+//! Geometric primitives.
+
 mod arc;
 mod line;
 mod point;

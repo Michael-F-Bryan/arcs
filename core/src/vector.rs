@@ -2,6 +2,7 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign,
 };
 
+/// Your typical 2D vector.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vector {
     pub x: f64,
@@ -9,9 +10,14 @@ pub struct Vector {
 }
 
 impl Vector {
+    /// Create a new [`Vector`].
+    ///
+    /// # Panics
+    ///
+    /// This will panic
     pub fn new(x: f64, y: f64) -> Self {
-        debug_assert!(x.is_finite(), "Can't create a vector with {}", x);
-        debug_assert!(y.is_finite(), "Can't create a vector with {}", y);
+        assert!(x.is_finite(), "Can't create a vector with {}", x);
+        assert!(y.is_finite(), "Can't create a vector with {}", y);
 
         Vector::new_unchecked(x, y)
     }
@@ -74,21 +80,24 @@ impl Vector {
         first: Vector,
         second: Vector,
         third: Vector,
-    ) -> Vector {
+    ) -> Option<Vector> {
         let temp = Vector::dot(second, second);
         let bc = (Vector::dot(first, first) - temp) / 2.0;
         let cd = (temp - third.x * third.x - third.y * third.y) / 2.0;
         let determinant = (first.x - second.x) * (second.y - third.y)
             - (second.x - third.x) * (first.y - second.y);
 
-        assert!(determinant != 0.0, "Can't find the centre of three points");
+        if determinant == 0.0 {
+            // the points are collinear
+            return None;
+        }
 
         let x = (bc * (second.y - third.y) - cd * (first.y - second.y))
             / determinant;
         let y = ((first.x - second.x) * cd - (second.x - third.x) * bc)
             / determinant;
 
-        Vector::new(x, y)
+        Some(Vector::new(x, y))
     }
 
     pub fn rotated(self, angle: f64) -> Vector {
@@ -218,7 +227,7 @@ mod tests {
         let b = Vector::new(-1.0, 0.0);
         let c = Vector::new(0.0, 1.0);
 
-        let centre = Vector::centre_of_three_points(a, b, c);
+        let centre = Vector::centre_of_three_points(a, b, c).unwrap();
 
         assert_eq!(centre, Vector::zero());
     }

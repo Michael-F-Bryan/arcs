@@ -1,10 +1,11 @@
-# arcs
+# A Rust CAD System
 
 [![Build Status](https://travis-ci.com/Michael-F-Bryan/arcs.svg?branch=master)](https://travis-ci.com/Michael-F-Bryan/arcs)
 
 ([API Docs])
 
-> **TODO:** Write up an interesting description.
+An extensible framework for creating 2D CAD applications, written in Rust based
+on an *Entity-Component-System* architecture.
 
 ## License
 
