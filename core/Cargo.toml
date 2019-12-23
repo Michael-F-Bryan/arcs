@@ -7,3 +7,6 @@ edition = "2018"
 description = "Core geometry primitives and algorithms for a 2D CAD system."
 
 [dependencies]
+specs-derive = "0.4"
+specs = "0.15"
+log = "0.4.8"

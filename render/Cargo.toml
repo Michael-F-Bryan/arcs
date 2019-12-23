@@ -8,5 +8,7 @@ edition = "2018"
 
 [dependencies]
 arcs-core = { path = "../core" }
-anyhow = "1.0.25"
+anyhow = "1.0"
 piet = "0.0.7"
+specs-derive = "0.4"
+specs = "0.15"

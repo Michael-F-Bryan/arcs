@@ -42,7 +42,12 @@ impl Arc {
         let start_angle = (start - centre).angle();
         let sweep_angle = sweep_angle_from_3_points(start, middle, end);
 
-        Some(Arc::from_centre_radius(centre, radius, start_angle, sweep_angle))
+        Some(Arc::from_centre_radius(
+            centre,
+            radius,
+            start_angle,
+            sweep_angle,
+        ))
     }
 
     pub const fn centre(self) -> Vector { self.centre }

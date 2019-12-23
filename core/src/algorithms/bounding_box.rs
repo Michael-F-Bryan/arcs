@@ -2,8 +2,11 @@ use crate::{
     primitives::{Arc, Line, Point},
     Vector,
 };
+use specs::prelude::*;
+use specs_derive::Component;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Component)]
+#[storage(DenseVecStorage)]
 pub struct BoundingBox {
     bottom_left: Vector,
     top_right: Vector,
