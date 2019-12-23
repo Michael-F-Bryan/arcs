@@ -21,6 +21,8 @@ anyhow = "1.0.25"
 web_logger = "0.2.0"
 log = "0.4.8"
 js-sys = "0.3.33"
+piet-web = "0.0.7"
+kurbo = "0.5.6"
 
 [target."cfg(debug_assertions)".dependencies]
 console_error_panic_hook = "0.1.5"

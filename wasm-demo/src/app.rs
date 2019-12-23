@@ -1,15 +1,15 @@
-use anyhow::{Context, Error};
 use crate::Msg;
-use arcs_render::html5_canvas::Html5Canvas;
-use wasm_bindgen::{closure::Closure, JsCast};
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
-use web_sys::Document;
+use anyhow::{Context, Error};
 use js_sys::Function;
+use piet_web::WebRenderContext;
+use wasm_bindgen::{closure::Closure, JsCast};
+use web_sys::{CanvasRenderingContext2d, Document, Window};
+use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
 #[derive(Debug)]
 pub struct App {
     link: ComponentLink<Self>,
-    canvas: Option<Html5Canvas>,
+    canvas: Option<CanvasRenderingContext2d>,
 }
 
 impl Component for App {
@@ -28,9 +28,15 @@ impl Component for App {
 
         match msg {
             Msg::CanvasLoaded => {
-                self.canvas = Some(html5_canvas_from_selector("#canvas").unwrap());
-            }
-            Msg::CanvasClicked(_event) => unimplemented!(),
+                self.canvas =
+                    Some(html5_canvas_from_selector("#canvas").unwrap());
+            },
+            Msg::CanvasClicked(event) => {
+                let window = window().unwrap();
+                let ctx = self.canvas.as_mut().unwrap();
+                let _render_context = WebRenderContext::new(ctx, &window);
+                log::debug!("Clicked {:?}", event);
+            },
         }
         true
     }
@@ -59,34 +65,35 @@ impl Component for App {
     }
 }
 
-fn html5_canvas_from_selector(selector: &str) -> Result<Html5Canvas, Error> {
-    let element = document()?
+fn window() -> Result<Window, Error> {
+    web_sys::window().context("Unable to get the Window")
+}
+
+fn html5_canvas_from_selector(
+    selector: &str,
+) -> Result<CanvasRenderingContext2d, Error> {
+    document()?
         .query_selector(selector)
         .ok()
         .context("The selector was malformed")?
         .context("Can't find the element")?
         .dyn_into()
         .ok()
-        .context("The element wasn't actually a <canvas>")?;
-
-    Html5Canvas::for_element(element)
+        .context("The element wasn't actually a <canvas>")
 }
 
 fn document() -> Result<Document, Error> {
-    Ok(web_sys::window()
-        .context("Unable to get the Window")?
-        .document()
-        .context("Unable to get the Document")?)
+    window()?.document().context("Unable to get the Document")
 }
 
+/// An equivalent of the `$.ready()` function from jQuery.
 fn on_ready<F>(cb: F)
-where F: FnOnce() + 'static
+where
+    F: FnOnce() + 'static,
 {
     let document = document().unwrap();
     let ready_state = document.ready_state();
-    let js_callback = Closure::once_into_js(cb)
-        .dyn_into::<Function>()
-        .unwrap();
+    let js_callback = Closure::once_into_js(cb).dyn_into::<Function>().unwrap();
 
     match ready_state.as_str() {
         "complete" | "interactive" => {
@@ -94,10 +101,14 @@ where F: FnOnce() + 'static
                 .expect("Unable to get the Window")
                 .set_timeout_with_callback(&js_callback)
                 .unwrap();
-        }
+        },
         _ => {
-            document.add_event_listener_with_callback("DOMContentLoaded", &js_callback)
+            document
+                .add_event_listener_with_callback(
+                    "DOMContentLoaded",
+                    &js_callback,
+                )
                 .unwrap();
-        }
+        },
     }
 }
