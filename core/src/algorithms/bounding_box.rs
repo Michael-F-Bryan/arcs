@@ -1,5 +1,6 @@
 use crate::{
     primitives::{Arc, Line, Point},
+    components::Visual,
     Vector,
 };
 use specs::prelude::*;
@@ -102,6 +103,16 @@ impl Bounded for Vector {
 impl Bounded for Line {
     fn bounding_box(&self) -> BoundingBox {
         BoundingBox::new(self.start, self.end)
+    }
+}
+
+impl Bounded for Visual {
+    fn bounding_box(&self) -> BoundingBox {
+        match self {
+            Visual::Line(line) => line.bounding_box(),
+            Visual::Arc(arc) => arc.bounding_box(),
+            Visual::Point(point) => point.bounding_box(),
+        }
     }
 }
 

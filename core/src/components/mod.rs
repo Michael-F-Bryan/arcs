@@ -1,8 +1,12 @@
+//! Common components used by the `arcs` CAD library.
+
 mod layer;
 pub mod name;
+mod visual;
 
 pub use layer::Layer;
 pub use name::Name;
+pub use visual::Visual;
 
 use name::NameTableBookkeeping;
 use specs::{DispatcherBuilder, World};
