@@ -1,5 +1,5 @@
 [workspace]
-members = ["arcs", "core", "render", "wasm-demo"]
+members = ["arcs", "wasm-demo"]
 
 [profile.release]
 lto = true

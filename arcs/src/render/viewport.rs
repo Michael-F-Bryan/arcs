@@ -1,4 +1,4 @@
-use arcs_core::Vector;
+use crate::Vector;
 use specs::prelude::*;
 use specs_derive::Component;
 

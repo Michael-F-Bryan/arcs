@@ -1,6 +1,6 @@
 use crate::{
-    primitives::{Arc, Line, Point},
     components::Visual,
+    primitives::{Arc, Line, Point},
     Vector,
 };
 use specs::prelude::*;

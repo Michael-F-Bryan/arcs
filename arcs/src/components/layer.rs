@@ -14,17 +14,16 @@ pub struct Layer {
 }
 
 impl Layer {
-    pub fn create(
-        builder: EntityBuilder,
-        name: Name,
-        layer: Layer,
-    ) -> Entity {
+    pub fn create(builder: EntityBuilder, name: Name, layer: Layer) -> Entity {
         builder.with(layer).with(name).build()
     }
 }
 
 impl Default for Layer {
     fn default() -> Layer {
-        Layer { z_level: 0, visible: true,}
+        Layer {
+            z_level: 0,
+            visible: true,
+        }
     }
 }

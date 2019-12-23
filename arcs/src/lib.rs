@@ -1,4 +1,9 @@
-//! The top-level facade for the arcs CAD library.
+//! Core algorithms and graphical primitives for the `arcs` CAD library.
 
-pub use arcs_core::{algorithms, primitives, Orientation, Vector};
-pub use arcs_render as render;
+pub mod algorithms;
+pub mod components;
+pub mod primitives;
+pub mod render;
+mod vector;
+
+pub use vector::{Orientation, Vector};

@@ -1,4 +1,4 @@
-use crate::primitives::{Line, Arc, Point};
+use crate::primitives::{Arc, Line, Point};
 use specs::prelude::*;
 use specs_derive::Component;
 

@@ -6,7 +6,7 @@ mod viewport;
 
 pub use viewport::Viewport;
 
-use arcs_core::{components::Visual, algorithms::BoundingBox};
+use crate::{algorithms::BoundingBox, components::Visual};
 use piet::{Error, RenderContext};
 use specs::{World, WorldExt};
 

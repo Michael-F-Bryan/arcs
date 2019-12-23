@@ -15,7 +15,7 @@ crate-type = ["cdylib"]
 wasm-bindgen = "0.2.45"
 wee_alloc = { version = "0.4.2", optional = true }
 yew = "0.10.0"
-arcs-render = { path = "../render" }
+arcs = { path = "../arcs" }
 web-sys = { version = "0.3.22", features = ["console", "Window", "Document", "Element", "EventTarget"] }
 anyhow = "1.0.25"
 web_logger = "0.2.0"

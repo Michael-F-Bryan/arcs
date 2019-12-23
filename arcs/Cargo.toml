@@ -8,5 +8,8 @@ description = "Facade crate for the arcs CAD library."
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-arcs-core = { path = "../core" }
-arcs-render = { path = "../render" }
+anyhow = "1.0"
+log = "0.4.8"
+piet = "0.0.7"
+specs = "0.15"
+specs-derive = "0.4"
