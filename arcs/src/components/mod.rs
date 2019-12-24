@@ -1,12 +1,16 @@
 //! Common components used by the `arcs` CAD library.
 
+mod dimension;
+mod drawing_object;
 mod layer;
 mod name;
-mod visual;
+mod styles;
 
+pub use dimension::Dimension;
+pub use drawing_object::{DrawingObject, Geometry};
 pub use layer::Layer;
 pub use name::{Name, NameTable, NameTableBookkeeping};
-pub use visual::Visual;
+pub use styles::{LineStyle, PointStyle};
 
 use specs::{DispatcherBuilder, World};
 

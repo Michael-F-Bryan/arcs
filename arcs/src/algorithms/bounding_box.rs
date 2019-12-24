@@ -1,5 +1,5 @@
 use crate::{
-    components::Visual,
+    components::Geometry,
     primitives::{Arc, Line, Point},
     Vector,
 };
@@ -37,6 +37,20 @@ impl BoundingBox {
             bottom_left,
             top_right,
         }
+    }
+
+    pub fn from_centre_and_dimensions(
+        centre: Vector,
+        width: f64,
+        height: f64,
+    ) -> Self {
+        debug_assert!(width >= 0.0);
+        debug_assert!(height >= 0.0);
+
+        let diagonal = Vector::new(width / 2.0, height / 2.0);
+        let bottom_left = centre - diagonal;
+        let top_right = centre + diagonal;
+        BoundingBox::new_unchecked(bottom_left, top_right)
     }
 
     pub fn width(self) -> f64 { self.top_right.x - self.bottom_left.x }
@@ -106,12 +120,12 @@ impl Bounded for Line {
     }
 }
 
-impl Bounded for Visual {
+impl Bounded for Geometry {
     fn bounding_box(&self) -> BoundingBox {
         match self {
-            Visual::Line(line) => line.bounding_box(),
-            Visual::Arc(arc) => arc.bounding_box(),
-            Visual::Point(point) => point.bounding_box(),
+            Geometry::Line(line) => line.bounding_box(),
+            Geometry::Arc(arc) => arc.bounding_box(),
+            Geometry::Point(point) => point.bounding_box(),
         }
     }
 }

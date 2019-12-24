@@ -2,8 +2,7 @@ use crate::Vector;
 use specs::prelude::*;
 use specs_derive::Component;
 
-#[derive(Debug, Clone, PartialEq, Component)]
-#[storage(DenseVecStorage)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Viewport {
     /// The location (in drawing units) this viewport is centred on.
     pub centre: Vector,

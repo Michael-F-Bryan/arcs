@@ -1,30 +1,16 @@
 //! Rendering and window management for the `arcs` CAD library.
+//!
+//! # A Note on Conventions
+//!
+//! The rendering system needs to work with two coordinate systems at the same
+//! time. To avoid confusion,
+//!
+//! > **In *Drawing Space* we'll use [`crate::Vector`] and types from
+//! > [`crate::primitives`], and when in *Canvas Space* we'll use types from
+//! > the [`kurbo`] crate**
 
-pub use piet;
-
+mod renderer;
 mod viewport;
 
+pub use renderer::Renderer;
 pub use viewport::Viewport;
-
-use crate::{algorithms::BoundingBox, components::Visual};
-use piet::{Error, RenderContext};
-use specs::{World, WorldExt};
-
-/// Register all [`specs::Component`]s used by the rendering system.
-pub fn setup(world: &mut World) {
-    world.register::<Viewport>();
-    world.register::<Visual>();
-}
-
-/// Render the drawing using a particular backend.
-pub fn render<R>(
-    _backend: &mut R,
-    _world: &World,
-    _window_size: BoundingBox,
-    _viewport: &Viewport,
-) -> Result<(), Error>
-where
-    R: RenderContext,
-{
-    unimplemented!()
-}
