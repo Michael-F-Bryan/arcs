@@ -1,30 +1,31 @@
 use crate::{
-    algorithms::BoundingBox,
+    algorithms::{Bounded, BoundingBox},
     components::{DrawingObject, Geometry, Layer, LineStyle, PointStyle},
     primitives::Point,
     render::Viewport,
     Vector,
 };
 use kurbo::{Circle, Rect};
-use piet::{Error, RenderContext};
+use piet::{Color, RenderContext};
 use shred_derive::SystemData;
-use specs::prelude::*;
+use specs::{join::MaybeJoin, prelude::*};
 use std::{cmp::Reverse, collections::BTreeMap};
 
 /// Long-lived state used when rendering.
 #[derive(Debug, Clone)]
+#[non_exhaustive]
 pub struct Renderer {
-    viewport: Viewport,
+    pub viewport: Viewport,
+    pub background: Color,
 }
 
 impl Renderer {
-    pub fn new(viewport: Viewport) -> Self {
-        Renderer { viewport }
+    pub fn new(viewport: Viewport, background: Color) -> Self {
+        Renderer {
+            viewport,
+            background,
+        }
     }
-
-    pub fn viewport(&self) -> &Viewport { &self.viewport }
-
-    pub fn viewport_mut(&mut self) -> &mut Viewport { &mut self.viewport }
 
     /// Get a [`System`] which will render using a particular [`RenderContext`].
     pub fn system<'a, R>(
@@ -117,7 +118,32 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
     /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the
     /// canvas.
     fn to_viewport_coordinates(&self, point: Vector) -> kurbo::Point {
-        unimplemented!()
+        to_viewport_coordinates(
+            point,
+            self.viewport_dimensions(),
+            self.window_size,
+        )
+    }
+}
+
+fn to_viewport_coordinates(
+    point: Vector,
+    viewport: BoundingBox,
+    window: Rect,
+) -> kurbo::Point {
+    // From the ratio:
+    //
+    //   point.x - bottom_left.x   X - window.bottom_left.x
+    //   ----------------------- = ------------------------
+    //      viewport.width()           window.width()
+
+    let bl = viewport.bottom_left();
+    let dx = point.x - bl.x;
+    let dy = point.y - bl.y;
+
+    kurbo::Point {
+        x: dx * window.width() / viewport.width(),
+        y: dy * window.height() / viewport.height(),
     }
 }
 
@@ -127,6 +153,9 @@ impl<'world, 'renderer, B: RenderContext> System<'world>
     type SystemData = (DrawOrder<'world>, Styling<'world>);
 
     fn run(&mut self, data: Self::SystemData) {
+        // make sure we're working with a blank screen
+        self.backend.clear(self.renderer.background.clone());
+
         let (draw_order, styling) = data;
 
         let viewport_dimensions = self.viewport_dimensions();
@@ -151,6 +180,7 @@ struct DrawOrder<'world> {
     entities: Entities<'world>,
     drawing_objects: ReadStorage<'world, DrawingObject>,
     layers: ReadStorage<'world, Layer>,
+    bounding_boxes: ReadStorage<'world, BoundingBox>,
 }
 
 impl<'world> DrawOrder<'world> {
@@ -166,14 +196,28 @@ impl<'world> DrawOrder<'world> {
             Vec<(Entity, &DrawingObject)>,
         > = BTreeMap::new();
 
-        // PERF: This could be improved with a cache that maps entities layers,
-        // letting us ignore hidden layers entirely
+        // PERF: This function has a massive impact on render times
+        // Some ideas:
+        //   - Use a pre-calculated quad-tree so we just need to check items
+        //     within the viewport bounds
+        //   - use a entities-to-layers cache so we can skip checking whether to
+        //     draw an object on a hidden layer
 
-        for (ent, obj) in (&self.entities, &self.drawing_objects).join() {
+        for (ent, obj, bounds) in (
+            &self.entities,
+            &self.drawing_objects,
+            MaybeJoin(&self.bounding_boxes),
+        )
+            .join()
+        {
             let Layer { z_level, visible } =
                 self.layers.get(obj.layer).unwrap();
 
-            if *visible {
+            let bounds = bounds
+                .copied()
+                .unwrap_or_else(|| obj.geometry.bounding_box());
+
+            if *visible && viewport_dimensions.intersects_with(bounds) {
                 drawing_objects
                     .entry(Reverse(*z_level))
                     .or_default()

@@ -91,6 +91,10 @@ impl BoundingBox {
     pub fn top_left(&self) -> Vector {
         self.bottom_left + Vector::new(0.0, self.height())
     }
+
+    pub fn intersects_with(&self, other: BoundingBox) -> bool {
+        unimplemented!()
+    }
 }
 
 pub trait Bounded {

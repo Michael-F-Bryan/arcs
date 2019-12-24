@@ -1,9 +1,10 @@
-use crate::{
-    components::Layer,
-    primitives::{Arc, Line, Point},
-};
+use crate::primitives::{Arc, Line, Point};
 use specs::prelude::*;
 use specs_derive::Component;
+
+// for rustdoc links
+#[allow(unused_imports)]
+use crate::components::Layer;
 
 #[derive(Debug, Clone, PartialEq, Component)]
 #[storage(VecStorage)]
