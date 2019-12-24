@@ -80,20 +80,36 @@ impl BoundingBox {
             })
     }
 
-    pub fn bottom_left(&self) -> Vector { self.bottom_left }
+    pub fn bottom_left(self) -> Vector { self.bottom_left }
 
-    pub fn bottom_right(&self) -> Vector {
+    pub fn bottom_right(self) -> Vector {
         self.bottom_left + Vector::new(self.width(), 0.0)
     }
 
-    pub fn top_right(&self) -> Vector { self.top_right }
+    pub fn top_right(self) -> Vector { self.top_right }
 
-    pub fn top_left(&self) -> Vector {
+    pub fn top_left(self) -> Vector {
         self.bottom_left + Vector::new(0.0, self.height())
     }
 
+    pub fn min_x(self) -> f64 { self.bottom_left.x }
+
+    pub fn min_y(self) -> f64 { self.bottom_left.y }
+
+    pub fn max_x(self) -> f64 { self.top_right.x }
+
+    pub fn max_y(self) -> f64 { self.top_right.y }
+
+    pub fn fully_contains(self, other: BoundingBox) -> bool {
+        self.min_x() <= other.min_x()
+            && other.max_x() <= self.max_x()
+            && self.min_y() <= other.min_y()
+            && other.max_y() <= self.max_y()
+    }
+
     pub fn intersects_with(&self, other: BoundingBox) -> bool {
-        unimplemented!()
+        // FIXMe: Actually implement this
+        self.fully_contains(other)
     }
 }
 

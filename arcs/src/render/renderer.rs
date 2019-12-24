@@ -5,7 +5,7 @@ use crate::{
     render::Viewport,
     Vector,
 };
-use kurbo::{Circle, Rect};
+use kurbo::{Circle, Size};
 use piet::{Color, RenderContext};
 use shred_derive::SystemData;
 use specs::{join::MaybeJoin, prelude::*};
@@ -31,7 +31,7 @@ impl Renderer {
     pub fn system<'a, R>(
         &'a mut self,
         backend: R,
-        window_size: Rect,
+        window_size: Size,
     ) -> impl System<'a> + 'a
     where
         R: RenderContext + 'a,
@@ -55,7 +55,7 @@ impl Renderer {
 #[derive(Debug)]
 struct RenderSystem<'renderer, B> {
     backend: B,
-    window_size: Rect,
+    window_size: Size,
     renderer: &'renderer mut Renderer,
 }
 
@@ -63,8 +63,8 @@ impl<'world, 'renderer, B> RenderSystem<'renderer, B> {
     /// Calculate the area of the drawing displayed by the viewport.
     fn viewport_dimensions(&self) -> BoundingBox {
         let scale = self.renderer.viewport.pixels_per_drawing_unit;
-        let width = scale * self.window_size.width();
-        let height = scale * self.window_size.height();
+        let width = scale * self.window_size.width;
+        let height = scale * self.window_size.height;
 
         BoundingBox::from_centre_and_dimensions(
             self.renderer.viewport.centre,
@@ -112,38 +112,19 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
             radius,
         };
 
+        log::trace!("Drawing {:?} with {:?}", point, style);
+
         self.backend.fill(point, &style.colour);
     }
 
     /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the
     /// canvas.
     fn to_viewport_coordinates(&self, point: Vector) -> kurbo::Point {
-        to_viewport_coordinates(
+        super::to_canvas_coordinates(
             point,
             self.viewport_dimensions(),
             self.window_size,
         )
-    }
-}
-
-fn to_viewport_coordinates(
-    point: Vector,
-    viewport: BoundingBox,
-    window: Rect,
-) -> kurbo::Point {
-    // From the ratio:
-    //
-    //   point.x - bottom_left.x   X - window.bottom_left.x
-    //   ----------------------- = ------------------------
-    //      viewport.width()           window.width()
-
-    let bl = viewport.bottom_left();
-    let dx = point.x - bl.x;
-    let dy = point.y - bl.y;
-
-    kurbo::Point {
-        x: dx * window.width() / viewport.width(),
-        y: dy * window.height() / viewport.height(),
     }
 }
 
@@ -216,6 +197,14 @@ impl<'world> DrawOrder<'world> {
             let bounds = bounds
                 .copied()
                 .unwrap_or_else(|| obj.geometry.bounding_box());
+
+            log::trace!(
+                "Checking {:?} ({:?} within {:?} = {})",
+                obj,
+                bounds,
+                viewport_dimensions,
+                viewport_dimensions.intersects_with(bounds)
+            );
 
             if *visible && viewport_dimensions.intersects_with(bounds) {
                 drawing_objects

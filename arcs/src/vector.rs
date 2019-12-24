@@ -1,3 +1,4 @@
+use kurbo::Affine;
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign,
 };
@@ -145,6 +146,25 @@ impl Mul<Vector> for f64 {
 
 impl MulAssign<f64> for Vector {
     fn mul_assign(&mut self, other: f64) { *self = *self * other; }
+}
+
+impl Mul<Affine> for Vector {
+    type Output = Vector;
+
+    fn mul(self, other: Affine) -> Vector {
+        let coefficients = other.as_coeffs();
+        let x = coefficients[0] * self.x
+            + coefficients[2] * self.y
+            + coefficients[4];
+        let y = coefficients[1] * self.x
+            + coefficients[3] * self.y
+            + coefficients[5];
+        Vector::new(x, y)
+    }
+}
+
+impl MulAssign<Affine> for Vector {
+    fn mul_assign(&mut self, other: Affine) { *self = *self * other; }
 }
 
 impl Div<f64> for Vector {

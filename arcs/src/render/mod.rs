@@ -10,15 +10,7 @@
 //! > the [`kurbo`] crate**
 
 mod renderer;
+mod utils;
 
 pub use renderer::Renderer;
-
-use crate::Vector;
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct Viewport {
-    /// The location (in drawing units) this viewport is centred on.
-    pub centre: Vector,
-    /// The number of pixels each drawing unit should take up on the screen.
-    pub pixels_per_drawing_unit: f64,
-}
+pub use utils::{Viewport, to_canvas_coordinates, to_drawing_coordinates};

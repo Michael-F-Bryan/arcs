@@ -4,3 +4,7 @@ use crate::Vector;
 pub struct Point {
     pub location: Vector,
 }
+
+impl Point {
+    pub fn new(location: Vector) -> Self { Point { location } }
+}

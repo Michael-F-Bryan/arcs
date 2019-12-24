@@ -12,7 +12,7 @@ pub use layer::Layer;
 pub use name::{Name, NameTable, NameTableBookkeeping};
 pub use styles::{LineStyle, PointStyle};
 
-use specs::{DispatcherBuilder, World};
+use specs::{DispatcherBuilder, World, WorldExt};
 
 /// Register any necessary background tasks with a [`DispatcherBuilder`].
 pub fn register_background_tasks<'a, 'b>(
@@ -24,4 +24,14 @@ pub fn register_background_tasks<'a, 'b>(
         NameTableBookkeeping::NAME,
         &[],
     )
+}
+
+/// Register all [`specs::Components`].
+pub fn register(world: &mut World) {
+    world.register::<DrawingObject>();
+    world.register::<crate::algorithms::BoundingBox>();
+    world.register::<Name>();
+    world.register::<LineStyle>();
+    world.register::<PointStyle>();
+    world.register::<Layer>();
 }
