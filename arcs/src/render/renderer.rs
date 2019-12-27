@@ -44,14 +44,15 @@ impl Renderer {
     }
 }
 
-/// The [`System`] which actually renders things. This needs to be a temporary
-/// object "closing over" the [`Renderer`] and some [`RenderContext`] due to
-/// lifetimes.
+/// The [`System`] which actually renders things.
 ///
-/// The `RenderContext` for the `piet_web` crate takes the HTML5 canvas by
-/// `&mut` reference instead of owning it, and we don't want to tie our
-/// [`Renderer`] to a particular stack frame because it's so long lived (we'd
-/// end up fighting the borrow checker and have self-referential types).
+/// This needs to be a temporary object "closing over" the [`Renderer`] and some
+/// [`RenderContext`] due to lifetimes.
+///
+/// In particular, the `RenderContext` for the `piet_web` crate takes the HTML5
+/// canvas by `&mut` reference instead of owning it, and we don't want to tie our
+/// [`Renderer`] to a particular stack frame because it's so long lived (we'd end
+/// up fighting the borrow checker and have self-referential types).
 #[derive(Debug)]
 struct RenderSystem<'renderer, B> {
     backend: B,
@@ -167,13 +168,13 @@ impl<'world> DrawOrder<'world> {
         &self,
         viewport_dimensions: BoundingBox,
     ) -> impl Iterator<Item = (Entity, &'_ DrawingObject)> + '_ {
+        type EntitiesByZLevel<'a> =
+            BTreeMap<Reverse<usize>, Vec<(Entity, &'a DrawingObject)>>;
+
         // Iterate through all drawing objects, grouping them by the parent
         // layer's z-level in reverse order (we want to yield higher z-levels
         // first)
-        let mut drawing_objects: BTreeMap<
-            Reverse<usize>,
-            Vec<(Entity, &DrawingObject)>,
-        > = BTreeMap::new();
+        let mut drawing_objects = EntitiesByZLevel::new();
 
         // PERF: This function has a massive impact on render times
         // Some ideas:
@@ -189,9 +190,12 @@ impl<'world> DrawOrder<'world> {
         )
             .join()
         {
-            let Layer { z_level, visible } =
-                self.layers.get(obj.layer).unwrap();
+            let Layer { z_level, visible } = self
+                .layers
+                .get(obj.layer)
+                .expect("The object's layer was deleted");
 
+            // try to use the cached bounds, otherwise re-calculate them
             let bounds = bounds
                 .copied()
                 .unwrap_or_else(|| obj.geometry.bounding_box());

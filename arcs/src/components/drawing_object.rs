@@ -1,17 +1,20 @@
 use crate::primitives::{Arc, Line, Point};
 use specs::prelude::*;
-use specs_derive::Component;
 
 // for rustdoc links
 #[allow(unused_imports)]
 use crate::components::Layer;
 
-#[derive(Debug, Clone, PartialEq, Component)]
-#[storage(VecStorage)]
+/// Something which can be drawn on the screen.
+#[derive(Debug, Clone, PartialEq)]
 pub struct DrawingObject {
     pub geometry: Geometry,
     /// The [`Layer`] this [`DrawingObject`] is attached to.
     pub layer: Entity,
+}
+
+impl Component for DrawingObject {
+    type Storage = FlaggedStorage<Self, DenseVecStorage<Self>>;
 }
 
 /// The geometry of a [`DrawingObject`].

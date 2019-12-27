@@ -1,6 +1,11 @@
+/// A dimension on the canvas.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Dimension {
+    /// The dimension should always be the same size in pixels, regardless of
+    /// the zoom level.
     Pixels(f64),
+    /// A "real" dimension defined in *Drawing Space*, which should be scaled
+    /// appropriately when we zoom.
     DrawingUnits(f64),
 }
 
