@@ -1,8 +1,6 @@
 use crate::{
     algorithms::Bounded,
-    components::{
-        BoundingBox, DrawingObject, Geometry, Layer, LineStyle, PointStyle,
-    },
+    components::{BoundingBox, DrawingObject, Geometry, Layer, PointStyle},
     primitives::Point,
     render::Viewport,
     Vector,
@@ -154,7 +152,6 @@ impl<'world, 'renderer, B: RenderContext> System<'world>
 /// Styling information.
 #[derive(SystemData)]
 struct Styling<'world> {
-    line_styles: ReadStorage<'world, LineStyle>,
     point_styles: ReadStorage<'world, PointStyle>,
 }
 
