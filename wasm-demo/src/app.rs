@@ -28,8 +28,6 @@ impl App {
         let window = window().unwrap();
         let ctx = self.canvas.as_mut().unwrap();
         let canvas = canvas_dimensions(&ctx).unwrap();
-        self.renderer.viewport.centre =
-            Vector::new(canvas.width / 2.0, canvas.height / 2.0);
         let render_context = WebRenderContext::new(ctx, &window);
 
         log::trace!("Redrawing the canvas with dimensions {:?}", canvas);
@@ -59,8 +57,12 @@ impl App {
     }
 
     fn to_drawing_coordinates(&self, location: kurbo::Point) -> Vector {
-        // FIXME: actually translate this properly
-        Vector::new(location.x / 2.0, location.y / 2.0)
+        let window = self.canvas.as_ref().and_then(canvas_dimensions).unwrap();
+        arcs::render::to_drawing_coordinates(
+            location,
+            &self.renderer.viewport,
+            window,
+        )
     }
 }
 

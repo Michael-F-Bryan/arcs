@@ -1,5 +1,5 @@
-use crate::{algorithms::BoundingBox, Vector};
-use kurbo::{Affine, Point, Size};
+use crate::Vector;
+use kurbo::{Affine, Point, Size, Vec2};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Viewport {
@@ -11,29 +11,56 @@ pub struct Viewport {
 
 pub fn to_canvas_coordinates(
     point: Vector,
-    viewport: BoundingBox,
+    viewport: &Viewport,
     window: Size,
 ) -> Point {
-    let transform = Affine::FLIP_Y * Affine::translate((0.0, -window.width));
-    // From the ratio:
-    //
-    //   point.x - bottom_left.x   X - window.bottom_left.x
-    //   ----------------------- = ------------------------
-    //      viewport.width()           window.width()
-
-    let bl = viewport.bottom_left();
-    let dx = point.x - bl.x;
-    let dy = point.y - bl.y;
-
-    kurbo::Point {
-        x: dx * window.width / viewport.width(),
-        y: window.height - dy * window.height / viewport.height(),
-    }
+    transform_to_canvas_space(viewport, window)
+        * kurbo::Point::new(point.x, point.y)
 }
 
-pub fn to_drawing_coordinates(point: Point, viewport: &Viewport) -> Vector {
-    Vector {
-        x: point.x,
-        y: point.y,
+pub fn transform_to_canvas_space(viewport: &Viewport, window: Size) -> Affine {
+    Affine::default()
+}
+
+pub fn transform_to_drawing_space(viewport: &Viewport, window: Size) -> Affine {
+    transform_to_canvas_space(viewport, window).inverse()
+}
+
+pub fn to_drawing_coordinates(
+    point: Point,
+    viewport: &Viewport,
+    window: Size,
+) -> Vector {
+    Vector::new(point.x, point.y) * transform_to_drawing_space(viewport, window)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn drawing_to_canvas_space() {
+        let inputs = vec![
+            // viewport centre
+            (Vector::new(300.0, 150.0), Point::new(400.0, 200.0)),
+            // top-left
+            (Vector::new(200.0, 200.0), Point::new(0.0, 0.0)),
+            // bottom-left
+            (Vector::new(200.0, 100.0), Point::new(0.0, 400.0)),
+            // bottom-right
+            (Vector::new(400.0, 100.0), Point::new(800.0, 400.0)),
+            // top-right
+            (Vector::new(400.0, 200.0), Point::new(800.0, 0.0)),
+        ];
+        let viewport = Viewport {
+            centre: Vector::new(300.0, 150.0),
+            pixels_per_drawing_unit: 4.0,
+        };
+        let window = Size::new(800.0, 400.0);
+
+        for (drawing_space, expected) in inputs {
+            let got = to_canvas_coordinates(drawing_space, &viewport, window);
+            assert_eq!(got, expected);
+        }
     }
 }

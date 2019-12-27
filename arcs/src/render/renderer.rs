@@ -112,8 +112,6 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
             radius,
         };
 
-        log::trace!("Drawing {:?} with {:?}", point, style);
-
         self.backend.fill(point, &style.colour);
     }
 
@@ -122,7 +120,7 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
     fn to_viewport_coordinates(&self, point: Vector) -> kurbo::Point {
         super::to_canvas_coordinates(
             point,
-            self.viewport_dimensions(),
+            &self.renderer.viewport,
             self.window_size,
         )
     }
@@ -197,14 +195,6 @@ impl<'world> DrawOrder<'world> {
             let bounds = bounds
                 .copied()
                 .unwrap_or_else(|| obj.geometry.bounding_box());
-
-            log::trace!(
-                "Checking {:?} ({:?} within {:?} = {})",
-                obj,
-                bounds,
-                viewport_dimensions,
-                viewport_dimensions.intersects_with(bounds)
-            );
 
             if *visible && viewport_dimensions.intersects_with(bounds) {
                 drawing_objects

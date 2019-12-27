@@ -13,4 +13,7 @@ mod renderer;
 mod utils;
 
 pub use renderer::Renderer;
-pub use utils::{Viewport, to_canvas_coordinates, to_drawing_coordinates};
+pub use utils::{
+    to_canvas_coordinates, to_drawing_coordinates, transform_to_canvas_space,
+    transform_to_drawing_space, Viewport,
+};
