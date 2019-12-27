@@ -1,6 +1,8 @@
 use crate::{
-    algorithms::{Bounded, BoundingBox},
-    components::{DrawingObject, Geometry, Layer, LineStyle, PointStyle},
+    algorithms::Bounded,
+    components::{
+        BoundingBox, DrawingObject, Geometry, Layer, LineStyle, PointStyle,
+    },
     primitives::Point,
     render::Viewport,
     Vector,
@@ -50,9 +52,9 @@ impl Renderer {
 /// [`RenderContext`] due to lifetimes.
 ///
 /// In particular, the `RenderContext` for the `piet_web` crate takes the HTML5
-/// canvas by `&mut` reference instead of owning it, and we don't want to tie our
-/// [`Renderer`] to a particular stack frame because it's so long lived (we'd end
-/// up fighting the borrow checker and have self-referential types).
+/// canvas by `&mut` reference instead of owning it, and we don't want to tie
+/// our [`Renderer`] to a particular stack frame because it's so long lived
+/// (we'd end up fighting the borrow checker and have self-referential types).
 #[derive(Debug)]
 struct RenderSystem<'renderer, B> {
     backend: B,
@@ -99,18 +101,21 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
         styles: &Styling,
     ) {
         let fallback = PointStyle::default();
+
         let style = styles
             .point_styles
+            // the style for this point may have been overridden explicitly
             .get(entity)
+            // otherwise fall back to the layer's PointStyle
             .or_else(|| styles.point_styles.get(layer))
+            // fall back to the global default if the layer didn't specify one
             .unwrap_or(&fallback);
 
-        let radius = style
-            .radius
-            .in_pixels(self.renderer.viewport.pixels_per_drawing_unit);
         let point = Circle {
             center: self.to_viewport_coordinates(point.location),
-            radius,
+            radius: style
+                .radius
+                .in_pixels(self.renderer.viewport.pixels_per_drawing_unit),
         };
 
         self.backend.fill(point, &style.colour);

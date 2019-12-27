@@ -10,8 +10,7 @@ pub struct NameTableBookkeeping {
 }
 
 impl NameTableBookkeeping {
-    pub const NAME: &'static str =
-        concat!(module_path!(), "::", stringify!(NameTableBookkeeping));
+    pub const NAME: &'static str = module_path!();
 
     pub fn new(world: &World) -> Self {
         NameTableBookkeeping {
@@ -67,7 +66,7 @@ impl<'world> System<'world> for NameTableBookkeeping {
                     log::warn!(
                         "Duplicate name found when associating {:?} with \"{}\" (previous entity: {:?})",
                         ent,
-                        name.0,
+                        name.as_ref(),
                         entry.get()
                     );
                     entry.insert(ent);

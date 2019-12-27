@@ -33,7 +33,7 @@ impl Component for Name {
 /// A global [`Resource`] for looking up an [`Entity`] using its [`Name`].
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct NameTable {
-    names: HashMap<Name, Entity>,
+    pub(crate) names: HashMap<Name, Entity>,
 }
 
 impl NameTable {
