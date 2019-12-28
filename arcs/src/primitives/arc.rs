@@ -75,39 +75,6 @@ impl Arc {
             + Vector::from_r_theta(self.radius(), self.start_angle() + angle)
     }
 
-    pub fn approximate(self, quality: f64) -> impl Iterator<Item = Vector> {
-        // Draw a chord between points A and B on a circle with centre C.
-        // Draw a line which bisects the angle ACB and intersects with the
-        // chord at point D.
-        // The distance from D to the arc is our "quality"
-        // (i.e. |CD| + quality = radius).
-        //
-        // From the triangle DCB:
-        //   cos(θ/2) = |CD|/R
-        //   cos(θ/2) = 1 - quality/R
-        //
-        //  where θ is the angle swept by a chord with the desired "quality".
-        //
-        // # line segments to approximate with the specified quality:
-        //   N = ⌈SweepAngle/θ⌉
-
-        let (steps, delta) = if quality <= 0.0 || self.radius() <= quality {
-            (1, self.sweep_angle())
-        } else {
-            let cos_theta_on_two = 1.0 - quality / self.radius();
-            let theta = cos_theta_on_two.acos() * 2.0;
-            let line_segment_count = self.sweep_angle() / theta;
-
-            // make sure we always have at least 2 points
-            let line_segment_count = f64::max(line_segment_count, 2.0);
-            let actual_step = self.sweep_angle() / line_segment_count;
-
-            (line_segment_count.ceil().abs() as usize, actual_step)
-        };
-
-        (0..steps + 1).map(move |i| self.point_at(i as f64 * delta))
-    }
-
     pub fn contains_angle(self, angle: f64) -> bool {
         let start_angle = self.start_angle();
         let end_angle = self.end_angle();
@@ -156,25 +123,5 @@ fn sweep_angle_from_3_points(
         2.0 * PI - angular_difference
     } else {
         angular_difference
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn approximate_arc_with_points() {
-        let arc = Arc::from_centre_radius(Vector::zero(), 100.0, 0.0, PI / 2.0);
-        let quality = 10.0;
-
-        let pieces: Vec<_> = arc.approximate(quality).collect();
-
-        for &piece in &pieces {
-            let error = arc.radius() - (piece - arc.centre()).length();
-            assert!(error < quality);
-        }
-        assert_eq!(arc.start(), *pieces.first().unwrap());
-        assert_eq!(arc.end(), *pieces.last().unwrap());
     }
 }
