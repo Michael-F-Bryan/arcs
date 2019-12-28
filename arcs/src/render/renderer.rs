@@ -1,7 +1,10 @@
 use crate::{
     algorithms::Bounded,
-    components::{BoundingBox, DrawingObject, Geometry, Layer, PointStyle},
-    primitives::Point,
+    components::{
+        BoundingBox, Dimension, DrawingObject, Geometry, Layer, LineStyle,
+        PointStyle,
+    },
+    primitives::{Line, Point},
     render::Viewport,
     Vector,
 };
@@ -29,7 +32,7 @@ impl Renderer {
 
     /// Get a [`System`] which will render using a particular [`RenderContext`].
     pub fn system<'a, R>(
-        &'a mut self,
+        &'a self,
         backend: R,
         window_size: Size,
     ) -> impl System<'a> + 'a
@@ -57,7 +60,7 @@ impl Renderer {
 struct RenderSystem<'renderer, B> {
     backend: B,
     window_size: Size,
-    renderer: &'renderer mut Renderer,
+    renderer: &'renderer Renderer,
 }
 
 impl<'world, 'renderer, B> RenderSystem<'renderer, B> {
@@ -84,7 +87,10 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
     ) {
         match drawing_object.geometry {
             Geometry::Point(ref point) => {
-                self.render_point(ent, point, drawing_object.layer, styles)
+                self.render_point(ent, point, drawing_object.layer, styles);
+            },
+            Geometry::Line(ref line) => {
+                self.render_line(ent, line, drawing_object.layer, styles);
             },
             _ => unimplemented!(),
         }
@@ -98,25 +104,38 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
         layer: Entity,
         styles: &Styling,
     ) {
-        let fallback = PointStyle::default();
+        let style = styles.resolve_point_style(entity, layer);
 
-        let style = styles
-            .point_styles
-            // the style for this point may have been overridden explicitly
-            .get(entity)
-            // otherwise fall back to the layer's PointStyle
-            .or_else(|| styles.point_styles.get(layer))
-            // fall back to the global default if the layer didn't specify one
-            .unwrap_or(&fallback);
-
-        let point = Circle {
+        let shape = Circle {
             center: self.to_viewport_coordinates(point.location),
             radius: style
                 .radius
                 .in_pixels(self.renderer.viewport.pixels_per_drawing_unit),
         };
+        log::trace!("Drawing {:?} as {:?} using {:?}", point, shape, style);
 
-        self.backend.fill(point, &style.colour);
+        self.backend.fill(shape, &style.colour);
+    }
+
+    fn render_line(
+        &mut self,
+        entity: Entity,
+        line: &Line,
+        layer: Entity,
+        styles: &Styling,
+    ) {
+        let style = styles.resolve_line_style(entity, layer);
+
+        let start = self.to_viewport_coordinates(line.start);
+        let end = self.to_viewport_coordinates(line.end);
+        let shape = kurbo::Line::new(start, end);
+        let stroke_width = style
+            .width
+            .in_pixels(self.renderer.viewport.pixels_per_drawing_unit);
+        log::trace!("Drawing {:?} as {:?} using {:?}", line, shape, style);
+
+        self.backend
+            .stroke(shape, &style.stroke, dbg!(stroke_width));
     }
 
     /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the
@@ -153,6 +172,36 @@ impl<'world, 'renderer, B: RenderContext> System<'world>
 #[derive(SystemData)]
 struct Styling<'world> {
     point_styles: ReadStorage<'world, PointStyle>,
+    line_styles: ReadStorage<'world, LineStyle>,
+}
+
+impl<'world> Styling<'world> {
+    const DEFAULT_LINE_STYLE: LineStyle = LineStyle {
+        width: Dimension::Pixels(1.0),
+        stroke: Color::BLACK,
+    };
+    const DEFAULT_POINT_STYLE: PointStyle = PointStyle {
+        radius: Dimension::Pixels(1.0),
+        colour: Color::BLACK,
+    };
+
+    fn resolve_point_style(&self, point: Entity, layer: Entity) -> &PointStyle {
+        self
+            .point_styles
+            // the style for this point may have been overridden explicitly
+            .get(point)
+            // otherwise fall back to the layer's PointStyle
+            .or_else(|| self.point_styles.get(layer))
+            // fall back to the global default if the layer didn't specify one
+            .unwrap_or(&Self::DEFAULT_POINT_STYLE)
+    }
+
+    fn resolve_line_style(&self, line: Entity, layer: Entity) -> &LineStyle {
+        self.line_styles
+            .get(line)
+            .or_else(|| self.line_styles.get(layer))
+            .unwrap_or(&Self::DEFAULT_LINE_STYLE)
+    }
 }
 
 /// The state needed when calculating which order to draw things in so z-levels

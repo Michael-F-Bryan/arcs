@@ -15,3 +15,8 @@ specs = "0.15"
 specs-derive = "0.4"
 shred-derive = "0.6.1"
 kurbo = "0.5.6"
+
+[dev-dependencies]
+piet-common = "0.0.7"
+image = "0.22.3"
+env_logger = "0.7.1"
