@@ -44,7 +44,7 @@
 
 <span class="kw">use</span> <span class="ident">specs</span>::{<span class="ident">World</span>, <span class="ident">WorldExt</span>};
 
-<span class="doccomment">/// Register all [`specs::Components`].</span>
+<span class="doccomment">/// Register all [`specs::Component`]s.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register</span>(<span class="ident">world</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">World</span>) {
     <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">DrawingObject</span><span class="op">&gt;</span>();
     <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">BoundingBox</span><span class="op">&gt;</span>();

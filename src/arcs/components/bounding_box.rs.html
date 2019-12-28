@@ -129,11 +129,13 @@
 <span id="129">129</span>
 <span id="130">130</span>
 <span id="131">131</span>
+<span id="132">132</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">Bounded</span>, <span class="ident">Vector</span>};
 <span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">specs_derive</span>::<span class="ident">Component</span>;
 
+<span class="doccomment">/// An axis-aligned bounding box.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Component</span>)]</span>
 <span class="attribute">#[<span class="ident">storage</span>(<span class="ident">DenseVecStorage</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BoundingBox</span> {
