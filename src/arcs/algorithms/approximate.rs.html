@@ -116,6 +116,10 @@
 <span id="116">116</span>
 <span id="117">117</span>
 <span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">primitives</span>::{<span class="ident">Arc</span>, <span class="ident">Line</span>, <span class="ident">Point</span>},
@@ -193,6 +197,10 @@
     }
 }
 
+<span class="doccomment">/// An iterator over the points in an arc approximation.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This shouldn&#39;t be used directly, you are probably looking for</span>
+<span class="doccomment">/// `Arc::approximate()`.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ApproximatedArc</span> {
     <span class="ident">i</span>: <span class="ident">usize</span>,
