@@ -2,8 +2,8 @@ language: rust
 cache: cargo
 
 rust:
-  # MSRV for arrayvec
-  - 1.36.0
+  # Required for #[non_exhaustive]
+  - 1.40.0
   - nightly
 
 script:
