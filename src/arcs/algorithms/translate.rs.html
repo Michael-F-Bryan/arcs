@@ -44,12 +44,14 @@
 <span id="44">44</span>
 <span id="45">45</span>
 <span id="46">46</span>
+<span id="47">47</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">primitives</span>::{<span class="ident">Arc</span>, <span class="ident">Line</span>, <span class="ident">Point</span>},
     <span class="ident">Vector</span>,
 };
 
+<span class="doccomment">/// Something which can be moved around in *Drawing Space*.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Translate</span> {
     <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">displacement</span>: <span class="ident">Vector</span>);
 

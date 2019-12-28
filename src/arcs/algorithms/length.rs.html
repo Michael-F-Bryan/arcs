@@ -18,25 +18,81 @@
 <span id="18">18</span>
 <span id="19">19</span>
 <span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">primitives</span>::{<span class="ident">Arc</span>, <span class="ident">Line</span>},
     <span class="ident">Vector</span>,
 };
 
+<span class="doccomment">/// Something which has a finite length.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Length</span> {
+    <span class="doccomment">/// Calculate the length.</span>
     <span class="kw">fn</span> <span class="ident">length</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">Length</span> <span class="kw">for</span> <span class="ident">Line</span> {
+    <span class="doccomment">/// Calculates the length of the line.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use arcs::{algorithms::Length, primitives::Line, Vector};</span>
+    <span class="doccomment">/// let line = Line::new(Vector::zero(), Vector::new(5.0, 0.0));</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(line.length(), 5.0);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">length</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">displacement</span>().<span class="ident">length</span>() }
 }
 
 <span class="kw">impl</span> <span class="ident">Length</span> <span class="kw">for</span> <span class="ident">Vector</span> {
+    <span class="doccomment">/// Calculates the [`Vector`]&#39;s magnitude.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use arcs::{algorithms::Length, Vector};</span>
+    <span class="doccomment">/// let vector = Vector::new(3.0, 4.0);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(vector.length(), 5.0);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">length</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="ident">Vector</span>::<span class="ident">length</span>(<span class="kw-2">*</span><span class="self">self</span>) }
 }
 
 <span class="kw">impl</span> <span class="ident">Length</span> <span class="kw">for</span> <span class="ident">Arc</span> {
+    <span class="doccomment">/// Calculates the length of an [`Arc`].</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use arcs::{algorithms::Length, primitives::Arc, Vector};</span>
+    <span class="doccomment">/// # use std::f64::consts::PI;</span>
+    <span class="doccomment">/// let radius = 50.0;</span>
+    <span class="doccomment">/// let arc = Arc::from_centre_radius(Vector::zero(), radius, 0.0, 2.0 * PI);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(arc.length(), 2.0 * radius * PI);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">length</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">radius</span>() <span class="op">*</span> <span class="self">self</span>.<span class="ident">sweep_angle</span>().<span class="ident">abs</span>() }
 }
 </pre></div>

@@ -139,6 +139,11 @@
 <span id="139">139</span>
 <span id="140">140</span>
 <span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">primitives</span>::{<span class="ident">Line</span>, <span class="ident">Point</span>},
@@ -146,7 +151,9 @@
 };
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">iter</span>::<span class="ident">FromIterator</span>;
 
+<span class="doccomment">/// Find the location on an object which is closest to a target point.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ClosestPoint</span> {
+    <span class="doccomment">/// Calculate the closest point to `target`.</span>
     <span class="kw">fn</span> <span class="ident">closest_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">Vector</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Closest</span>;
 }
 
@@ -184,8 +191,11 @@
     }
 }
 
+<span class="doccomment">/// An enum containing the different possible solutions for</span>
+<span class="doccomment">/// [`ClosestPoint::closest_point()`].</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Closest</span> {
+    <span class="doccomment">/// There are infinitely solutions.</span>
     <span class="ident">Infinite</span>,
     <span class="ident">One</span>(<span class="ident">Vector</span>),
     <span class="ident">Many</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vector</span><span class="op">&gt;</span>),
