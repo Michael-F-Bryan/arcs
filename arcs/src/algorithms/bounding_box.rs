@@ -4,6 +4,7 @@ use crate::{
     Vector,
 };
 
+/// Calculate an axis-aligned bounding box around the item.
 pub trait Bounded {
     /// Calculate the approximate location this object is located in.
     fn bounding_box(&self) -> BoundingBox;

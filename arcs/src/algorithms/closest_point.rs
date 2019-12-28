@@ -4,7 +4,9 @@ use crate::{
 };
 use std::iter::FromIterator;
 
+/// Find the location on an object which is closest to a target point.
 pub trait ClosestPoint {
+    /// Calculate the closest point to `target`.
     fn closest_point(&self, target: Vector) -> Closest;
 }
 
@@ -42,8 +44,11 @@ impl ClosestPoint for Line {
     }
 }
 
+/// An enum containing the different possible solutions for
+/// [`ClosestPoint::closest_point()`].
 #[derive(Debug, Clone, PartialEq)]
 pub enum Closest {
+    /// There are infinitely solutions.
     Infinite,
     One(Vector),
     Many(Vec<Vector>),
