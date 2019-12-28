@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Bounded",""]]});
+initSidebarItems({"enum":[["Closest",""]],"trait":[["Bounded",""],["ClosestPoint",""],["Length",""],["Translate",""]]});
