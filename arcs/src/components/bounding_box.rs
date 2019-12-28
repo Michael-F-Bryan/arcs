@@ -2,6 +2,7 @@ use crate::{algorithms::Bounded, Vector};
 use specs::prelude::*;
 use specs_derive::Component;
 
+/// An axis-aligned bounding box.
 #[derive(Debug, Copy, Clone, PartialEq, Component)]
 #[storage(DenseVecStorage)]
 pub struct BoundingBox {

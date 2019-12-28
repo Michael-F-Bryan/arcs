@@ -148,23 +148,20 @@ impl MulAssign<f64> for Vector {
     fn mul_assign(&mut self, other: f64) { *self = *self * other; }
 }
 
-impl Mul<Affine> for Vector {
+impl Mul<Vector> for Affine {
     type Output = Vector;
 
-    fn mul(self, other: Affine) -> Vector {
-        let coefficients = other.as_coeffs();
-        let x = coefficients[0] * self.x
-            + coefficients[2] * self.y
-            + coefficients[4];
-        let y = coefficients[1] * self.x
-            + coefficients[3] * self.y
-            + coefficients[5];
+    fn mul(self, other: Vector) -> Vector {
+        use kurbo::Point;
+
+        let temporary = Point::new(other.x, other.y);
+        let Point { x, y } = self * temporary;
         Vector::new(x, y)
     }
 }
 
 impl MulAssign<Affine> for Vector {
-    fn mul_assign(&mut self, other: Affine) { *self = *self * other; }
+    fn mul_assign(&mut self, other: Affine) { *self = other.mul(*self); }
 }
 
 impl Div<f64> for Vector {

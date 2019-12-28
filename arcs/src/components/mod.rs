@@ -16,7 +16,7 @@ pub use styles::{LineStyle, PointStyle};
 
 use specs::{World, WorldExt};
 
-/// Register all [`specs::Components`].
+/// Register all [`specs::Component`]s.
 pub fn register(world: &mut World) {
     world.register::<DrawingObject>();
     world.register::<BoundingBox>();

@@ -1,3 +1,5 @@
+//! Background tasks and useful [`specs::System`]s.
+
 mod bounds;
 mod name_table_bookkeeping;
 
