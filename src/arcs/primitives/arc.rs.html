@@ -125,59 +125,6 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
-<span id="128">128</span>
-<span id="129">129</span>
-<span id="130">130</span>
-<span id="131">131</span>
-<span id="132">132</span>
-<span id="133">133</span>
-<span id="134">134</span>
-<span id="135">135</span>
-<span id="136">136</span>
-<span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
-<span id="140">140</span>
-<span id="141">141</span>
-<span id="142">142</span>
-<span id="143">143</span>
-<span id="144">144</span>
-<span id="145">145</span>
-<span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
-<span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
-<span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
-<span id="160">160</span>
-<span id="161">161</span>
-<span id="162">162</span>
-<span id="163">163</span>
-<span id="164">164</span>
-<span id="165">165</span>
-<span id="166">166</span>
-<span id="167">167</span>
-<span id="168">168</span>
-<span id="169">169</span>
-<span id="170">170</span>
-<span id="171">171</span>
-<span id="172">172</span>
-<span id="173">173</span>
-<span id="174">174</span>
-<span id="175">175</span>
-<span id="176">176</span>
-<span id="177">177</span>
-<span id="178">178</span>
-<span id="179">179</span>
-<span id="180">180</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Orientation</span>, <span class="ident">Vector</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">f64</span>::<span class="ident">consts</span>::<span class="ident">PI</span>;
@@ -256,39 +203,6 @@
             <span class="op">+</span> <span class="ident">Vector</span>::<span class="ident">from_r_theta</span>(<span class="self">self</span>.<span class="ident">radius</span>(), <span class="self">self</span>.<span class="ident">start_angle</span>() <span class="op">+</span> <span class="ident">angle</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">approximate</span>(<span class="self">self</span>, <span class="ident">quality</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Vector</span><span class="op">&gt;</span> {
-        <span class="comment">// Draw a chord between points A and B on a circle with centre C.</span>
-        <span class="comment">// Draw a line which bisects the angle ACB and intersects with the</span>
-        <span class="comment">// chord at point D.</span>
-        <span class="comment">// The distance from D to the arc is our &quot;quality&quot;</span>
-        <span class="comment">// (i.e. |CD| + quality = radius).</span>
-        <span class="comment">//</span>
-        <span class="comment">// From the triangle DCB:</span>
-        <span class="comment">//   cos(θ/2) = |CD|/R</span>
-        <span class="comment">//   cos(θ/2) = 1 - quality/R</span>
-        <span class="comment">//</span>
-        <span class="comment">//  where θ is the angle swept by a chord with the desired &quot;quality&quot;.</span>
-        <span class="comment">//</span>
-        <span class="comment">// # line segments to approximate with the specified quality:</span>
-        <span class="comment">//   N = ⌈SweepAngle/θ⌉</span>
-
-        <span class="kw">let</span> (<span class="ident">steps</span>, <span class="ident">delta</span>) <span class="op">=</span> <span class="kw">if</span> <span class="ident">quality</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">0.0</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">radius</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">quality</span> {
-            (<span class="number">1</span>, <span class="self">self</span>.<span class="ident">sweep_angle</span>())
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">cos_theta_on_two</span> <span class="op">=</span> <span class="number">1.0</span> <span class="op">-</span> <span class="ident">quality</span> <span class="op">/</span> <span class="self">self</span>.<span class="ident">radius</span>();
-            <span class="kw">let</span> <span class="ident">theta</span> <span class="op">=</span> <span class="ident">cos_theta_on_two</span>.<span class="ident">acos</span>() <span class="op">*</span> <span class="number">2.0</span>;
-            <span class="kw">let</span> <span class="ident">line_segment_count</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sweep_angle</span>() <span class="op">/</span> <span class="ident">theta</span>;
-
-            <span class="comment">// make sure we always have at least 2 points</span>
-            <span class="kw">let</span> <span class="ident">line_segment_count</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">max</span>(<span class="ident">line_segment_count</span>, <span class="number">2.0</span>);
-            <span class="kw">let</span> <span class="ident">actual_step</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sweep_angle</span>() <span class="op">/</span> <span class="ident">line_segment_count</span>;
-
-            (<span class="ident">line_segment_count</span>.<span class="ident">ceil</span>().<span class="ident">abs</span>() <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">actual_step</span>)
-        };
-
-        (<span class="number">0</span>..<span class="ident">steps</span> <span class="op">+</span> <span class="number">1</span>).<span class="ident">map</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">i</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">point_at</span>(<span class="ident">i</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">*</span> <span class="ident">delta</span>))
-    }
-
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains_angle</span>(<span class="self">self</span>, <span class="ident">angle</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">let</span> <span class="ident">start_angle</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">start_angle</span>();
         <span class="kw">let</span> <span class="ident">end_angle</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">end_angle</span>();
@@ -337,26 +251,6 @@
         <span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span> <span class="op">-</span> <span class="ident">angular_difference</span>
     } <span class="kw">else</span> {
         <span class="ident">angular_difference</span>
-    }
-}
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">approximate_arc_with_points</span>() {
-        <span class="kw">let</span> <span class="ident">arc</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">from_centre_radius</span>(<span class="ident">Vector</span>::<span class="ident">zero</span>(), <span class="number">100.0</span>, <span class="number">0.0</span>, <span class="ident">PI</span> <span class="op">/</span> <span class="number">2.0</span>);
-        <span class="kw">let</span> <span class="ident">quality</span> <span class="op">=</span> <span class="number">10.0</span>;
-
-        <span class="kw">let</span> <span class="ident">pieces</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">arc</span>.<span class="ident">approximate</span>(<span class="ident">quality</span>).<span class="ident">collect</span>();
-
-        <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">piece</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">pieces</span> {
-            <span class="kw">let</span> <span class="ident">error</span> <span class="op">=</span> <span class="ident">arc</span>.<span class="ident">radius</span>() <span class="op">-</span> (<span class="ident">piece</span> <span class="op">-</span> <span class="ident">arc</span>.<span class="ident">centre</span>()).<span class="ident">length</span>();
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">error</span> <span class="op">&lt;</span> <span class="ident">quality</span>);
-        }
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arc</span>.<span class="ident">start</span>(), <span class="kw-2">*</span><span class="ident">pieces</span>.<span class="ident">first</span>().<span class="ident">unwrap</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">arc</span>.<span class="ident">end</span>(), <span class="kw-2">*</span><span class="ident">pieces</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>());
     }
 }
 </pre></div>
