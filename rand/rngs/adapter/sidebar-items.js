@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ReseedingRng","A wrapper around any PRNG that implements [`BlockRngCore`], that adds the ability to reseed it."]]});

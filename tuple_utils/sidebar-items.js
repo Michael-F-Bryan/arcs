@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Append","Helper trait to allow Appending of tuples"],["Merge","Helper trait that allow for merging of tuples"],["Prepend","Helper trait to allow Perpending of tuples"],["Split","Tries to split a tuple into two tuples if the tuple is odd sized the Right side will contain the extra element"]]});

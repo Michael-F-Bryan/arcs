@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["InvalidBorrow","Marker struct for an invalid borrow error"],["Ref","An immutable reference to data in a `TrustCell`."],["RefMut","A mutable reference to data in a `TrustCell`."],["TrustCell","A custom cell container that is a `RefCell` with thread-safety."]]});

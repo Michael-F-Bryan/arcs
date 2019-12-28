@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `mopa` crate."><meta name="keywords" content="rust, rustlang, rust-lang, mopa"><title>mopa - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../mopa/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate mopa</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all mopa's items</p></a><div class="block items"><ul><li><a href="#macros">Macros</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'mopa', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/mopa/lib.rs.html#16-411' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>mopa</a></span></h1><div class='docblock'><p><strong>MOPA: My Own Personal Any.</strong> A macro to implement all the <code>Any</code> methods on your own trait.</p>
+<p>You like <code>Any</code>—its ability to store any <code>'static</code> type as a trait object and then downcast it
+back to the original type is very convenient, and in fact you need it for whatever misguided
+reason. But it’s not enough. What you <em>really</em> want is your own trait object type with <code>Any</code>’s
+functionality glued onto it. Maybe you have a <code>Person</code> trait and you want your people to be
+able to do various things, but you also want to be able to conveniently downcast the person to
+its original type, right? Alas, you can’t write a type like <code>Box&lt;Person + Any&gt;</code> (at present,
+anyway). So what do you do instead? Do you give up? No, no! No, no! Enter MOPA.</p>
+<blockquote>
+<p>There once was a quite friendly trait<br />
+Called <code>Person</code>, with much on its plate.<br />
+    “I need to be <code>Any</code><br />
+    To downcast to <code>Benny</code>—<br />
+But I’m not, so I guess I’ll just wait.”</p>
+</blockquote>
+<p>A pitiful tale, isn’t it? Especially given that there was a bear chasing it with intent to eat
+it. Fortunately now you can <em>mopafy</em> <code>Person</code> in three simple steps:</p>
+<ol>
+<li>
+<p>Add the <code>mopa</code> crate to your <code>Cargo.toml</code> as usual and your crate root like so:</p>
+
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">mopa</span>;</pre></div>
+</li>
+<li>
+<p>Make <code>Any</code> (<code>mopa::Any</code>, not <code>std::any::Any</code>) a supertrait of <code>Person</code>;</p>
+</li>
+<li>
+<p><code>mopafy!(Person);</code>.</p>
+</li>
+</ol>
+<p>And lo, you can now write <code>person.is::&lt;Benny&gt;()</code> and <code>person.downcast_ref::&lt;Benny&gt;()</code> and so on
+to your heart’s content. Simple, huh?</p>
+<p>Oh, by the way, it was actually the person on the bear’s plate. There wasn’t really anything on
+<code>Person</code>’s plate after all.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">mopa</span>;
+
+<span class="kw">struct</span> <span class="ident">Bear</span> {
+    <span class="comment">// This might be a pretty fat bear.</span>
+    <span class="ident">fatness</span>: <span class="ident">u16</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Bear</span> {
+    <span class="kw">fn</span> <span class="ident">eat</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">person</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Person</span><span class="op">&gt;</span>) {
+        <span class="self">self</span>.<span class="ident">fatness</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">fatness</span> <span class="kw">as</span> <span class="ident">i16</span> <span class="op">+</span> <span class="ident">person</span>.<span class="ident">weight</span>()) <span class="kw">as</span> <span class="ident">u16</span>;
+    }
+}
+
+<span class="kw">trait</span> <span class="ident">Person</span>: <span class="ident">mopa</span>::<span class="ident">Any</span> {
+    <span class="kw">fn</span> <span class="ident">panic</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
+    <span class="kw">fn</span> <span class="ident">yell</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) { <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Argh!&quot;</span>); }
+    <span class="kw">fn</span> <span class="ident">sleep</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
+    <span class="kw">fn</span> <span class="ident">weight</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span>;
+}
+
+<span class="macro">mopafy</span><span class="macro">!</span>(<span class="ident">Person</span>);
+
+<span class="kw">struct</span> <span class="ident">Benny</span> {
+    <span class="comment">// (Benny is not a superhero. He can’t carry more than 256kg of food at once.)</span>
+    <span class="ident">kilograms_of_food</span>: <span class="ident">u8</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Person</span> <span class="kw">for</span> <span class="ident">Benny</span> {
+    <span class="kw">fn</span> <span class="ident">panic</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) { <span class="self">self</span>.<span class="ident">yell</span>() }
+    <span class="kw">fn</span> <span class="ident">sleep</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) { <span class="comment">/* ... */</span> }
+    <span class="kw">fn</span> <span class="ident">weight</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span> {
+        <span class="comment">// Who’s trying to find out? I’m scared!</span>
+        <span class="self">self</span>.<span class="ident">yell</span>();
+        <span class="self">self</span>.<span class="ident">kilograms_of_food</span> <span class="kw">as</span> <span class="ident">i16</span> <span class="op">+</span> <span class="number">60</span>
+    }
+}
+
+<span class="kw">struct</span> <span class="ident">Chris</span>;
+
+<span class="kw">impl</span> <span class="ident">Chris</span> {
+    <span class="comment">// Normal people wouldn’t be brave enough to hit a bear but Chris might.</span>
+    <span class="kw">fn</span> <span class="ident">hit</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bear</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bear</span>) {
+        <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Chris hits the bear! How brave! (Or maybe stupid?)&quot;</span>);
+        <span class="comment">// Meh, boundary conditions, what use are they in examples?</span>
+        <span class="comment">// Chris clearly hits quite hard. Poor bear.</span>
+        <span class="ident">bear</span>.<span class="ident">fatness</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Person</span> <span class="kw">for</span> <span class="ident">Chris</span> {
+    <span class="kw">fn</span> <span class="ident">panic</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) { <span class="comment">/* ... */</span> }
+    <span class="kw">fn</span> <span class="ident">sleep</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) { <span class="comment">/* ... */</span> }
+    <span class="kw">fn</span> <span class="ident">weight</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span> { <span class="op">-</span><span class="number">5</span> <span class="comment">/* antigravity device! cool! */</span> }
+}
+
+<span class="kw">fn</span> <span class="ident">simulate_simulation</span>(<span class="ident">person</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Person</span><span class="op">&gt;</span>, <span class="ident">bear</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Bear</span>) {
+    <span class="kw">if</span> <span class="ident">person</span>.<span class="ident">is</span>::<span class="op">&lt;</span><span class="ident">Benny</span><span class="op">&gt;</span>() {
+        <span class="comment">// None of the others do, but Benny knows this particular</span>
+        <span class="comment">// bear by reputation and he’s *really* going to be worried.</span>
+        <span class="ident">person</span>.<span class="ident">yell</span>()
+    }
+    <span class="comment">// If it happens to be Chris, he’ll hit the bear.</span>
+    <span class="ident">person</span>.<span class="ident">downcast_ref</span>::<span class="op">&lt;</span><span class="ident">Chris</span><span class="op">&gt;</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">chris</span><span class="op">|</span> <span class="ident">chris</span>.<span class="ident">hit</span>(<span class="ident">bear</span>));
+    <span class="ident">bear</span>.<span class="ident">eat</span>(<span class="ident">person</span>);
+}
+
+<span class="kw">fn</span> <span class="ident">main</span>() {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bear</span> <span class="op">=</span> <span class="ident">Bear</span> { <span class="ident">fatness</span>: <span class="number">10</span> };
+    <span class="ident">simulate_simulation</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Benny</span> { <span class="ident">kilograms_of_food</span>: <span class="number">5</span> }), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bear</span>);
+    <span class="ident">simulate_simulation</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Chris</span>), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bear</span>);
+}</pre></div>
+<p>Now <em>should</em> you do something like this? Probably not. Enums are probably a better solution for
+this particular case as written; frankly I believe that almost the only time you should
+downcast an Any trait object (or a mopafied trait object) is with a generic parameter, when
+producing something like <code>AnyMap</code>, for example. If you control <em>all</em> the code, <code>Any</code> trait
+objects are probably not the right solution; they’re good for cases with user-defined
+types across a variety of libraries. But the question of purpose and suitability is open, and I
+don’t have a really good example of such a use case here at present. TODO.</p>
+</div><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table><tr class='module-item'><td><a class="macro" href="macro.mopafy.html" title='mopa::mopafy macro'>mopafy</a></td><td class='docblock-short'><p>The macro for implementing all the <code>Any</code> methods on your own trait.</p>
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.Any.html" title='mopa::Any trait'>Any</a></td><td class='docblock-short'><p>A type to emulate dynamic typing.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../";window.currentCrate = "mopa";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

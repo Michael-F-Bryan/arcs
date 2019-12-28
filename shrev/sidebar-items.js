@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["EventChannel","The `EventChannel`, which is the central component of `shrev`."],["EventIterator","Iterator over a slice of data in `RingBufferStorage`."],["ReaderId","A reader ID which represents a subscription to the events pushed to the `EventChannel`."]],"trait":[["Event","Marker trait for data to use with the EventChannel."]]});
