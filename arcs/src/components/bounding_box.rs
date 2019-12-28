@@ -105,7 +105,7 @@ impl BoundingBox {
     }
 
     pub fn intersects_with(&self, other: BoundingBox) -> bool {
-        // FIXMe: Actually implement this
+        // FIXME: Actually implement this
         self.fully_contains(other)
     }
 }

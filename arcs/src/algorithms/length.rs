@@ -12,7 +12,7 @@ impl Length for Line {
 }
 
 impl Length for Vector {
-    fn length(&self) -> f64 { self.x.hypot(self.y) }
+    fn length(&self) -> f64 { Vector::length(*self) }
 }
 
 impl Length for Arc {
