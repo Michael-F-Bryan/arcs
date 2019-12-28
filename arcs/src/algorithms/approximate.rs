@@ -74,6 +74,10 @@ impl Approximate for Arc {
     }
 }
 
+/// An iterator over the points in an arc approximation.
+///
+/// This shouldn't be used directly, you are probably looking for
+/// `Arc::approximate()`.
 #[derive(Debug, Clone)]
 pub struct ApproximatedArc {
     i: usize,
