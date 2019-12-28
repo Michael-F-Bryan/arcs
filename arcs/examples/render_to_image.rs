@@ -6,11 +6,11 @@ use arcs::{
     render::{Renderer, Viewport},
     Vector,
 };
-use image::{png::PNGEncoder, ColorType};
+use image::RgbaImage;
 use kurbo::Size;
 use piet::{Color, ImageFormat};
 use specs::prelude::*;
-use std::{f64::consts::PI, fs::File};
+use std::f64::consts::PI;
 
 fn main() {
     env_logger::init();
@@ -91,11 +91,11 @@ fn main() {
         RunNow::run_now(&mut system, &world);
     }
 
-    let img = bitmap_canvas
+    let raw_image = bitmap_canvas
         .into_raw_pixels(ImageFormat::RgbaPremul)
         .unwrap();
-
-    PNGEncoder::new(File::create("rendered.png").unwrap())
-        .encode(&img, width as u32, height as u32, ColorType::RGBA(8))
+    RgbaImage::from_raw(width as u32, height as u32, raw_image)
+        .unwrap()
+        .save("rendered.png")
         .unwrap();
 }
