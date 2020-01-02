@@ -1,7 +1,7 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["ahash"] = {"name":"","files":["convert.rs","fallback_hash.rs","lib.rs"]};
 sourcesIndex["anyhow"] = {"name":"","files":["backtrace.rs","chain.rs","context.rs","error.rs","fmt.rs","kind.rs","lib.rs","macros.rs","wrapper.rs"]};
-sourcesIndex["arcs"] = {"name":"","dirs":[{"name":"algorithms","files":["approximate.rs","bounding_box.rs","closest_point.rs","length.rs","mod.rs","translate.rs"]},{"name":"components","files":["bounding_box.rs","dimension.rs","drawing_object.rs","layer.rs","mod.rs","name.rs","styles.rs"]},{"name":"primitives","files":["arc.rs","line.rs","mod.rs","point.rs"]},{"name":"render","files":["mod.rs","renderer.rs","utils.rs"]},{"name":"systems","files":["bounds.rs","mod.rs","name_table_bookkeeping.rs"]}],"files":["lib.rs","vector.rs"]};
+sourcesIndex["arcs"] = {"name":"","dirs":[{"name":"algorithms","files":["approximate.rs","bounding_box.rs","closest_point.rs","length.rs","mod.rs","translate.rs"]},{"name":"commands","files":["mod.rs"]},{"name":"components","files":["bounding_box.rs","dimension.rs","drawing_object.rs","layer.rs","mod.rs","name.rs","styles.rs"]},{"name":"primitives","files":["arc.rs","line.rs","mod.rs","point.rs"]},{"name":"render","files":["mod.rs","renderer.rs","utils.rs"]},{"name":"systems","files":["bounds.rs","mod.rs","name_table_bookkeeping.rs"]}],"files":["lib.rs","vector.rs"]};
 sourcesIndex["arrayvec"] = {"name":"","files":["array.rs","array_string.rs","char.rs","errors.rs","lib.rs","maybe_uninit_stable.rs","range.rs"]};
 sourcesIndex["atom"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["c2_chacha"] = {"name":"","files":["guts.rs","lib.rs"]};
