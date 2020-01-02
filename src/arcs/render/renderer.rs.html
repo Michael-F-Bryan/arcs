@@ -261,7 +261,6 @@
 <span id="261">261</span>
 <span id="262">262</span>
 <span id="263">263</span>
-<span id="264">264</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">algorithms</span>::<span class="ident">Bounded</span>,
@@ -399,8 +398,7 @@
             .<span class="ident">in_pixels</span>(<span class="self">self</span>.<span class="ident">renderer</span>.<span class="ident">viewport</span>.<span class="ident">pixels_per_drawing_unit</span>);
         <span class="ident">log</span>::<span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;Drawing {:?} as {:?} using {:?}&quot;</span>, <span class="ident">line</span>, <span class="ident">shape</span>, <span class="ident">style</span>);
 
-        <span class="self">self</span>.<span class="ident">backend</span>
-            .<span class="ident">stroke</span>(<span class="ident">shape</span>, <span class="kw-2">&amp;</span><span class="ident">style</span>.<span class="ident">stroke</span>, <span class="macro">dbg</span><span class="macro">!</span>(<span class="ident">stroke_width</span>));
+        <span class="self">self</span>.<span class="ident">backend</span>.<span class="ident">stroke</span>(<span class="ident">shape</span>, <span class="kw-2">&amp;</span><span class="ident">style</span>.<span class="ident">stroke</span>, <span class="ident">stroke_width</span>);
     }
 
     <span class="doccomment">/// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the</span>
