@@ -134,8 +134,7 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
             .in_pixels(self.renderer.viewport.pixels_per_drawing_unit);
         log::trace!("Drawing {:?} as {:?} using {:?}", line, shape, style);
 
-        self.backend
-            .stroke(shape, &style.stroke, dbg!(stroke_width));
+        self.backend.stroke(shape, &style.stroke, stroke_width);
     }
 
     /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the

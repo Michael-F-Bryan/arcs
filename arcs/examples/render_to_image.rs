@@ -53,10 +53,10 @@ fn main() {
 
         world
             .create_entity()
-            .with(dbg!(DrawingObject {
+            .with(DrawingObject {
                 geometry: Geometry::Line(Line::new(start, end)),
                 layer,
-            }))
+            })
             .with(LineStyle {
                 width: Dimension::DrawingUnits(5.0),
                 stroke: Color::rgb8(0xff, 0, 0),
