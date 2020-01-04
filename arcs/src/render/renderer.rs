@@ -153,11 +153,9 @@ impl<'world, 'renderer, B: RenderContext> System<'world>
 {
     type SystemData = (DrawOrder<'world>, Styling<'world>);
 
-    fn run(&mut self, data: Self::SystemData) {
+    fn run(&mut self, (draw_order, styling): Self::SystemData) {
         // make sure we're working with a blank screen
         self.backend.clear(self.renderer.background.clone());
-
-        let (draw_order, styling) = data;
 
         let viewport_dimensions = self.viewport_dimensions();
 
