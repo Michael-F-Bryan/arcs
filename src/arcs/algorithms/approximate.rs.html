@@ -120,6 +120,14 @@
 <span id="120">120</span>
 <span id="121">121</span>
 <span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">primitives</span>::{<span class="ident">Arc</span>, <span class="ident">Line</span>, <span class="ident">Point</span>},
@@ -137,6 +145,14 @@
     <span class="doccomment">/// Approximate the shape, ensuring the resulting path is within `tolerance`</span>
     <span class="doccomment">/// units of the original.</span>
     <span class="kw">fn</span> <span class="ident">approximate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tolerance</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Iter</span>;
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">A</span>: <span class="ident">Approximate</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">Approximate</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">A</span> {
+    <span class="kw">type</span> <span class="ident">Iter</span> <span class="op">=</span> <span class="ident">A</span>::<span class="ident">Iter</span>;
+
+    <span class="kw">fn</span> <span class="ident">approximate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tolerance</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Iter</span> {
+        (<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">approximate</span>(<span class="ident">tolerance</span>)
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">Approximate</span> <span class="kw">for</span> <span class="ident">Point</span> {

@@ -45,6 +45,12 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">primitives</span>::{<span class="ident">Arc</span>, <span class="ident">Line</span>, <span class="ident">Point</span>},
@@ -63,6 +69,12 @@
         <span class="ident">clone</span>.<span class="ident">translate</span>(<span class="ident">displacement</span>);
 
         <span class="ident">clone</span>
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span>, <span class="ident">T</span>: <span class="ident">Translate</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">Translate</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;t</span> <span class="kw-2">mut</span> <span class="ident">T</span> {
+    <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">displacement</span>: <span class="ident">Vector</span>) {
+        (<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">translate</span>(<span class="ident">displacement</span>);
     }
 }
 

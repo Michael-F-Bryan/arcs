@@ -144,6 +144,12 @@
 <span id="144">144</span>
 <span id="145">145</span>
 <span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">primitives</span>::{<span class="ident">Line</span>, <span class="ident">Point</span>},
@@ -155,6 +161,12 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ClosestPoint</span> {
     <span class="doccomment">/// Calculate the closest point to `target`.</span>
     <span class="kw">fn</span> <span class="ident">closest_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">Vector</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Closest</span>;
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">C</span>: <span class="ident">ClosestPoint</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">ClosestPoint</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">C</span> {
+    <span class="kw">fn</span> <span class="ident">closest_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">Vector</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Closest</span> {
+        (<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">closest_point</span>(<span class="ident">target</span>)
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">ClosestPoint</span> <span class="kw">for</span> <span class="ident">Vector</span> {
