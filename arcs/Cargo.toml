@@ -7,7 +7,7 @@ description = "An extensible framework for creating 2D CAD applications using th
 repository = "https://github.com/Michael-F-Bryan/arcs"
 keywords = ["cad", "geometry", "2d", "design"]
 categories = ["graphics", "gui", "mathematics", "wasm"]
-license = "MIT or Apache-2.0"
+license = "MIT OR Apache-2.0"
 
 [badges]
 travis-ci = { repository = "Michael-F-Bryan/arcs", branch = "master" }
