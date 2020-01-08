@@ -86,13 +86,14 @@ impl Arc {
         };
 
         let angular_difference = (max - min).abs();
+        let between_max_and_min = min <= angle && angle <= max;
 
         if (self.is_major_arc() && angular_difference > PI)
             || (self.is_minor_arc() && angular_difference < PI)
         {
-            min <= angle && angle <= max
+            between_max_and_min
         } else {
-            min <= angle && angle <= max
+            !between_max_and_min
         }
     }
 

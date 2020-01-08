@@ -69,7 +69,7 @@ impl Approximate for Arc {
             i: 0,
             steps,
             step_size: delta,
-            arc: self.clone(),
+            arc: *self,
         }
     }
 }
