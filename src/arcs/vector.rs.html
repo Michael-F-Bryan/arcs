@@ -279,7 +279,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// This will panic</span>
+    <span class="doccomment">/// This will panic if `x` or `y` aren&#39;t finite.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">x</span>: <span class="ident">f64</span>, <span class="ident">y</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">x</span>.<span class="ident">is_finite</span>(), <span class="string">&quot;Can&#39;t create a vector with {}&quot;</span>, <span class="ident">x</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">y</span>.<span class="ident">is_finite</span>(), <span class="string">&quot;Can&#39;t create a vector with {}&quot;</span>, <span class="ident">y</span>);
