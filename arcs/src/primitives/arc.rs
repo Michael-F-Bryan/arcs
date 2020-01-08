@@ -40,7 +40,7 @@ impl Arc {
         let centre = Vector::centre_of_three_points(start, middle, end)?;
         let radius = (start - centre).length();
         let start_angle = (start - centre).angle();
-        let sweep_angle = sweep_angle_from_3_points(start, middle, end);
+        let sweep_angle = sweep_angle_from_3_points(start, middle, end, centre);
 
         Some(Arc::from_centre_radius(
             centre,
@@ -95,16 +95,17 @@ impl Arc {
 
 fn sweep_angle_from_3_points(
     start: Vector,
-    centre: Vector,
+    middle: Vector,
     end: Vector,
+    centre: Vector,
 ) -> f64 {
     debug_assert!(
-        Vector::orientation(start, centre, end) != Orientation::Collinear
+        Vector::orientation(start, middle, end) != Orientation::Collinear
     );
 
     let start_ray = start - centre;
     let end_ray = end - centre;
-    let orientation = Vector::orientation(start, centre, end);
+    let orientation = Vector::orientation(start, middle, end);
     let angular_difference = end_ray.angle() - start_ray.angle();
 
     if angular_difference > 0.0 && orientation == Orientation::Clockwise {
@@ -151,4 +152,28 @@ mod tests {
     test_contains_angle!(inside_reverse_arc,
         Arc::from_centre_radius(Vector::zero(), 1.0, PI/4.0, -PI/4.0),
         45.0 => true);
+
+    #[test]
+    fn arc_from_three_points() {
+        let a = Vector::new(10.0, 0.0);
+        let b = Vector::new(0.0, 10.0);
+        let c = Vector::new(-10.0, 0.0);
+        let expected = Arc::from_centre_radius(Vector::zero(), 10.0, 0.0, PI);
+
+        let got = Arc::from_three_points(a, b, c).unwrap();
+
+        assert_eq!(got, expected);
+    }
+
+    #[test]
+    fn clockwise_arc_from_three_points() {
+        let a = Vector::new(10.0, 0.0);
+        let b = Vector::new(0.0, 10.0);
+        let c = Vector::new(-10.0, 0.0);
+        let expected = Arc::from_centre_radius(Vector::zero(), 10.0, PI, -PI);
+
+        let got = Arc::from_three_points(c, b, a).unwrap();
+
+        assert_eq!(got, expected);
+    }
 }

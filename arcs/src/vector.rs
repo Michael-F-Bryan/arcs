@@ -15,7 +15,7 @@ impl Vector {
     ///
     /// # Panics
     ///
-    /// This will panic
+    /// This will panic if `x` or `y` aren't finite.
     pub fn new(x: f64, y: f64) -> Self {
         assert!(x.is_finite(), "Can't create a vector with {}", x);
         assert!(y.is_finite(), "Can't create a vector with {}", y);
