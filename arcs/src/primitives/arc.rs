@@ -85,19 +85,10 @@ impl Arc {
             (end_angle, start_angle)
         };
 
-        let angular_difference = (max - min).abs();
-        let between_max_and_min = min <= angle && angle <= max;
-
-        if (self.is_major_arc() && angular_difference > PI)
-            || (self.is_minor_arc() && angular_difference < PI)
-        {
-            between_max_and_min
-        } else {
-            !between_max_and_min
-        }
+        (min <= angle) && (angle <= max)
     }
 
-    pub fn is_minor_arc(&self) -> bool { self.sweep_angle().abs() < PI }
+    pub fn is_minor_arc(&self) -> bool { self.sweep_angle().abs() <= PI }
 
     pub fn is_major_arc(&self) -> bool { !self.is_minor_arc() }
 }
@@ -125,4 +116,39 @@ fn sweep_angle_from_3_points(
     } else {
         angular_difference
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    macro_rules! test_contains_angle {
+        ($name:ident, $arc:expr, $degrees:expr => $expected:expr) => {
+            #[test]
+            fn $name() {
+                let arc: Arc = $arc;
+                let angle = $degrees * PI / 180.0;
+
+                let got = arc.contains_angle(angle);
+
+                assert_eq!(got, $expected);
+            }
+        };
+    }
+
+    test_contains_angle!(middle_of_ne_quadrant,
+        Arc::from_centre_radius(Vector::zero(), 1.0, 0.0, PI/2.0),
+        45.0 => true);
+    test_contains_angle!(start_of_arc,
+        Arc::from_centre_radius(Vector::zero(), 1.0, 0.0, PI/2.0),
+        0.0 => true);
+    test_contains_angle!(end_of_arc,
+        Arc::from_centre_radius(Vector::zero(), 1.0, 0.0, PI/2.0),
+        90.0 => true);
+    test_contains_angle!(outside_of_arc,
+        Arc::from_centre_radius(Vector::zero(), 1.0, 0.0, PI/4.0),
+        90.0 => false);
+    test_contains_angle!(inside_reverse_arc,
+        Arc::from_centre_radius(Vector::zero(), 1.0, PI/4.0, -PI/4.0),
+        45.0 => true);
 }
