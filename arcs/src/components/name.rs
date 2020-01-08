@@ -1,4 +1,4 @@
-use specs::prelude::*;
+use specs::{prelude::*, world::Index};
 use std::{borrow::Borrow, collections::HashMap};
 
 /// A name that can be looked up later in the [`NameTable`].
@@ -45,5 +45,26 @@ impl NameTable {
         &'this self,
     ) -> impl Iterator<Item = (&str, Entity)> + 'this {
         self.names.iter().map(|(name, ent)| (name.as_ref(), *ent))
+    }
+
+    pub fn clear(&mut self) { self.names.clear(); }
+
+    pub fn len(&self) -> usize { self.names.len() }
+
+    pub fn is_empty(&self) -> bool { self.names.is_empty() }
+
+    pub fn remove_by_id(&mut self, id: Index) {
+        let filter = move |(name, ent): (&Name, &Entity)| {
+            if ent.id() == id {
+                Some(name.clone())
+            } else {
+                None
+            }
+        };
+
+        // OPT: This is super inefficient...
+        if let Some(name) = self.names.iter().filter_map(filter).next() {
+            self.names.remove(&name);
+        }
     }
 }

@@ -177,6 +177,7 @@ impl DivAssign<f64> for Vector {
     fn div_assign(&mut self, other: f64) { *self = *self / other; }
 }
 
+/// How something may be oriented.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Orientation {
     Clockwise,

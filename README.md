@@ -34,7 +34,7 @@ containing a list of related features or concepts.
   - [ ] Zoom `Viewport` in/out
 
 - [ ] Milestone: Required by Real-World Applications
-      (see [`Michael-F-Bryan/rustmatic#38][rustmatic-38])
+      (see [Michael-F-Bryan/rustmatic#38][rustmatic-38])
   - [ ] Robust undo/redo mechanism
 
 - <span id="wishlist">Wish List</span>

@@ -50,3 +50,23 @@ impl Length for Arc {
     /// ```
     fn length(&self) -> f64 { self.radius() * self.sweep_angle().abs() }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::f64::consts::PI;
+
+    #[test]
+    fn line() {
+        let thing = Line::new(Vector::zero(), Vector::new(3.0, 4.0));
+
+        assert_eq!(thing.length(), 5.0);
+    }
+
+    #[test]
+    fn arc() {
+        let arc = Arc::from_centre_radius(Vector::zero(), 10.0, 0.0, PI);
+
+        assert_eq!(arc.length(), arc.sweep_angle().abs() * arc.radius());
+    }
+}

@@ -51,3 +51,18 @@ impl Translate for Arc {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn vector() {
+        let original = Vector::new(3.0, 4.0);
+        let delta = Vector::new(-5.0, 2.5);
+
+        let got = original.translated(delta);
+
+        assert_eq!(got, original + delta);
+    }
+}

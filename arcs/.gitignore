@@ -1,3 +1,4 @@
 *.png
 Cargo.lock
 target/
+tarpaulin-report.html
