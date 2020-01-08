@@ -18,6 +18,12 @@ pub trait Translate {
     }
 }
 
+impl<'t, T: Translate + ?Sized> Translate for &'t mut T {
+    fn translate(&mut self, displacement: Vector) {
+        (*self).translate(displacement);
+    }
+}
+
 impl Translate for Vector {
     fn translate(&mut self, displacement: Vector) { *self += displacement; }
 }

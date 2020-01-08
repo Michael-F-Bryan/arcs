@@ -16,6 +16,14 @@ pub trait Approximate {
     fn approximate(&self, tolerance: f64) -> Self::Iter;
 }
 
+impl<'a, A: Approximate + ?Sized> Approximate for &'a A {
+    type Iter = A::Iter;
+
+    fn approximate(&self, tolerance: f64) -> Self::Iter {
+        (*self).approximate(tolerance)
+    }
+}
+
 impl Approximate for Point {
     type Iter = Once<Vector>;
 

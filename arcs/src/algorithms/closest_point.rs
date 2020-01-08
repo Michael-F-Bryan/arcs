@@ -10,6 +10,12 @@ pub trait ClosestPoint {
     fn closest_point(&self, target: Vector) -> Closest;
 }
 
+impl<'c, C: ClosestPoint + ?Sized> ClosestPoint for &'c C {
+    fn closest_point(&self, target: Vector) -> Closest {
+        (*self).closest_point(target)
+    }
+}
+
 impl ClosestPoint for Vector {
     fn closest_point(&self, _target: Vector) -> Closest { Closest::One(*self) }
 }

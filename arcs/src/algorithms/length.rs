@@ -9,6 +9,10 @@ pub trait Length {
     fn length(&self) -> f64;
 }
 
+impl<'a, L: Length + ?Sized> Length for &'a L {
+    fn length(&self) -> f64 { (*self).length() }
+}
+
 impl Length for Line {
     /// Calculates the length of the line.
     ///
