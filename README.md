@@ -33,6 +33,10 @@ containing a list of related features or concepts.
   - [ ] `Viewport` panning
   - [ ] Zoom `Viewport` in/out
 
+- [ ] Milestone: Required by Real-World Applications
+      (see [`Michael-F-Bryan/rustmatic#38][rustmatic-38])
+  - [ ] Robust undo/redo mechanism
+
 - <span id="wishlist">Wish List</span>
   - [X] Z-levels so objects can be drawn on top of each other
   - [X] Entities can be tagged with a name to give them semantic meaning
@@ -73,3 +77,4 @@ license, shall be dual licensed as above, without any additional terms or
 conditions.
 
 [API Docs]: https://michael-f-bryan.github.io/arcs
+[rustmatic-38]: https://github.com/Michael-F-Bryan/rustmatic/issues/38

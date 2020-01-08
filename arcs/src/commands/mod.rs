@@ -1,3 +1,6 @@
+//! Transactional updates which can be applied to the world for a basic
+//! undo/redo mechanism.
+
 pub struct UndoRedoBuffer {}
 
 pub trait CommandContext {}
