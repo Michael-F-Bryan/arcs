@@ -3,7 +3,7 @@ use crate::{
     Vector,
 };
 
-/// Something which can be moved around in *Drawing Space*.
+/// Something which can be moved around "rigidly" in *Drawing Space*.
 pub trait Translate {
     fn translate(&mut self, displacement: Vector);
 
