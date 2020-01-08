@@ -1,4 +1,5 @@
-//! The `arcs` CAD library.
+//! A Rust CAD System - A library for building 2D *Computer Aided Design*
+//! applications.
 
 pub mod algorithms;
 // pub mod commands;
