@@ -3,7 +3,14 @@ name = "arcs"
 version = "0.1.0"
 authors = ["Michael Bryan <michaelfbryan@gmail.com>"]
 edition = "2018"
-description = "Facade crate for the arcs CAD library."
+description = "An extensible framework for creating 2D CAD applications using the Entity-Component-System pattern."
+repository = "https://github.com/Michael-F-Bryan/arcs"
+keywords = ["cad", "geometry", "2d", "design"]
+categories = ["graphics", "gui", "mathematics", "wasm"]
+license = "MIT or Apache-2.0"
+
+[badges]
+travis-ci = { repository = "Michael-F-Bryan/arcs", branch = "master" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,10 +20,10 @@ log = "0.4.8"
 piet = "0.0.7"
 specs = "0.15"
 specs-derive = "0.4"
-shred-derive = "0.6.1"
-kurbo = "0.5.6"
+shred-derive = "0.6"
+kurbo = "0.5"
 
 [dev-dependencies]
 piet-common = "0.0.7"
-image = "0.22.3"
-env_logger = "0.7.1"
+image = "0.22"
+env_logger = "0.7"
