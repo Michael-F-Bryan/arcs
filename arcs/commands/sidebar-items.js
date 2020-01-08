@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["UndoRedoBuffer",""]],"trait":[["Command","An operation which can be executed against a target."],["CommandContext",""]]});
