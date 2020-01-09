@@ -1,14 +1,14 @@
 use crate::{
     algorithms::Bounded,
     components::{
-        BoundingBox, Dimension, DrawingObject, Geometry, Layer, LineStyle,
-        PointStyle, Viewport, WindowStyle,
+        BoundingBox, DrawingObject, Geometry, Layer, LineStyle, PointStyle,
+        Viewport, WindowStyle,
     },
     primitives::{Line, Point},
     Vector,
 };
 use kurbo::{Circle, Size};
-use piet::{Color, RenderContext};
+use piet::RenderContext;
 use shred_derive::SystemData;
 use specs::{join::MaybeJoin, prelude::*};
 use std::{cmp::Reverse, collections::BTreeMap};
@@ -44,7 +44,6 @@ impl Window {
         &'a self,
         backend: R,
         window_size: Size,
-        world: &'a World,
     ) -> impl System<'a> + 'a
     where
         R: RenderContext + 'a,
@@ -52,12 +51,7 @@ impl Window {
         RenderSystem {
             backend,
             window_size,
-            // Note: We need to clone instead of using a `&'a Viewport` here
-            // because the `viewport` getter requires a borrowed storage and
-            // accepting a `&'a World` means the storages we get are only alive
-            // for the duration of this function.
-            viewport: self.viewport(&world.read_storage()).clone(),
-            window_style: self.style(&world.read_storage()).clone(),
+            window: self,
         }
     }
 }
@@ -103,41 +97,49 @@ impl Window {
 /// This is a temporary object "closing over" the [`Window`] and some
 /// [`RenderContext`].
 #[derive(Debug)]
-struct RenderSystem<B> {
+struct RenderSystem<'window, B> {
     backend: B,
     window_size: Size,
-    viewport: Viewport,
-    window_style: WindowStyle,
+    window: &'window Window,
 }
 
-impl<B> RenderSystem<B> {
+impl<'window, B> RenderSystem<'window, B> {
     /// Calculate the area of the drawing displayed by the viewport.
-    fn viewport_dimensions(&self) -> BoundingBox {
-        let scale = self.viewport.pixels_per_drawing_unit;
+    fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox {
+        let scale = viewport.pixels_per_drawing_unit;
         let width = scale * self.window_size.width;
         let height = scale * self.window_size.height;
 
-        BoundingBox::from_centre_and_dimensions(
-            self.viewport.centre,
-            width,
-            height,
-        )
+        BoundingBox::from_centre_and_dimensions(viewport.centre, width, height)
     }
 }
 
-impl<B: RenderContext> RenderSystem<B> {
+impl<'window, B: RenderContext> RenderSystem<'window, B> {
     fn render(
         &mut self,
         ent: Entity,
         drawing_object: &DrawingObject,
         styles: &Styling,
+        viewport: &Viewport,
     ) {
         match drawing_object.geometry {
             Geometry::Point(ref point) => {
-                self.render_point(ent, point, drawing_object.layer, styles);
+                self.render_point(
+                    ent,
+                    point,
+                    drawing_object.layer,
+                    styles,
+                    viewport,
+                );
             },
             Geometry::Line(ref line) => {
-                self.render_line(ent, line, drawing_object.layer, styles);
+                self.render_line(
+                    ent,
+                    line,
+                    drawing_object.layer,
+                    styles,
+                    viewport,
+                );
             },
             _ => unimplemented!(),
         }
@@ -150,14 +152,13 @@ impl<B: RenderContext> RenderSystem<B> {
         point: &Point,
         layer: Entity,
         styles: &Styling,
+        viewport: &Viewport,
     ) {
-        let style = styles.resolve_point_style(entity, layer);
+        let style = resolve_point_style(styles, self.window, entity, layer);
 
         let shape = Circle {
-            center: self.to_viewport_coordinates(point.location),
-            radius: style
-                .radius
-                .in_pixels(self.viewport.pixels_per_drawing_unit),
+            center: self.to_viewport_coordinates(point.location, viewport),
+            radius: style.radius.in_pixels(viewport.pixels_per_drawing_unit),
         };
         log::trace!("Drawing {:?} as {:?} using {:?}", point, shape, style);
 
@@ -170,14 +171,15 @@ impl<B: RenderContext> RenderSystem<B> {
         line: &Line,
         layer: Entity,
         styles: &Styling,
+        viewport: &Viewport,
     ) {
-        let style = styles.resolve_line_style(entity, layer);
+        let style = resolve_line_style(styles, self.window, entity, layer);
 
-        let start = self.to_viewport_coordinates(line.start);
-        let end = self.to_viewport_coordinates(line.end);
+        let start = self.to_viewport_coordinates(line.start, viewport);
+        let end = self.to_viewport_coordinates(line.end, viewport);
         let shape = kurbo::Line::new(start, end);
         let stroke_width =
-            style.width.in_pixels(self.viewport.pixels_per_drawing_unit);
+            style.width.in_pixels(viewport.pixels_per_drawing_unit);
         log::trace!("Drawing {:?} as {:?} using {:?}", line, shape, style);
 
         self.backend.stroke(shape, &style.stroke, stroke_width);
@@ -185,25 +187,37 @@ impl<B: RenderContext> RenderSystem<B> {
 
     /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the
     /// canvas.
-    fn to_viewport_coordinates(&self, point: Vector) -> kurbo::Point {
-        super::to_canvas_coordinates(point, &self.viewport, self.window_size)
+    fn to_viewport_coordinates(
+        &self,
+        point: Vector,
+        viewport: &Viewport,
+    ) -> kurbo::Point {
+        super::to_canvas_coordinates(point, viewport, self.window_size)
     }
 }
 
-impl<'world, B: RenderContext> System<'world> for RenderSystem<B> {
-    type SystemData = (DrawOrder<'world>, Styling<'world>);
+impl<'window, 'world, B: RenderContext> System<'world>
+    for RenderSystem<'window, B>
+{
+    type SystemData = (
+        DrawOrder<'world>,
+        Styling<'world>,
+        ReadStorage<'world, Viewport>,
+    );
 
     fn run(&mut self, data: Self::SystemData) {
+        let (draw_order, styling, viewports) = data;
+
+        let window_style = self.window.style(&styling.window_styles);
+        let viewport = self.window.viewport(&viewports);
+
         // make sure we're working with a blank screen
-        self.backend
-            .clear(self.window_style.background_colour.clone());
+        self.backend.clear(window_style.background_colour.clone());
 
-        let (draw_order, styling) = data;
-
-        let viewport_dimensions = self.viewport_dimensions();
+        let viewport_dimensions = self.viewport_dimensions(&viewport);
 
         for (ent, obj) in draw_order.calculate(viewport_dimensions) {
-            self.render(ent, obj, &styling);
+            self.render(ent, obj, &styling, viewport);
         }
     }
 }
@@ -213,35 +227,36 @@ impl<'world, B: RenderContext> System<'world> for RenderSystem<B> {
 struct Styling<'world> {
     point_styles: ReadStorage<'world, PointStyle>,
     line_styles: ReadStorage<'world, LineStyle>,
+    window_styles: ReadStorage<'world, WindowStyle>,
 }
 
-impl<'world> Styling<'world> {
-    const DEFAULT_LINE_STYLE: LineStyle = LineStyle {
-        width: Dimension::Pixels(1.0),
-        stroke: Color::BLACK,
-    };
-    const DEFAULT_POINT_STYLE: PointStyle = PointStyle {
-        radius: Dimension::Pixels(1.0),
-        colour: Color::BLACK,
-    };
-
-    fn resolve_point_style(&self, point: Entity, layer: Entity) -> &PointStyle {
-        self
+fn resolve_point_style<'a>(
+    styling: &'a Styling,
+    window: &'a Window,
+    point: Entity,
+    layer: Entity,
+) -> &'a PointStyle {
+    styling
             .point_styles
             // the style for this point may have been overridden explicitly
             .get(point)
             // otherwise fall back to the layer's PointStyle
-            .or_else(|| self.point_styles.get(layer))
-            // fall back to the global default if the layer didn't specify one
-            .unwrap_or(&Self::DEFAULT_POINT_STYLE)
-    }
+            .or_else(|| styling.point_styles.get(layer))
+            // fall back to the window's default if the layer didn't specify one
+            .unwrap_or_else(|| window.default_point_style(&styling.point_styles))
+}
 
-    fn resolve_line_style(&self, line: Entity, layer: Entity) -> &LineStyle {
-        self.line_styles
-            .get(line)
-            .or_else(|| self.line_styles.get(layer))
-            .unwrap_or(&Self::DEFAULT_LINE_STYLE)
-    }
+fn resolve_line_style<'a>(
+    styling: &'a Styling,
+    window: &'a Window,
+    line: Entity,
+    layer: Entity,
+) -> &'a LineStyle {
+    styling
+        .line_styles
+        .get(line)
+        .or_else(|| styling.line_styles.get(layer))
+        .unwrap_or_else(|| window.default_line_style(&styling.line_styles))
 }
 
 /// The state needed when calculating which order to draw things in so z-levels

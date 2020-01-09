@@ -89,7 +89,6 @@ fn main() {
         let mut system = window.render_system(
             bitmap_canvas.render_context(),
             Size::new(width as f64, height as f64),
-            &world,
         );
         // and run the system
         RunNow::run_now(&mut system, &world);
