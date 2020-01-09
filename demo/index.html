@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <meta name="description" content="">
-
     <link rel="icon" type="image/png" href="/public/favicon.png">
+    <title>A Rust CAD System - WebAssembly Demo</title>
 
-    <title>A Title</title>
+</head>
 
-    </head>
+<body>
+    <section id="app"></section>
+    <script type="module">
+        // https://rustwasm.github.io/docs/wasm-bindgen/examples/without-a-bundler.html
+        import init from '/pkg/package.js';
+        init('/pkg/package_bg.wasm');
+    </script>
 
-    <body>
-        <section id="app"></section>
-        <script type="module">
-            // https://rustwasm.github.io/docs/wasm-bindgen/examples/without-a-bundler.html
-            import init from '/pkg/package.js';
-            init('/pkg/package_bg.wasm');
-        </script>
+</body>
 
-    </body>
 </html>

@@ -1,6 +1,9 @@
 use arcs::window::Window;
+use kurbo::Size;
+use piet_web::WebRenderContext;
 use seed::{prelude::*, *};
 use specs::prelude::*;
+use web_sys::MouseEvent;
 
 const CANVAS_ID: &str = "canvas";
 
@@ -25,27 +28,36 @@ fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
 }
 
 #[derive(Copy, Clone)]
-enum Msg {
+pub enum Msg {
     Rendered,
     Clicked,
+}
+
+impl Msg {
+    pub fn from_click_event(ev: MouseEvent) -> Self { unimplemented!() }
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
         Msg::Rendered => {
-            draw(&model.world, &model.window);
+            draw(&mut model.world, &model.window);
             // We want to call `.skip` to prevent infinite loop.
             orders.after_next_render(|_| Msg::Rendered).skip();
         },
-        Msg::Clicked => {
-            unimplemented!();
-        },
+        Msg::Clicked => unimplemented!(),
     }
 }
 
-fn draw(world: &World, window: &Window) {
+fn draw(world: &mut World, window: &Window) {
     let canvas = seed::canvas(CANVAS_ID).unwrap();
-    let ctx = seed::canvas_context_2d(&canvas);
+    let mut canvas_ctx = seed::canvas_context_2d(&canvas);
+    let browser_window = seed::window();
+    let ctx = WebRenderContext::new(&mut canvas_ctx, &browser_window);
+    let window_size = Size::new(canvas.width().into(), canvas.height().into());
+
+    let mut system = window.render_system(ctx, window_size);
+    RunNow::setup(&mut system, world);
+    RunNow::run_now(&mut system, world);
 }
 
 fn view(_model: &Model) -> impl View<Msg> {
@@ -64,9 +76,14 @@ fn view(_model: &Model) -> impl View<Msg> {
     ]
 }
 
+pub fn window_events(_model: &Model) -> Vec<Listener<Msg>> {
+    vec![mouse_ev(Ev::KeyDown, Msg::from_click_event)]
+}
+
 #[wasm_bindgen(start)]
 pub fn render() {
     seed::App::builder(update, view)
         .after_mount(after_mount)
+        .window_events(window_events)
         .build_and_start();
 }
