@@ -1,9 +1,11 @@
 use crate::Msg;
 use anyhow::{Context, Error};
 use arcs::{
-    components::{Dimension, DrawingObject, Geometry, Layer, Name, PointStyle},
+    components::{
+        Dimension, DrawingObject, Geometry, Layer, Name, PointStyle, Viewport,
+    },
     primitives::Point,
-    render::{Renderer, Viewport},
+    window::Window as CadWindow,
     Vector,
 };
 use js_sys::Function;
@@ -18,7 +20,7 @@ use yew::{html, Component, ComponentLink, Html, ShouldRender};
 pub struct App {
     link: ComponentLink<Self>,
     canvas: Option<CanvasRenderingContext2d>,
-    renderer: Renderer,
+    window: CadWindow,
     world: World,
     layer_id: Entity,
 }
@@ -32,7 +34,7 @@ impl App {
 
         log::trace!("Redrawing the canvas with dimensions {:?}", canvas);
 
-        let mut system = self.renderer.system(render_context, canvas);
+        let mut system = self.window.render_system(render_context, canvas);
 
         RunNow::setup(&mut system, &mut self.world);
         RunNow::run_now(&mut system, &self.world);
@@ -58,11 +60,10 @@ impl App {
 
     fn to_drawing_coordinates(&self, location: kurbo::Point) -> Vector {
         let window = self.canvas.as_ref().and_then(canvas_dimensions).unwrap();
-        arcs::render::to_drawing_coordinates(
-            location,
-            &self.renderer.viewport,
-            window,
-        )
+        let viewports = self.world.read_storage();
+        let viewport = self.window.viewport(&viewports);
+
+        arcs::window::to_drawing_coordinates(location, &viewport, window)
     }
 }
 
@@ -100,20 +101,15 @@ impl Component for App {
         let on_canvas_loaded = link.send_back(|_| Msg::CanvasLoaded);
         on_ready(move || on_canvas_loaded.emit(()));
 
-        let viewport = Viewport {
-            centre: Vector::zero(),
-            pixels_per_drawing_unit: 1.0,
-        };
-        let background = Color::BLACK;
-
-        let (world, layer_id) = create_world_and_default_layer();
+        let (mut world, layer_id) = create_world_and_default_layer();
+        let window = CadWindow::create(&mut world);
 
         App {
             link,
             world,
             layer_id,
+            window,
             canvas: None,
-            renderer: Renderer::new(viewport, background),
         }
     }
 
