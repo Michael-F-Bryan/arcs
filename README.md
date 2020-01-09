@@ -7,6 +7,11 @@
 An extensible framework for creating 2D CAD applications, written in Rust based
 on an *Entity-Component-System* architecture.
 
+If you want a high-level understanding of how this project is implemented and
+the way things are designed, you may want to check out [A Thought Experiment:
+Using the ECS Pattern Outside of Game
+Engines](http://adventures.michaelfbryan.com/posts/ecs-outside-of-games/).
+
 ## Project Goals and Milestones
 
 I've broken the direction of this project up into a handful of milestones, each
