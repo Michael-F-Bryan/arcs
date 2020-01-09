@@ -59,9 +59,9 @@ impl Window {
 macro_rules! components {
     ($( $get:ident, $get_mut:ident, $component_name:expr => $component_type:ty ),* $(,)?) => {
         $(
-            #[doc = "Get a reference to the [`Window`]'s "]
+            #[doc = "Get a reference to the [`Window`]'s [`"]
             #[doc = $component_name]
-            #[doc = " component."]
+            #[doc = "`] component."]
             pub fn $get<'a>(&self, storage: &'a ReadStorage<'a, $component_type>) -> &'a $component_type
             {
                 storage
