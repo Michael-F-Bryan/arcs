@@ -34,3 +34,17 @@ impl Default for LineStyle {
         }
     }
 }
+
+#[derive(Debug, Clone, Component)]
+#[storage(HashMapStorage)]
+pub struct WindowStyle {
+    pub background_colour: Color,
+}
+
+impl Default for WindowStyle {
+    fn default() -> WindowStyle {
+        WindowStyle {
+            background_colour: Color::WHITE,
+        }
+    }
+}

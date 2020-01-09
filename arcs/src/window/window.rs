@@ -2,10 +2,9 @@ use crate::{
     algorithms::Bounded,
     components::{
         BoundingBox, Dimension, DrawingObject, Geometry, Layer, LineStyle,
-        PointStyle,
+        PointStyle, Viewport, WindowStyle,
     },
     primitives::{Line, Point},
-    render::Viewport,
     Vector,
 };
 use kurbo::{Circle, Size};
@@ -14,27 +13,58 @@ use shred_derive::SystemData;
 use specs::{join::MaybeJoin, prelude::*};
 use std::{cmp::Reverse, collections::BTreeMap};
 
-/// Long-lived state used when rendering.
-#[derive(Debug, Clone)]
-#[non_exhaustive]
-pub struct Renderer {
-    pub viewport: Viewport,
-    pub background: Color,
+/// A wrapper around the "window" object.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Window(pub Entity);
+
+macro_rules! components {
+    ($( $get:ident, $get_mut:ident => $component_type:ty ),* $(,)?) => {
+        $(
+            pub fn $get<'a>(&self, storage: &'a ReadStorage<'a, $component_type>) -> &'a $component_type
+            {
+                storage
+                    .get(self.0)
+                    .expect(concat!("The window should always have a ", stringify!($component_type), " component"))
+            }
+        )*
+    };
 }
 
-impl Renderer {
-    pub fn new(viewport: Viewport, background: Color) -> Self {
-        Renderer {
-            viewport,
-            background,
-        }
+impl Window {
+    components! {
+        viewport, viewport_mut => Viewport,
+        default_point_style, default_point_style_mut => PointStyle,
+        default_line_style, default_line_style_mut => LineStyle,
+        style, style_mut => WindowStyle,
+    }
+
+    /// Creates a new [`Window`] entity populated with all default components.
+    pub fn create(world: &mut World) -> Self {
+        let ent = world
+            .create_entity()
+            .with(Viewport {
+                centre: Vector::zero(),
+                pixels_per_drawing_unit: 1.0,
+            })
+            .with(LineStyle::default())
+            .with(PointStyle::default())
+            .build();
+
+        Window(ent)
     }
 
     /// Get a [`System`] which will render using a particular [`RenderContext`].
-    pub fn system<'a, R>(
+    ///
+    /// # Note
+    ///
+    /// This snapshots the window's state and styling (e.g. [`Viewport`] and
+    /// `[WindowStyle]`) so you shouldn't keep this system around for any length
+    /// of time.
+    pub fn render_system<'a, R>(
         &'a self,
         backend: R,
         window_size: Size,
+        world: &'a World,
     ) -> impl System<'a> + 'a
     where
         R: RenderContext + 'a,
@@ -42,7 +72,12 @@ impl Renderer {
         RenderSystem {
             backend,
             window_size,
-            renderer: self,
+            // Note: We need to clone instead of using a `&'a Viewport` here
+            // because the `viewport` getter requires a borrowed storage and
+            // accepting a `&'a World` means the storages we get are only alive
+            // for the duration of this function.
+            viewport: self.viewport(&world.read_storage()).clone(),
+            window_style: self.style(&world.read_storage()).clone(),
         }
     }
 }
@@ -57,28 +92,29 @@ impl Renderer {
 /// our [`Renderer`] to a particular stack frame because it's so long lived
 /// (we'd end up fighting the borrow checker and have self-referential types).
 #[derive(Debug)]
-struct RenderSystem<'renderer, B> {
+struct RenderSystem<B> {
     backend: B,
     window_size: Size,
-    renderer: &'renderer Renderer,
+    viewport: Viewport,
+    window_style: WindowStyle,
 }
 
-impl<'world, 'renderer, B> RenderSystem<'renderer, B> {
+impl<B> RenderSystem<B> {
     /// Calculate the area of the drawing displayed by the viewport.
     fn viewport_dimensions(&self) -> BoundingBox {
-        let scale = self.renderer.viewport.pixels_per_drawing_unit;
+        let scale = self.viewport.pixels_per_drawing_unit;
         let width = scale * self.window_size.width;
         let height = scale * self.window_size.height;
 
         BoundingBox::from_centre_and_dimensions(
-            self.renderer.viewport.centre,
+            self.viewport.centre,
             width,
             height,
         )
     }
 }
 
-impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
+impl<B: RenderContext> RenderSystem<B> {
     fn render(
         &mut self,
         ent: Entity,
@@ -110,7 +146,7 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
             center: self.to_viewport_coordinates(point.location),
             radius: style
                 .radius
-                .in_pixels(self.renderer.viewport.pixels_per_drawing_unit),
+                .in_pixels(self.viewport.pixels_per_drawing_unit),
         };
         log::trace!("Drawing {:?} as {:?} using {:?}", point, shape, style);
 
@@ -129,9 +165,8 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
         let start = self.to_viewport_coordinates(line.start);
         let end = self.to_viewport_coordinates(line.end);
         let shape = kurbo::Line::new(start, end);
-        let stroke_width = style
-            .width
-            .in_pixels(self.renderer.viewport.pixels_per_drawing_unit);
+        let stroke_width =
+            style.width.in_pixels(self.viewport.pixels_per_drawing_unit);
         log::trace!("Drawing {:?} as {:?} using {:?}", line, shape, style);
 
         self.backend.stroke(shape, &style.stroke, stroke_width);
@@ -140,22 +175,17 @@ impl<'world, 'renderer, B: RenderContext> RenderSystem<'renderer, B> {
     /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the
     /// canvas.
     fn to_viewport_coordinates(&self, point: Vector) -> kurbo::Point {
-        super::to_canvas_coordinates(
-            point,
-            &self.renderer.viewport,
-            self.window_size,
-        )
+        super::to_canvas_coordinates(point, &self.viewport, self.window_size)
     }
 }
 
-impl<'world, 'renderer, B: RenderContext> System<'world>
-    for RenderSystem<'renderer, B>
-{
+impl<'world, B: RenderContext> System<'world> for RenderSystem<B> {
     type SystemData = (DrawOrder<'world>, Styling<'world>);
 
     fn run(&mut self, data: Self::SystemData) {
         // make sure we're working with a blank screen
-        self.backend.clear(self.renderer.background.clone());
+        self.backend
+            .clear(self.window_style.background_colour.clone());
 
         let (draw_order, styling) = data;
 

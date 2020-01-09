@@ -9,11 +9,11 @@
 //! > [`crate::primitives`], and when in *Canvas Space* we'll use types from
 //! > the [`kurbo`] crate**
 
-mod renderer;
 mod utils;
+mod window;
 
-pub use renderer::Renderer;
 pub use utils::{
     to_canvas_coordinates, to_drawing_coordinates, transform_to_canvas_space,
-    transform_to_drawing_space, Viewport,
+    transform_to_drawing_space,
 };
+pub use window::Window;
