@@ -29,7 +29,7 @@ fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
     AfterMount::new(Model::default())
 }
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Msg {
     Rendered,
     Clicked,
@@ -41,6 +41,8 @@ impl Msg {
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
+    log::debug!("Handling {:?}", msg);
+
     match msg {
         Msg::Rendered => {
             draw(&mut model.world, &model.window);
@@ -80,13 +82,20 @@ fn resize_to_fill_parent(canvas: &mut HtmlCanvasElement) {
 
 fn view(_model: &Model) -> impl View<Msg> {
     div![
-        style! {St::Display => "flex"},
-        div![canvas![
-            attrs![ At::Id => CANVAS_ID ],
-            style![
-                St::Border => "1px solid black",
+        style! {
+            St::Display => "flex",
+            St::Width => "100%",
+            St::Height => "100%",
+        },
+        div![
+            attrs![ At::Class => "canvas-container" ],
+            canvas![
+                attrs![ At::Id => CANVAS_ID ],
+                style![
+                    St::Border => "1px solid black",
+                ],
             ],
-        ],]
+        ]
     ]
 }
 
