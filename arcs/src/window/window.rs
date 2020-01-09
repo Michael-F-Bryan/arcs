@@ -28,6 +28,7 @@ impl Window {
             })
             .with(LineStyle::default())
             .with(PointStyle::default())
+            .with(WindowStyle::default())
             .build();
 
         Window(ent)
