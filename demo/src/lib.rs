@@ -3,7 +3,9 @@ use kurbo::Size;
 use piet_web::WebRenderContext;
 use seed::{prelude::*, *};
 use specs::prelude::*;
-use web_sys::MouseEvent;
+use std::convert::TryInto;
+use wasm_bindgen::JsCast;
+use web_sys::{HtmlCanvasElement, HtmlElement, MouseEvent};
 
 const CANVAS_ID: &str = "canvas";
 
@@ -31,10 +33,11 @@ fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
 pub enum Msg {
     Rendered,
     Clicked,
+    WindowResized,
 }
 
 impl Msg {
-    pub fn from_click_event(ev: MouseEvent) -> Self { unimplemented!() }
+    pub fn from_click_event(_ev: MouseEvent) -> Self { Msg::Clicked }
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
@@ -45,6 +48,11 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             orders.after_next_render(|_| Msg::Rendered).skip();
         },
         Msg::Clicked => unimplemented!(),
+        Msg::WindowResized => {
+            if let Some(mut canvas) = seed::canvas(CANVAS_ID) {
+                resize_to_fill_parent(&mut canvas);
+            }
+        },
     }
 }
 
@@ -60,24 +68,33 @@ fn draw(world: &mut World, window: &Window) {
     RunNow::run_now(&mut system, world);
 }
 
+fn resize_to_fill_parent(canvas: &mut HtmlCanvasElement) {
+    if let Some(parent) = canvas
+        .parent_element()
+        .and_then(|e| e.dyn_into::<HtmlElement>().ok())
+    {
+        canvas.set_width(parent.offset_width().try_into().unwrap());
+        canvas.set_height(parent.offset_height().try_into().unwrap());
+    }
+}
+
 fn view(_model: &Model) -> impl View<Msg> {
     div![
         style! {St::Display => "flex"},
-        canvas![
-            attrs![
-                At::Id => CANVAS_ID,
-                At::Width => px(200),
-                At::Height => px(100),
-            ],
+        div![canvas![
+            attrs![ At::Id => CANVAS_ID ],
             style![
                 St::Border => "1px solid black",
             ],
-        ],
+        ],]
     ]
 }
 
 pub fn window_events(_model: &Model) -> Vec<Listener<Msg>> {
-    vec![mouse_ev(Ev::KeyDown, Msg::from_click_event)]
+    vec![
+        mouse_ev(Ev::KeyDown, Msg::from_click_event),
+        simple_ev(Ev::Resize, Msg::WindowResized),
+    ]
 }
 
 #[wasm_bindgen(start)]
