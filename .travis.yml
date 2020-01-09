@@ -1,16 +1,28 @@
 language: rust
-cache: cargo
+cache:
+  directories:
+    - $HOME/.cargo
+    - $TRAVIS_BUILD_DIR/arcs/target
+    - $TRAVIS_BUILD_DIR/demo/target
 
 rust:
   # Required for #[non_exhaustive]
   - 1.40.0
   - nightly
 
+install:
+  - export PATH="$HOME/.cargo/bin:$PATH"
+  - command -v cargo-make >/dev/null 2>&1 || cargo install cargo-make
+  - set -e
+
 script:
   - cd $TRAVIS_BUILD_DIR/arcs
   - cargo build --verbose
   - cargo test --verbose
   - cargo doc --verbose
+  - cd $TRAVIS_BUILD_DIR/demo
+  - cargo build --verbose
+  - cargo make build_release
 
 before_deploy:
   - cd $TRAVIS_BUILD_DIR/arcs
