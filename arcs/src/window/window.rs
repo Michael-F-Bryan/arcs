@@ -17,27 +17,7 @@ use std::{cmp::Reverse, collections::BTreeMap};
 #[derive(Debug, Clone, PartialEq)]
 pub struct Window(pub Entity);
 
-macro_rules! components {
-    ($( $get:ident, $get_mut:ident => $component_type:ty ),* $(,)?) => {
-        $(
-            pub fn $get<'a>(&self, storage: &'a ReadStorage<'a, $component_type>) -> &'a $component_type
-            {
-                storage
-                    .get(self.0)
-                    .expect(concat!("The window should always have a ", stringify!($component_type), " component"))
-            }
-        )*
-    };
-}
-
 impl Window {
-    components! {
-        viewport, viewport_mut => Viewport,
-        default_point_style, default_point_style_mut => PointStyle,
-        default_line_style, default_line_style_mut => LineStyle,
-        style, style_mut => WindowStyle,
-    }
-
     /// Creates a new [`Window`] entity populated with all default components.
     pub fn create(world: &mut World) -> Self {
         let ent = world
@@ -58,7 +38,7 @@ impl Window {
     /// # Note
     ///
     /// This snapshots the window's state and styling (e.g. [`Viewport`] and
-    /// `[WindowStyle]`) so you shouldn't keep this system around for any length
+    /// [`WindowStyle`]) so you shouldn't keep this system around for any length
     /// of time.
     pub fn render_system<'a, R>(
         &'a self,
@@ -82,15 +62,46 @@ impl Window {
     }
 }
 
+macro_rules! components {
+    ($( $get:ident, $get_mut:ident, $component_name:expr => $component_type:ty ),* $(,)?) => {
+        $(
+            #[doc = "Get a reference to the [`Window`]'s "]
+            #[doc = $component_name]
+            #[doc = " component."]
+            pub fn $get<'a>(&self, storage: &'a ReadStorage<'a, $component_type>) -> &'a $component_type
+            {
+                storage
+                    .get(self.0)
+                    .expect(concat!("The window should always have a ", stringify!($component_type), " component"))
+            }
+
+            #[doc = "Get a mutable reference to the [`Window`]'s [`"]
+            #[doc = $component_name]
+            #[doc = "`] component."]
+            pub fn $get_mut<'a, 'world: 'a>(&self, storage: &'a mut WriteStorage<'world, $component_type>) -> &'a mut $component_type
+            {
+                storage
+                    .get_mut(self.0)
+                    .expect(concat!("The window should always have a ", stringify!($component_type), " component"))
+            }
+        )*
+    };
+}
+
+/// Accessors for the various components attached to this [`Window`].
+impl Window {
+    components! {
+        viewport, viewport_mut, stringify!(Viewport) => Viewport,
+        default_point_style, default_point_style_mut, stringify!(PointStyle) => PointStyle,
+        default_line_style, default_line_style_mut, stringify!(LineStyle) => LineStyle,
+        style, style_mut, stringify!(WindowStyle) => WindowStyle,
+    }
+}
+
 /// The [`System`] which actually renders things.
 ///
-/// This needs to be a temporary object "closing over" the [`Renderer`] and some
-/// [`RenderContext`] due to lifetimes.
-///
-/// In particular, the `RenderContext` for the `piet_web` crate takes the HTML5
-/// canvas by `&mut` reference instead of owning it, and we don't want to tie
-/// our [`Renderer`] to a particular stack frame because it's so long lived
-/// (we'd end up fighting the borrow checker and have self-referential types).
+/// This is a temporary object "closing over" the [`Window`] and some
+/// [`RenderContext`].
 #[derive(Debug)]
 struct RenderSystem<B> {
     backend: B,
