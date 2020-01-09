@@ -1,9 +1,10 @@
 use arcs::{
     components::{
         Dimension, DrawingObject, Geometry, Layer, LineStyle, Name, PointStyle,
+        Viewport,
     },
     primitives::{Line, Point},
-    render::{Renderer, Viewport},
+    window::Window,
     Vector,
 };
 use image::RgbaImage;
@@ -65,14 +66,16 @@ fn main() {
     }
 
     // now we've added some objects to the world we can start rendering
+    let window = Window::create(&mut world);
 
-    let viewport = Viewport {
+    // set the viewport and background colour
+    *window.viewport_mut(&mut world.write_storage()) = Viewport {
         centre: Vector::zero(),
         pixels_per_drawing_unit: 5.0,
     };
-    let background_colour = Color::WHITE;
-
-    let renderer = Renderer::new(viewport, background_colour);
+    window
+        .style_mut(&mut world.write_storage())
+        .background_colour = Color::WHITE;
 
     // We'll need a canvas to draw things on
     let width = 640;
@@ -83,9 +86,10 @@ fn main() {
     {
         // now we've got a piet::RenderContext we can create the rendering
         // system
-        let mut system = renderer.system(
+        let mut system = window.render_system(
             bitmap_canvas.render_context(),
             Size::new(width as f64, height as f64),
+            &world,
         );
         // and run the system
         RunNow::run_now(&mut system, &world);
