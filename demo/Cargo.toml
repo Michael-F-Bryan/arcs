@@ -1,0 +1,20 @@
+[package]
+name = "arcs-demo"
+version = "0.1.0"
+authors = ["Michael-F-Bryan <michaelfbryan@gmail.com>"]
+edition = "2018"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+seed = "^0.5.1"
+wasm-bindgen = "^0.2.50"
+futures = "^0.1.26"
+arcs = { path = "../arcs" }
+specs = "0.15.1"
+
+[profile.release]
+lto = true
+opt-level = 'z'
