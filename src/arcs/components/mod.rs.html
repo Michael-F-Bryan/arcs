@@ -25,6 +25,10 @@
 <span id="25">25</span>
 <span id="26">26</span>
 <span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Common components used by the `arcs` CAD library.</span>
 
@@ -34,13 +38,15 @@
 <span class="kw">mod</span> <span class="ident">layer</span>;
 <span class="kw">mod</span> <span class="ident">name</span>;
 <span class="kw">mod</span> <span class="ident">styles</span>;
+<span class="kw">mod</span> <span class="ident">viewport</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">bounding_box</span>::<span class="ident">BoundingBox</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">dimension</span>::<span class="ident">Dimension</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">drawing_object</span>::{<span class="ident">DrawingObject</span>, <span class="ident">Geometry</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">layer</span>::<span class="ident">Layer</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">name</span>::{<span class="ident">Name</span>, <span class="ident">NameTable</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">styles</span>::{<span class="ident">LineStyle</span>, <span class="ident">PointStyle</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">styles</span>::{<span class="ident">LineStyle</span>, <span class="ident">PointStyle</span>, <span class="ident">WindowStyle</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">viewport</span>::<span class="ident">Viewport</span>;
 
 <span class="kw">use</span> <span class="ident">specs</span>::{<span class="ident">World</span>, <span class="ident">WorldExt</span>};
 
@@ -49,9 +55,11 @@
     <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">DrawingObject</span><span class="op">&gt;</span>();
     <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">BoundingBox</span><span class="op">&gt;</span>();
     <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">Name</span><span class="op">&gt;</span>();
+    <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">Layer</span><span class="op">&gt;</span>();
     <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">LineStyle</span><span class="op">&gt;</span>();
     <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">PointStyle</span><span class="op">&gt;</span>();
-    <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">Layer</span><span class="op">&gt;</span>();
+    <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">WindowStyle</span><span class="op">&gt;</span>();
+    <span class="ident">world</span>.<span class="ident">register</span>::<span class="op">&lt;</span><span class="ident">Viewport</span><span class="op">&gt;</span>();
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "arcs";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

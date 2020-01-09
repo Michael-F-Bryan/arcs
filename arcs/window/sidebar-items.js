@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["to_canvas_coordinates",""],["to_drawing_coordinates",""],["transform_to_canvas_space",""],["transform_to_drawing_space",""]],"struct":[["Window","A wrapper around the \"window\" object."]]});
