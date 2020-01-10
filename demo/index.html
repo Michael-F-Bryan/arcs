@@ -8,14 +8,20 @@
     <link rel="icon" type="image/png" href="/public/favicon.png">
     <title>A Rust CAD System - WebAssembly Demo</title>
 
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
 </head>
 
 <body>
     <section id="app"></section>
     <script type="module">
         // https://rustwasm.github.io/docs/wasm-bindgen/examples/without-a-bundler.html
-        import init from '/pkg/package.js';
-        init('/pkg/package_bg.wasm');
+        import init from '/pkg/arcs_demo.js';
+        init('/pkg/arcs_demo_bg.wasm');
     </script>
 
 </body>

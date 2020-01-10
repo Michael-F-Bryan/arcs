@@ -45,7 +45,10 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
 
     match msg {
         Msg::Rendered => {
-            draw(&mut model.world, &model.window);
+            if let Some(canvas) = seed::canvas(CANVAS_ID) {
+                draw(&canvas, &mut model.world, &model.window);
+            }
+
             // We want to call `.skip` to prevent infinite loop.
             orders.after_next_render(|_| Msg::Rendered).skip();
         },
@@ -53,13 +56,13 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         Msg::WindowResized => {
             if let Some(mut canvas) = seed::canvas(CANVAS_ID) {
                 resize_to_fill_parent(&mut canvas);
+                draw(&canvas, &mut model.world, &model.window);
             }
         },
     }
 }
 
-fn draw(world: &mut World, window: &Window) {
-    let canvas = seed::canvas(CANVAS_ID).unwrap();
+fn draw(canvas: &HtmlCanvasElement, world: &mut World, window: &Window) {
     let mut canvas_ctx = seed::canvas_context_2d(&canvas);
     let browser_window = seed::window();
     let ctx = WebRenderContext::new(&mut canvas_ctx, &browser_window);
@@ -75,8 +78,8 @@ fn resize_to_fill_parent(canvas: &mut HtmlCanvasElement) {
         .parent_element()
         .and_then(|e| e.dyn_into::<HtmlElement>().ok())
     {
-        canvas.set_width(parent.offset_width().try_into().unwrap());
-        canvas.set_height(parent.offset_height().try_into().unwrap());
+        canvas.set_width(parent.client_width().try_into().unwrap());
+        canvas.set_height(parent.client_height().try_into().unwrap());
     }
 }
 
@@ -84,11 +87,13 @@ fn view(_model: &Model) -> impl View<Msg> {
     div![
         style! {
             St::Display => "flex",
-            St::Width => "100%",
-            St::Height => "100%",
         },
         div![
             attrs![ At::Class => "canvas-container" ],
+            style! {
+                St::Width => "100%",
+                St::Height => "100%",
+            },
             canvas![
                 attrs![ At::Id => CANVAS_ID ],
                 style![

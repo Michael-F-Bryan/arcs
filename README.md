@@ -4,8 +4,8 @@
 
 ([API Docs])
 
-An extensible framework for creating 2D CAD applications, written in Rust based
-on an *Entity-Component-System* architecture.
+An extensible framework for creating 2D CAD applications, written in Rust and
+based on an *Entity-Component-System* architecture.
 
 If you want a high-level understanding of how this project is implemented and
 the way things are designed, you may want to check out [A Thought Experiment:
@@ -56,6 +56,57 @@ containing a list of related features or concepts.
   - [ ] Elliptical sections
   - [ ] Closest point algorithm for all geometric primitives
 
+## Building the WebAssembly Demo
+
+If you want to run the WebAssembly demo locally you'll first need a copy of the
+code.
+
+```console
+$ git clone https://github.com/Michael-F-Bryan/arcs
+```
+
+You'll also need the [`wasm-pack`][wp] program. We'll use this to build the
+demo.
+
+```console
+$ cargo install --force wasm-pack
+    Updating crates.io index
+  Installing wasm-pack v0.8.1
+  Downloaded cc v1.0.50
+  ...
+  Compiling wasm-pack v0.8.1
+    Finished release [optimized] target(s) in 2m 20s
+   Installed /home/michael/.cargo/bin/wasm-pack
+```
+
+Now we can build the demo.
+
+```console
+$ cd arcs/demo
+$ wasm-pack build --target web
+[INFO]: Checking for the Wasm target...
+[INFO]: Compiling to Wasm...
+   Compiling arcs-demo v0.1.0 (/home/michael/Documents/arcs/demo)
+    Finished release [optimized] target(s) in 8.19s
+:-) [WARN]: origin crate has no README
+[INFO]: Installing wasm-bindgen...
+[INFO]: :-) Done in 8.37s
+[INFO]: :-) Your wasm pkg is ready to publish at ./pkg.
+$ ls pkg
+arcs_demo.d.ts arcs_demo.js arcs_demo_bg.d.ts arcs_demo_bg.wasm
+package.json README.md
+```
+
+Now the demo is compiled, it can be served from disk.
+
+```console
+$ python3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+127.0.0.1 - - [10/Jan/2020 18:31:35] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2020 18:31:35] "GET /pkg/arcs_demo.js HTTP/1.1" 200 -
+127.0.0.1 - - [10/Jan/2020 18:31:35] "GET /pkg/arcs_demo_bg.wasm HTTP/1.1" 200 -
+```
+
 ## License
 
 This project is licensed under either of
@@ -83,3 +134,4 @@ conditions.
 
 [API Docs]: https://michael-f-bryan.github.io/arcs
 [rustmatic-38]: https://github.com/Michael-F-Bryan/rustmatic/issues/38
+[wp]: https://crates.io/crates/wasm-pack

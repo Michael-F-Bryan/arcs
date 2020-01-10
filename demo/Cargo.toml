@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Michael-F-Bryan <michaelfbryan@gmail.com>"]
 edition = "2018"
 publish = false
+description = "A WebAssembly demo for the arcs CAD library."
+repository = "https://github.com/Michael-F-Bryan/arcs"
+license = "MIT OR Apache-2.0"
 
 [lib]
 crate-type = ["cdylib"]
