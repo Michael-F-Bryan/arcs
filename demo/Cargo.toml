@@ -21,6 +21,8 @@ piet-web = "0.0.7"
 kurbo = "0.5.6"
 web-sys = { version = "0.3.35", features = ["MouseEvent", "HtmlCanvasElement", "Node", "CanvasRenderingContext2d", "HtmlElement"] }
 log = "0.4.8"
+console_log = "0.1.2"
+piet = "0.0.7"
 
 [profile.release]
 lto = true

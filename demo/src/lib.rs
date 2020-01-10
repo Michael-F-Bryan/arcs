@@ -1,10 +1,11 @@
 use arcs::window::Window;
 use kurbo::Size;
+use log::Level;
+use piet::Color;
 use piet_web::WebRenderContext;
 use seed::{prelude::*, *};
 use specs::prelude::*;
-use std::convert::TryInto;
-use wasm_bindgen::JsCast;
+use std::convert::TryFrom;
 use web_sys::{HtmlCanvasElement, HtmlElement, MouseEvent};
 
 const CANVAS_ID: &str = "canvas";
@@ -12,20 +13,32 @@ const CANVAS_ID: &str = "canvas";
 pub struct Model {
     world: World,
     window: Window,
+    canvas_size: Size,
 }
 
 impl Default for Model {
     fn default() -> Model {
         let mut world = World::new();
         arcs::components::register(&mut world);
-        let window = Window::create(&mut world);
 
-        Model { world, window }
+        let window = Window::create(&mut world);
+        window
+            .style_mut(&mut world.write_storage())
+            .background_colour = Color::rgb8(0xff, 0, 0);
+
+        Model {
+            world,
+            window,
+            canvas_size: Size::new(300.0, 150.0),
+        }
     }
 }
 
 fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
-    orders.after_next_render(|_| Msg::Rendered);
+    orders
+        .after_next_render(|_| Msg::Rendered)
+        .after_next_render(|_| Msg::WindowResized);
+
     AfterMount::new(Model::default())
 }
 
@@ -46,62 +59,72 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
         Msg::Rendered => {
             if let Some(canvas) = seed::canvas(CANVAS_ID) {
-                draw(&canvas, &mut model.world, &model.window);
+                draw(&canvas, model);
+                orders.skip();
             }
-
-            // We want to call `.skip` to prevent infinite loop.
-            orders.after_next_render(|_| Msg::Rendered).skip();
         },
         Msg::Clicked => unimplemented!(),
         Msg::WindowResized => {
-            if let Some(mut canvas) = seed::canvas(CANVAS_ID) {
-                resize_to_fill_parent(&mut canvas);
-                draw(&canvas, &mut model.world, &model.window);
+            if let Some(parent_size) =
+                seed::canvas(CANVAS_ID).and_then(|canvas| parent_size(&canvas))
+            {
+                log::debug!("Changing the canvas to {}", parent_size);
+                model.canvas_size = parent_size;
+
+                orders.render();
             }
         },
     }
+
+    // make sure we redraw the canvas
+    orders.after_next_render(|_| Msg::Rendered);
 }
 
-fn draw(canvas: &HtmlCanvasElement, world: &mut World, window: &Window) {
+fn draw(canvas: &HtmlCanvasElement, model: &mut Model) {
     let mut canvas_ctx = seed::canvas_context_2d(&canvas);
     let browser_window = seed::window();
     let ctx = WebRenderContext::new(&mut canvas_ctx, &browser_window);
-    let window_size = Size::new(canvas.width().into(), canvas.height().into());
 
-    let mut system = window.render_system(ctx, window_size);
-    RunNow::setup(&mut system, world);
-    RunNow::run_now(&mut system, world);
+    let mut system = model.window.render_system(ctx, model.canvas_size);
+    RunNow::setup(&mut system, &mut model.world);
+    RunNow::run_now(&mut system, &mut model.world);
 }
 
-fn resize_to_fill_parent(canvas: &mut HtmlCanvasElement) {
-    if let Some(parent) = canvas
-        .parent_element()
-        .and_then(|e| e.dyn_into::<HtmlElement>().ok())
-    {
-        canvas.set_width(parent.client_width().try_into().unwrap());
-        canvas.set_height(parent.client_height().try_into().unwrap());
-    }
-}
+fn parent_size(element: &HtmlElement) -> Option<Size> {
+    let window = seed::window();
+    let height = window.inner_height().ok()?.as_f64()?
+        - f64::try_from(element.offset_top()).ok()?;
+    let width = window.inner_width().ok()?.as_f64()?;
 
-fn view(_model: &Model) -> impl View<Msg> {
-    div![
+    Some(Size::new(
+        f64::try_from(width).ok()?,
+        f64::try_from(height).ok()?,
+    ))
+}
+style! {
+    St::OverflowY => "hidden",
+    St::OverflowX => "hidden",
+},
+fn view(model: &Model) -> impl View<Msg> {
+    div![div![
+        attrs![ At::Class => "canv            style! {
+                St::OverflowY => "hidden",
+                St::OverflowX => "hidden",
+            },as-container" ],
         style! {
-            St::Display => "flex",
+            St::Width => "100%",
+            St::Height => "100%",
+            St::OverflowY => "hidden",
+            St::OverflowX => "hidden",
         },
-        div![
-            attrs![ At::Class => "canvas-container" ],
-            style! {
-                St::Width => "100%",
-                St::Height => "100%",
-            },
-            canvas![
-                attrs![ At::Id => CANVAS_ID ],
-                style![
-                    St::Border => "1px solid black",
-                ],
+        canvas![
+            attrs![
+                At::Id => CANVAS_ID,
+                At::Width => model.canvas_size.width,
+                At::Height => model.canvas_size.height,
             ],
-        ]
-    ]
+        ],
+    ]]
 }
 
 pub fn window_events(_model: &Model) -> Vec<Listener<Msg>> {
@@ -113,6 +136,9 @@ pub fn window_events(_model: &Model) -> Vec<Listener<Msg>> {
 
 #[wasm_bindgen(start)]
 pub fn render() {
+    console_log::init_with_level(Level::Debug)
+        .expect("Unable to initialize the log");
+
     seed::App::builder(update, view)
         .after_mount(after_mount)
         .window_events(window_events)
