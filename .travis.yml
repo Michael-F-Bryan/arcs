@@ -12,7 +12,7 @@ rust:
 
 install:
   - export PATH="$HOME/.cargo/bin:$PATH"
-  - command -v cargo-make >/dev/null 2>&1 || cargo install cargo-make
+  - command -v wasm-pack >/dev/null 2>&1 || cargo install wasm-pack
   - set -e
 
 script:
@@ -22,7 +22,7 @@ script:
   - cargo doc --verbose
   - cd $TRAVIS_BUILD_DIR/demo
   - cargo build --verbose
-  - cargo make build_release
+  - wasm-pack build --dev --target web
 
 before_deploy:
   - cd $TRAVIS_BUILD_DIR/arcs
