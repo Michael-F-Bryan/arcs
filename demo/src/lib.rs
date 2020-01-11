@@ -101,29 +101,21 @@ fn parent_size(element: &HtmlElement) -> Option<Size> {
         f64::try_from(height).ok()?,
     ))
 }
-style! {
-    St::OverflowY => "hidden",
-    St::OverflowX => "hidden",
-},
+
 fn view(model: &Model) -> impl View<Msg> {
     div![div![
-        attrs![ At::Class => "canv            style! {
-                St::OverflowY => "hidden",
-                St::OverflowX => "hidden",
-            },as-container" ],
+        attrs![ At::Class => "canvas-container" ],
         style! {
             St::Width => "100%",
             St::Height => "100%",
             St::OverflowY => "hidden",
             St::OverflowX => "hidden",
         },
-        canvas![
-            attrs![
-                At::Id => CANVAS_ID,
-                At::Width => model.canvas_size.width,
-                At::Height => model.canvas_size.height,
-            ],
-        ],
+        canvas![attrs![
+            At::Id => CANVAS_ID,
+            At::Width => model.canvas_size.width,
+            At::Height => model.canvas_size.height,
+        ],],
     ]]
 }
 
