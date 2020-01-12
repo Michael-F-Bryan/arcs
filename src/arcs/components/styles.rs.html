@@ -48,6 +48,12 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">components</span>::<span class="ident">Dimension</span>;
 <span class="kw">use</span> <span class="ident">piet</span>::<span class="ident">Color</span>;
@@ -60,6 +66,8 @@
     <span class="kw">pub</span> <span class="ident">colour</span>: <span class="ident">Color</span>,
     <span class="kw">pub</span> <span class="ident">radius</span>: <span class="ident">Dimension</span>,
 }
+
+<span class="macro">decl_component</span><span class="macro">!</span>(<span class="ident">PointStyle</span>);
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">PointStyle</span> {
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PointStyle</span> {
@@ -77,6 +85,8 @@
     <span class="kw">pub</span> <span class="ident">width</span>: <span class="ident">Dimension</span>,
 }
 
+<span class="macro">decl_component</span><span class="macro">!</span>(<span class="ident">LineStyle</span>);
+
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">LineStyle</span> {
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LineStyle</span> {
         <span class="ident">LineStyle</span> {
@@ -91,6 +101,8 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">WindowStyle</span> {
     <span class="kw">pub</span> <span class="ident">background_colour</span>: <span class="ident">Color</span>,
 }
+
+<span class="macro">decl_component</span><span class="macro">!</span>(<span class="ident">WindowStyle</span>);
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">WindowStyle</span> {
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WindowStyle</span> {

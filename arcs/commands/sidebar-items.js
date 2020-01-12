@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["UndoRedoBuffer",""]],"trait":[["Command","An operation which can be executed against a target."],["CommandContext",""]]});
+initSidebarItems({"struct":[["Builder",""],["ChangeRecorder","A wrapper around a [`World`] which records any changes that are made."],["UndoRedoBuffer",""]],"trait":[["Command",""]]});

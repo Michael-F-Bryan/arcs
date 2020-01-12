@@ -25,6 +25,8 @@
 <span id="25">25</span>
 <span id="26">26</span>
 <span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">primitives</span>::{<span class="ident">Arc</span>, <span class="ident">Line</span>, <span class="ident">Point</span>};
 <span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
@@ -44,6 +46,8 @@
 <span class="kw">impl</span> <span class="ident">Component</span> <span class="kw">for</span> <span class="ident">DrawingObject</span> {
     <span class="kw">type</span> <span class="ident">Storage</span> <span class="op">=</span> <span class="ident">FlaggedStorage</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">DenseVecStorage</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 }
+
+<span class="macro">decl_component</span><span class="macro">!</span>(<span class="ident">DrawingObject</span>);
 
 <span class="doccomment">/// The geometry of a [`DrawingObject`].</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>

@@ -130,6 +130,8 @@
 <span id="130">130</span>
 <span id="131">131</span>
 <span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">Bounded</span>, <span class="ident">Vector</span>};
 <span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
@@ -142,6 +144,8 @@
     <span class="ident">bottom_left</span>: <span class="ident">Vector</span>,
     <span class="ident">top_right</span>: <span class="ident">Vector</span>,
 }
+
+<span class="macro">decl_component</span><span class="macro">!</span>(<span class="ident">BoundingBox</span>);
 
 <span class="kw">impl</span> <span class="ident">BoundingBox</span> {
     <span class="doccomment">/// Create a new [`BoundingBox`] around two points.</span>
