@@ -10,6 +10,8 @@ pub struct BoundingBox {
     top_right: Vector,
 }
 
+decl_component!(BoundingBox);
+
 impl BoundingBox {
     /// Create a new [`BoundingBox`] around two points.
     pub fn new(first: Vector, second: Vector) -> Self {

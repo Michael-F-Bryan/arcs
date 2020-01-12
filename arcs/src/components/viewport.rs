@@ -10,3 +10,5 @@ pub struct Viewport {
     /// The number of pixels each drawing unit should take up on the screen.
     pub pixels_per_drawing_unit: f64,
 }
+
+decl_component!(Viewport);

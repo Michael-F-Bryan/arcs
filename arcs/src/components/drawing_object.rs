@@ -17,6 +17,8 @@ impl Component for DrawingObject {
     type Storage = FlaggedStorage<Self, DenseVecStorage<Self>>;
 }
 
+decl_component!(DrawingObject);
+
 /// The geometry of a [`DrawingObject`].
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]

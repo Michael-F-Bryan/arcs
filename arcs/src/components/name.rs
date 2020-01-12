@@ -68,3 +68,5 @@ impl NameTable {
         }
     }
 }
+
+decl_component!(Name);

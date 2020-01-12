@@ -27,3 +27,5 @@ impl Default for Layer {
         }
     }
 }
+
+decl_component!(Layer);
