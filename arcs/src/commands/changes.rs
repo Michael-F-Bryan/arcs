@@ -25,12 +25,14 @@ impl<'world> ChangeRecorder<'world> {
     }
 
     /// Delete an [`Entity`] and any components associated with it.
-    pub fn delete_entity(&mut self, entity: Entity) {
+    pub fn delete_entity(&mut self, _entity: Entity) {
         // we need to use our "reflection" mechanism to figure out which
         // components are associated with this entity and get a copy of them
 
-        // then 
-        unimplemented!() }
+        // then stash them away so our backwards closure is able to restore
+        // them again.
+        unimplemented!()
+    }
 
     /// Associate a new [`Component`] with a particular [`Entity`].
     pub fn set_component<C: Component + Clone>(
@@ -40,7 +42,7 @@ impl<'world> ChangeRecorder<'world> {
     ) {
         // The forward operation just overwrites the component with the new
         // copy
-        let forwards = move |world: &mut World| {
+        let forwards = move |world: &World| {
             world
                 .write_storage::<C>()
                 .insert(entity, component.clone())
@@ -51,7 +53,7 @@ impl<'world> ChangeRecorder<'world> {
         // previous value and (if there was one) revert the entity to that one,
         // otherwise delete the component altogether
         let previous_value = self.get_component::<C>(entity);
-        let backwards = move |world: &mut World| match previous_value {
+        let backwards = move |world: &World| match previous_value {
             Some(ref value) => {
                 world
                     .write_storage::<C>()
@@ -102,8 +104,8 @@ impl<'world> ChangeRecorder<'world> {
     /// apply a diff and `backwards` to revert it.
     fn push_change<F, B>(&mut self, forwards: F, backwards: B)
     where
-        F: Fn(&mut World) + 'static,
-        B: Fn(&mut World) + 'static,
+        F: Fn(&World) + 'static,
+        B: Fn(&World) + 'static,
     {
         self.changeset.push(Change {
             forward: Box::new(forwards),
@@ -112,7 +114,29 @@ impl<'world> ChangeRecorder<'world> {
     }
 
     /// Extract the list of [`Change`]s.
-    fn into_changes(self) -> Vec<Change> { self.changeset }
+    pub fn into_changes(self) -> ChangeSet {
+        ChangeSet {
+            changes: self.changeset,
+        }
+    }
+}
+
+pub struct ChangeSet {
+    changes: Vec<Change>,
+}
+
+impl ChangeSet {
+    pub fn apply(&self, world: &World) {
+        for change in &self.changes {
+            change.apply(world);
+        }
+    }
+
+    pub fn revert(&self, world: &World) {
+        for change in self.changes.iter().rev() {
+            change.revert(world);
+        }
+    }
 }
 
 pub struct Builder<'recorder> {
@@ -122,12 +146,12 @@ pub struct Builder<'recorder> {
 
 /// A single change.
 pub(crate) struct Change {
-    forward: Box<dyn Fn(&mut World)>,
-    backward: Box<dyn Fn(&mut World)>,
+    forward: Box<dyn Fn(&World)>,
+    backward: Box<dyn Fn(&World)>,
 }
 
 impl Change {
-    pub fn apply(&self, world: &mut World) { (self.forward)(world); }
+    pub fn apply(&self, world: &World) { (self.forward)(world); }
 
-    pub fn revert(&self, world: &mut World) { (self.backward)(world); }
+    pub fn revert(&self, world: &World) { (self.backward)(world); }
 }

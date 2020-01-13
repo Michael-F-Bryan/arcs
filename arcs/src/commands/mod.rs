@@ -2,10 +2,10 @@
 //! undo/redo mechanism.
 
 mod changes;
+mod undo_redo_buffer;
 
-pub use changes::{Builder, ChangeRecorder};
-
-pub struct UndoRedoBuffer {}
+pub use changes::{Builder, ChangeRecorder, ChangeSet};
+pub use undo_redo_buffer::{UndoRedoBuffer, UndoRedoError};
 
 pub trait Command {
     fn execute(&self, world: &mut ChangeRecorder<'_>);
