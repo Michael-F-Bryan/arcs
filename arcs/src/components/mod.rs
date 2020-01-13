@@ -40,13 +40,13 @@ pub fn register(world: &mut World) {
     }
 }
 
-/// Looks up all [`Component`]s associated with this [`Entity`], yielding copies
-/// of their current value.
+/// Looks up all [`specs::Component`]s associated with this [`Entity`], yielding
+/// copies of their current value.
 ///
 /// # Note
 ///
 /// This requires the [`decl_component!()`] macro to have been invoked on
-/// the [`Component`].
+/// the [`specs::Component`].
 pub fn attached_to_entity(
     world: &World,
     entity: Entity,
