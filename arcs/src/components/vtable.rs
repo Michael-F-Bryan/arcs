@@ -11,7 +11,7 @@ pub struct ComponentVtable {
     name: &'static str,
     register: fn(world: &mut World),
     get_cloned: fn(world: &World, entity: Entity) -> Option<Box<dyn Any>>,
-    set: fn(world: &mut World, entity: Entity, value: Box<dyn Any>),
+    set: fn(world: &mut World, entity: Entity, value: &dyn Any),
     debug: fn(item: &dyn Any, f: &mut Formatter<'_>) -> fmt::Result,
 }
 
@@ -36,18 +36,25 @@ impl ComponentVtable {
                     .map(|item| Box::new(item) as Box<dyn Any>)
             },
             set: |world, entity, value| {
-                let value: T = match value.downcast() {
-                    Ok(boxed) => *boxed,
-                    Err(_) => panic!("Expected a {}", any::type_name::<T>()),
+                let value: &T = match value.downcast_ref() {
+                    Some(boxed) => &*boxed,
+                    None => panic!("Expected a {}", any::type_name::<T>()),
                 };
 
-                world.write_storage::<T>().insert(entity, value).unwrap();
+                world
+                    .write_storage::<T>()
+                    .insert(entity, value.clone())
+                    .unwrap();
             },
             debug: |item, f| match item.downcast_ref::<T>() {
                 Some(item) => Debug::fmt(item, f),
                 None => panic!("Expected a {}", any::type_name::<T>()),
             },
         }
+    }
+
+    pub fn applies_to<T: 'static>(&self) -> bool {
+        self.type_id == TypeId::of::<T>()
     }
 
     /// A human-readable version of the [`Component`]'s name.
@@ -76,7 +83,7 @@ impl ComponentVtable {
         &self,
         world: &mut World,
         entity: Entity,
-        value: Box<dyn Any>,
+        value: &dyn Any,
     ) {
         (self.set)(world, entity, value);
     }

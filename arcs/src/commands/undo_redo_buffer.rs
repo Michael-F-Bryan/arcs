@@ -21,7 +21,7 @@ impl UndoRedoBuffer {
 
     pub fn can_redo(&self) -> bool { self.cursor <= self.changes.len() }
 
-    pub fn undo(&mut self, world: &World) -> Result<(), UndoRedoError> {
+    pub fn undo(&mut self, world: &mut World) -> Result<(), UndoRedoError> {
         if !self.can_undo() {
             return Err(UndoRedoError);
         }
@@ -32,7 +32,7 @@ impl UndoRedoBuffer {
         Ok(())
     }
 
-    pub fn redo(&mut self, world: &World) -> Result<(), UndoRedoError> {
+    pub fn redo(&mut self, world: &mut World) -> Result<(), UndoRedoError> {
         if !self.can_redo() {
             return Err(UndoRedoError);
         }
