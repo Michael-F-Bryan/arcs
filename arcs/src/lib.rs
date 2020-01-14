@@ -13,3 +13,4 @@ mod transform;
 pub mod window;
 
 pub use vector::{Orientation, Vector};
+pub use transform::Transformation;

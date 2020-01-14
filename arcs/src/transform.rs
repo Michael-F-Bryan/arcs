@@ -1,5 +1,6 @@
 use cgmath::{Matrix3, Vector3};
 use crate::{Vector};
+use std::ops::{Mul};
 
 pub struct Transformation {
     pub matrix: Matrix3<f64>
@@ -26,4 +27,17 @@ impl Transformation {
             z: 1.0
         }
     }
+
+    fn to_vector(v: &Vector3<f64>) -> Vector {
+        Vector::new(v.x, v.y)
+    }
 }
+
+impl Mul<Vector> for Transformation {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Self::Output {
+        Transformation::to_vector(&(self.matrix * Transformation::to_homogenous(&rhs)))
+    }
+}
+
