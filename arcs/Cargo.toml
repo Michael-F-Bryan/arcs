@@ -25,6 +25,7 @@ shred-derive = "0.6"
 kurbo = "0.5"
 shred = "0.9"
 inventory = "0.1.5"
+cgmath = "0.17.0"
 
 [dev-dependencies]
 piet-common = "0.0.7"

@@ -9,6 +9,7 @@ pub mod components;
 pub mod primitives;
 pub mod systems;
 mod vector;
+mod transform;
 pub mod window;
 
 pub use vector::{Orientation, Vector};
