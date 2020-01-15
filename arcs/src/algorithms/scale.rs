@@ -90,6 +90,12 @@ mod tests {
         let expected = Line::new(Vector::new(3.0, 6.0), Vector::new(4.5, -7.5));
 
         assert_eq!(actual, expected);
+
+        // scale by line mid-point as reference
+        let actual = original.scaled(factor, start + original.displacement() * 0.5);
+        let expected = Line::new(Vector::new(1.75, 6.25), Vector::new(3.25, -7.25));
+
+        assert_eq!(actual, expected);
     }
 
     #[test]
@@ -103,6 +109,11 @@ mod tests {
 
         let actual = original.scaled(factor, Vector::zero());
         let expected = Arc::from_centre_radius(Vector::new(-2.8, 4.0), radius * factor, start_angle, sweep_angle);
+
+        assert_eq!(actual, expected);
+
+        let actual = original.scaled(factor, centre);
+        let expected = Arc::from_centre_radius(centre, radius * factor, start_angle, sweep_angle);
 
         assert_eq!(actual, expected);
     }
