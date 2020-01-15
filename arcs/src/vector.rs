@@ -1,7 +1,8 @@
-use kurbo::Affine;
+use kurbo::{Affine, Vec2};
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign,
 };
+use std::convert::From;
 
 /// Your typical 2D vector.
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -175,6 +176,12 @@ impl Div<f64> for Vector {
 
 impl DivAssign<f64> for Vector {
     fn div_assign(&mut self, other: f64) { *self = *self / other; }
+}
+
+impl From<Vector> for Vec2 {
+    fn from(v: Vector) -> Self {
+        Vec2::new(v.x, v.y)
+    }
 }
 
 /// How something may be oriented.

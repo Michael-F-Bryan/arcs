@@ -6,14 +6,14 @@ use kurbo::Affine;
 
 /// Something which can be scaled in *Drawing Space*
 pub trait Scale {
-    fn scale(&mut self, factor: f64);
+    fn scale(&mut self, factor: f64, base: Vector);
 
-    fn scaled(&self, factor: f64) -> Self
+    fn scaled(&self, factor: f64, base: Vector) -> Self
     where 
         Self: Sized + Clone,
         {
             let mut clone = self.clone();
-            clone.scale(factor);
+            clone.scale(factor, base);
 
             clone
         }
@@ -21,37 +21,40 @@ pub trait Scale {
 }
 
 impl<'t, T: Scale + ?Sized> Scale for &'t mut T {
-    fn scale(&mut self, factor: f64) {
-        (*self).scale(factor);
+    fn scale(&mut self, factor: f64, base: Vector) {
+        (*self).scale(factor, base);
     }
 }
 
 impl Scale for Vector {
-    fn scale(&mut self, factor: f64) {
+    fn scale(&mut self, factor: f64, base: Vector) {
+        let translate_to_base = Affine::translate(base * -1.0);
         let scale = Affine::scale(factor);
-        let new_pos = scale * *self;
+        let translate_back = Affine::translate(base);
+        let combined_transform = translate_back * scale * translate_to_base;
+        let new_pos = combined_transform * *self;
         self.x = new_pos.x;
         self.y = new_pos.y;
     }
 }
 
 impl Scale for Point {
-    fn scale(&mut self, factor: f64) {
-        self.location.scale(factor);
+    fn scale(&mut self, factor: f64, base: Vector) {
+        self.location.scale(factor, base);
     }
 }
 
 impl Scale for Line {
-    fn scale(&mut self, factor: f64) {
-        self.start.scale(factor);
-        self.end.scale(factor);
+    fn scale(&mut self, factor: f64, base: Vector) {
+        self.start.scale(factor, base);
+        self.end.scale(factor, base);
     }
 }
 
 impl Scale for Arc {
-    fn scale(&mut self, factor: f64) {
+    fn scale(&mut self, factor: f64, base: Vector) {
         let mut centre = self.centre();
-        centre.scale(factor);
+        centre.scale(factor, base);
         *self = Arc::from_centre_radius(
             centre, 
             self.radius() * factor, 
@@ -70,7 +73,7 @@ mod tests {
         let original = Vector::new(1.0, 1.0);
         let factor = 2.0;
 
-        let actual = original.scaled(factor);
+        let actual = original.scaled(factor, Vector::zero());
         let expected = Vector::new(2.0, 2.0);
 
         assert_eq!(actual, expected);
@@ -83,7 +86,7 @@ mod tests {
         let original = Line::new(start, end);
         let factor = 1.5;
 
-        let actual = original.scaled(factor);
+        let actual = original.scaled(factor, Vector::zero());
         let expected = Line::new(Vector::new(3.0, 6.0), Vector::new(4.5, -7.5));
 
         assert_eq!(actual, expected);
@@ -98,7 +101,7 @@ mod tests {
         let original = Arc::from_centre_radius(centre, radius, start_angle, sweep_angle);
         let factor = 2.0;
 
-        let actual = original.scaled(factor);
+        let actual = original.scaled(factor, Vector::zero());
         let expected = Arc::from_centre_radius(Vector::new(-2.8, 4.0), radius * factor, start_angle, sweep_angle);
 
         assert_eq!(actual, expected);
