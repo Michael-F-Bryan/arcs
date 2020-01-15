@@ -2,7 +2,6 @@ use kurbo::{Affine, Vec2};
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign,
 };
-use std::convert::From;
 
 /// Your typical 2D vector.
 #[derive(Debug, Copy, Clone, PartialEq)]
