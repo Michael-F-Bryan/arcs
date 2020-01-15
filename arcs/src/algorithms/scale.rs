@@ -1,7 +1,8 @@
 use crate::{
     primitives::{Arc, Line, Point},
-    Vector, Transformation,
+    Vector,
 };
+use kurbo::Affine;
 
 /// Something which can be scaled in *Drawing Space*
 pub trait Scale {
@@ -27,7 +28,7 @@ impl<'t, T: Scale + ?Sized> Scale for &'t mut T {
 
 impl Scale for Vector {
     fn scale(&mut self, factor: f64) {
-        let scale = Transformation::scale(factor);
+        let scale = Affine::scale(factor);
         let new_pos = scale * *self;
         self.x = new_pos.x;
         self.y = new_pos.y;
