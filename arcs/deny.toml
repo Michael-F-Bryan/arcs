@@ -1,0 +1,20 @@
+[advisories]
+db-path = "$HOME/.cargo/advisory-db"
+db-url = "https://github.com/rustsec/advisory-db"
+vulnerability = "deny"
+unmaintained = "warn"
+notice = "warn"
+ignore = []
+
+[licenses]
+# See https://spdx.org/licenses/ for list of possible licenses
+unlicensed = "deny"
+allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC"]
+deny = []
+copyleft = "warn"
+allow-osi-fsf-free = "neither"
+confidence-threshold = 0.8
+
+[bans]
+multiple-versions = "warn"
+highlight = "all"

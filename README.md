@@ -1,8 +1,11 @@
 # A Rust CAD System
 
 [![Build Status](https://travis-ci.com/Michael-F-Bryan/arcs.svg?branch=master)](https://travis-ci.com/Michael-F-Bryan/arcs)
+[![Docs.rs Badge](https://docs.rs/arcs/badge.svg)](https://docs.rs/arcs)
+[![Crates.io](https://img.shields.io/crates/v/arcs)](https://crates.io/crates/arcs)
+![Crates.io](https://img.shields.io/crates/l/arcs)
 
-([API Docs])
+([API Docs for `master`][docs])
 
 An extensible framework for creating 2D CAD applications, written in Rust and
 based on an *Entity-Component-System* architecture.
@@ -132,6 +135,6 @@ submitted for inclusion in the work by you, as defined in the Apache-2.0
 license, shall be dual licensed as above, without any additional terms or
 conditions.
 
-[API Docs]: https://michael-f-bryan.github.io/arcs
+[docs]: https://michael-f-bryan.github.io/arcs
 [rustmatic-38]: https://github.com/Michael-F-Bryan/rustmatic/issues/38
 [wp]: https://crates.io/crates/wasm-pack
