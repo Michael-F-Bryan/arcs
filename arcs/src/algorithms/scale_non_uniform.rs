@@ -1,4 +1,5 @@
 use crate::{
+    primitives::{Point},
     Vector,
 };
 use kurbo::Affine;
@@ -34,6 +35,12 @@ impl ScaleNonUniform for Vector {
         let new_pos = combined_transform * *self;
         self.x = new_pos.x;
         self.y = new_pos.y;
+    }
+}
+
+impl ScaleNonUniform for Point {
+    fn scale_nu(&mut self, factor_x: f64, factor_y: f64, base: Vector) {
+        self.location.scale_nu(factor_x, factor_y, base);
     }
 }
 
