@@ -1,6 +1,6 @@
 [package]
 name = "arcs"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Michael Bryan <michaelfbryan@gmail.com>"]
 edition = "2018"
 description = "An extensible framework for creating 2D CAD applications using the Entity-Component-System pattern."
