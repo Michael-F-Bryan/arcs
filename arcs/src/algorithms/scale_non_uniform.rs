@@ -1,5 +1,5 @@
 use crate::{
-    primitives::{Point},
+    primitives::{Point, Line},
     Vector,
 };
 use kurbo::Affine;
@@ -44,6 +44,13 @@ impl ScaleNonUniform for Point {
     }
 }
 
+impl ScaleNonUniform for Line {
+    fn scale_nu(&mut self, factor_x: f64, factor_y: f64, base: Vector) {
+        self.start.scale_nu(factor_x, factor_y, base);
+        self.end.scale_nu(factor_x, factor_y, base);
+    }
+}
+
 #[inline]
 const fn kurbo_scale_nu(factor_x: f64, factor_y: f64) -> Affine {
     Affine::new([factor_x, 0.0, 0.0, factor_y, 0.0, 0.0])
@@ -68,6 +75,26 @@ mod tests {
         let base = Vector::new(2.0, 0.0);
         let actual = original.scaled_nu(factor_x, factor_y, base);
         let expected = Vector::new(-4.0, 12.5);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn line() {
+        let start = Vector::new(2.0, 4.0);
+        let end = Vector::new(3.0, -5.0);
+        let original = Line::new(start, end);
+        let factor_x = 1.5;
+        let factor_y = -2.0;
+
+        let actual = original.scaled_nu(factor_x, factor_y, Vector::zero());
+        let expected = Line::new(Vector::new(3.0, -8.0), Vector::new(4.5, 10.0));
+
+        assert_eq!(actual, expected);
+
+        // scale by line mid-point as reference
+        let actual = original.scaled_nu(factor_x, factor_y, start + original.displacement() * 0.5);
+        let expected = Line::new(Vector::new(1.75, -9.5), Vector::new(3.25, 8.5));
 
         assert_eq!(actual, expected);
     }
