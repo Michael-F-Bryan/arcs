@@ -50,7 +50,7 @@ containing a list of related features or concepts.
   - [X] Entities can be tagged with a name to give them semantic meaning
   - [X] Approximation algorithm
   - [X] Translation algorithm
-  - [ ] Uniform scale algorithm
+  - [X] Uniform scale algorithm
   - [ ] Scaling algorithm without maintaining aspect ratio
   - [ ] Calculate the length of a geometric primitive
   - [ ] B-Splines
