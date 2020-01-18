@@ -121,6 +121,9 @@ This project is licensed under either of
 
 at your option.
 
+It is recommended to always use [cargo-crev][crev] to verify the
+trustworthiness of each of your dependencies, including this one.
+
 ### Contribution
 
 The easiest way to start contributing is to check the issue tracker and look for
@@ -130,6 +133,9 @@ or experience.
 
 We're always keen to help mentor contributors!
 
+The intent of this crate is to be free of soundness bugs. The developers will
+do their best to avoid them, and welcome help in analyzing and fixing them.
+
 Unless you explicitly state otherwise, any contribution intentionally
 submitted for inclusion in the work by you, as defined in the Apache-2.0
 license, shall be dual licensed as above, without any additional terms or
@@ -138,3 +144,5 @@ conditions.
 [docs]: https://michael-f-bryan.github.io/arcs
 [rustmatic-38]: https://github.com/Michael-F-Bryan/rustmatic/issues/38
 [wp]: https://crates.io/crates/wasm-pack
+[crev]: https://github.com/crev-dev/cargo-crev
+
