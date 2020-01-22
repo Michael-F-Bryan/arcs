@@ -34,13 +34,15 @@ mod tests {
 
     #[test]
     fn scale_vector() {
-        let original = Vector::new(-1.0, 5.0);
+        let x = -1.0;
+        let y = 5.0;
+        let original = Vector::new(x, y);
         let factor_x = 2.0;
         let factor_y = 2.5;
 
         let actual = original.scaled_non_uniform(factor_x, factor_y, Vector::zero());
         // known value
-        let expected = Vector::new(-2.0, 12.5);
+        let expected = Vector::new(x * factor_x, y * factor_y);
 
         assert_eq!(actual, expected);
     }
