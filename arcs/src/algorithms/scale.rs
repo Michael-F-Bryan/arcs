@@ -1,6 +1,7 @@
 use crate::{
     primitives::{Arc},
     algorithms::ScaleNonUniform,
+    components::{BoundingBox},
 };
 
 /// Something which can be scaled in *Drawing Space*
@@ -38,12 +39,22 @@ impl Scale for Arc {
     }
 }
 
+impl Scale for BoundingBox {
+    fn scale(&mut self, scale_factor: f64) {
+        *self = BoundingBox::new(
+            self.bottom_left().scaled(scale_factor),
+            self.top_right().scaled(scale_factor)
+        );
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::primitives::{Arc, Line};
     use crate::Vector;
     use crate::algorithms::{AffineTransformable, Translate};
+    use crate::components::{BoundingBox};
     use kurbo::Affine;
 
     #[test]
@@ -133,5 +144,18 @@ mod tests {
         transformed.translate(centre);
 
         assert_eq!(transformed, expected);
+    }
+
+    #[test]
+    fn scale_bounding_box() {
+        let first = Vector::new(-2.0, 1.5);
+        let second = Vector::new(4.0, 3.5);
+        let scale_factor = 1.5;
+        let original = BoundingBox::new(first, second);
+
+        let expected = BoundingBox::new(Vector::new(-3.0, 2.25), Vector::new(6.0, 5.25));
+        let actual = original.scaled(scale_factor);
+
+        assert_eq!(actual, expected);
     }
 }
