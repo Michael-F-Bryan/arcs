@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/kurbo-0.5.6/src/svg.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>svg.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../kurbo/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/kurbo-0.5.7/src/svg.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>svg.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../kurbo/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -543,11 +543,60 @@
 <span id="543">543</span>
 <span id="544">544</span>
 <span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! SVG path representation.</span>
 
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">f64</span>::<span class="ident">consts</span>::<span class="ident">PI</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Display</span>, <span class="ident">Formatter</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="self">self</span>, <span class="ident">Write</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Arc</span>, <span class="ident">BezPath</span>, <span class="ident">ParamCurve</span>, <span class="ident">PathEl</span>, <span class="ident">PathSeg</span>, <span class="ident">Point</span>, <span class="ident">Vec2</span>};
 
@@ -556,11 +605,18 @@
 <span class="doccomment">/// A single SVG arc segment.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SvgArc</span> {
+    <span class="doccomment">/// The arc&#39;s start point.</span>
     <span class="kw">pub</span> <span class="ident">from</span>: <span class="ident">Point</span>,
+    <span class="doccomment">/// The arc&#39;s end point.</span>
     <span class="kw">pub</span> <span class="ident">to</span>: <span class="ident">Point</span>,
+    <span class="doccomment">/// The arc&#39;s radii, where the vector&#39;s x-component is the radius in the</span>
+    <span class="doccomment">/// positive x direction after applying `x_rotation`.</span>
     <span class="kw">pub</span> <span class="ident">radii</span>: <span class="ident">Vec2</span>,
+    <span class="doccomment">/// How much the arc is rotated, in radians.</span>
     <span class="kw">pub</span> <span class="ident">x_rotation</span>: <span class="ident">f64</span>,
+    <span class="doccomment">/// Does this arc sweep through more than π radians?</span>
     <span class="kw">pub</span> <span class="ident">large_arc</span>: <span class="ident">bool</span>,
+    <span class="doccomment">/// Determines if the arc should begin moving at positive angles.</span>
     <span class="kw">pub</span> <span class="ident">sweep</span>: <span class="ident">bool</span>,
 }
 
@@ -593,137 +649,160 @@
     <span class="doccomment">/// The current implementation doesn&#39;t take any special care to produce a</span>
     <span class="doccomment">/// short string (reducing precision, using relative movement).</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_svg</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-        <span class="kw">for</span> <span class="ident">el</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">elements</span>() {
-            <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">el</span> {
-                <span class="ident">PathEl</span>::<span class="ident">MoveTo</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">result</span>, <span class="string">&quot;M{} {}&quot;</span>, <span class="ident">p</span>.<span class="ident">x</span>, <span class="ident">p</span>.<span class="ident">y</span>).<span class="ident">unwrap</span>(),
-                <span class="ident">PathEl</span>::<span class="ident">LineTo</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">result</span>, <span class="string">&quot;L{} {}&quot;</span>, <span class="ident">p</span>.<span class="ident">x</span>, <span class="ident">p</span>.<span class="ident">y</span>).<span class="ident">unwrap</span>(),
-                <span class="ident">PathEl</span>::<span class="ident">QuadTo</span>(<span class="ident">p1</span>, <span class="ident">p2</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                    <span class="macro">write</span><span class="macro">!</span>(<span class="ident">result</span>, <span class="string">&quot;Q{} {} {} {}&quot;</span>, <span class="ident">p1</span>.<span class="ident">x</span>, <span class="ident">p1</span>.<span class="ident">y</span>, <span class="ident">p2</span>.<span class="ident">x</span>, <span class="ident">p2</span>.<span class="ident">y</span>).<span class="ident">unwrap</span>()
-                }
-                <span class="ident">PathEl</span>::<span class="ident">CurveTo</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(
-                    <span class="ident">result</span>,
-                    <span class="string">&quot;C{} {} {} {} {} {}&quot;</span>,
-                    <span class="ident">p1</span>.<span class="ident">x</span>, <span class="ident">p1</span>.<span class="ident">y</span>, <span class="ident">p2</span>.<span class="ident">x</span>, <span class="ident">p2</span>.<span class="ident">y</span>, <span class="ident">p3</span>.<span class="ident">x</span>, <span class="ident">p3</span>.<span class="ident">y</span>
-                )
-                .<span class="ident">unwrap</span>(),
-                <span class="ident">PathEl</span>::<span class="ident">ClosePath</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">result</span>, <span class="string">&quot;Z&quot;</span>).<span class="ident">unwrap</span>(),
-            }
-        }
-        <span class="ident">String</span>::<span class="ident">from_utf8</span>(<span class="ident">result</span>).<span class="ident">unwrap</span>()
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="self">self</span>.<span class="ident">write_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buffer</span>).<span class="ident">unwrap</span>();
+        <span class="ident">String</span>::<span class="ident">from_utf8</span>(<span class="ident">buffer</span>).<span class="ident">unwrap</span>()
     }
 
+    <span class="doccomment">/// Write the SVG representation of this path to the provided buffer.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_to</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">for</span> <span class="ident">el</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">elements</span>() {
+            <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">el</span> {
+                <span class="ident">PathEl</span>::<span class="ident">MoveTo</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="string">&quot;M{} {}&quot;</span>, <span class="ident">p</span>.<span class="ident">x</span>, <span class="ident">p</span>.<span class="ident">y</span>)<span class="question-mark">?</span>,
+                <span class="ident">PathEl</span>::<span class="ident">LineTo</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="string">&quot;L{} {}&quot;</span>, <span class="ident">p</span>.<span class="ident">x</span>, <span class="ident">p</span>.<span class="ident">y</span>)<span class="question-mark">?</span>,
+                <span class="ident">PathEl</span>::<span class="ident">QuadTo</span>(<span class="ident">p1</span>, <span class="ident">p2</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="string">&quot;Q{} {} {} {}&quot;</span>, <span class="ident">p1</span>.<span class="ident">x</span>, <span class="ident">p1</span>.<span class="ident">y</span>, <span class="ident">p2</span>.<span class="ident">x</span>, <span class="ident">p2</span>.<span class="ident">y</span>)<span class="question-mark">?</span>,
+                <span class="ident">PathEl</span>::<span class="ident">CurveTo</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(
+                    <span class="ident">writer</span>,
+                    <span class="string">&quot;C{} {} {} {} {} {}&quot;</span>,
+                    <span class="ident">p1</span>.<span class="ident">x</span>, <span class="ident">p1</span>.<span class="ident">y</span>, <span class="ident">p2</span>.<span class="ident">x</span>, <span class="ident">p2</span>.<span class="ident">y</span>, <span class="ident">p3</span>.<span class="ident">x</span>, <span class="ident">p3</span>.<span class="ident">y</span>
+                )<span class="question-mark">?</span>,
+                <span class="ident">PathEl</span>::<span class="ident">ClosePath</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="string">&quot;Z&quot;</span>)<span class="question-mark">?</span>,
+            }
+        }
+
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Try to parse a bezier path from an SVG path element.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This is implemented on a best-effort basis, intended for cases where the</span>
+    <span class="doccomment">/// user controls the source of paths, and is not intended as a replacement</span>
+    <span class="doccomment">/// for a general, robust SVG parser.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_svg</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BezPath</span>, <span class="ident">SvgParseError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lexer</span> <span class="op">=</span> <span class="ident">SvgLexer</span>::<span class="ident">new</span>(<span class="ident">data</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">BezPath</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">last_cmd</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_cmd</span>(<span class="ident">last_cmd</span>) {
-            <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;m&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;M&#39;</span> {
-                <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="ident">path</span>.<span class="ident">move_to</span>(<span class="ident">pt</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
-                <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">pt</span>);
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span> <span class="op">-</span> (<span class="string">b&#39;M&#39;</span> <span class="op">-</span> <span class="string">b&#39;L&#39;</span>);
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;l&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;L&#39;</span> {
-                <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">pt</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;h&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;H&#39;</span> {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
-                <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
-                <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;h&#39;</span> {
-                    <span class="ident">x</span> <span class="op">+</span><span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">x</span>;
+            <span class="kw">match</span> <span class="ident">c</span> {
+                <span class="string">b&#39;m&#39;</span> <span class="op">|</span> <span class="string">b&#39;M&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="ident">path</span>.<span class="ident">move_to</span>(<span class="ident">pt</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">pt</span>);
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span> <span class="op">-</span> (<span class="string">b&#39;M&#39;</span> <span class="op">-</span> <span class="string">b&#39;L&#39;</span>);
                 }
-                <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">y</span>);
-                <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">pt</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;v&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;V&#39;</span> {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
-                <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
-                <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;v&#39;</span> {
-                    <span class="ident">y</span> <span class="op">+</span><span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">y</span>;
+                <span class="string">b&#39;l&#39;</span> <span class="op">|</span> <span class="string">b&#39;L&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">pt</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">pt</span>);
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
                 }
-                <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">x</span>, <span class="ident">y</span>);
-                <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">pt</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;q&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;Q&#39;</span> {
-                <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="ident">path</span>.<span class="ident">quad_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>);
-                <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p1</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p2</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;t&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;T&#39;</span> {
-                <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">last_ctrl</span> {
-                    <span class="prelude-val">Some</span>(<span class="ident">ctrl</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="number">2.0</span> <span class="op">*</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">to_vec2</span>() <span class="op">-</span> <span class="ident">ctrl</span>.<span class="ident">to_vec2</span>()).<span class="ident">to_point</span>(),
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>,
-                };
-                <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="ident">path</span>.<span class="ident">quad_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>);
-                <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p1</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p2</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;c&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;C&#39;</span> {
-                <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">p3</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="ident">path</span>.<span class="ident">curve_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>);
-                <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p2</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p3</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;s&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;S&#39;</span> {
-                <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">last_ctrl</span> {
-                    <span class="prelude-val">Some</span>(<span class="ident">ctrl</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="number">2.0</span> <span class="op">*</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">to_vec2</span>() <span class="op">-</span> <span class="ident">ctrl</span>.<span class="ident">to_vec2</span>()).<span class="ident">to_point</span>(),
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>,
-                };
-                <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">p3</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="ident">path</span>.<span class="ident">curve_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>);
-                <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p2</span>);
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p3</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;a&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;A&#39;</span> {
-                <span class="kw">let</span> <span class="ident">radii</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number_pair</span>()<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">x_rotation</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>.<span class="ident">to_radians</span>();
-                <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
-                <span class="kw">let</span> <span class="ident">large_arc</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
-                <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
-                <span class="kw">let</span> <span class="ident">sweep</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
-                <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
-                <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="ident">svg_arc</span> <span class="op">=</span> <span class="ident">SvgArc</span> {
-                    <span class="ident">from</span>: <span class="ident">lexer</span>.<span class="ident">last_pt</span>,
-                    <span class="ident">to</span>: <span class="ident">p</span>,
-                    <span class="ident">radii</span>: <span class="ident">radii</span>.<span class="ident">to_vec2</span>(),
-                    <span class="ident">x_rotation</span>,
-                    <span class="ident">large_arc</span>: <span class="ident">large_arc</span> <span class="op">!</span><span class="op">=</span> <span class="number">0.0</span>,
-                    <span class="ident">sweep</span>: <span class="ident">sweep</span> <span class="op">!</span><span class="op">=</span> <span class="number">0.0</span>,
-                };
-
-                <span class="kw">match</span> <span class="ident">Arc</span>::<span class="ident">from_svg_arc</span>(<span class="kw-2">&amp;</span><span class="ident">svg_arc</span>) {
-                    <span class="prelude-val">Some</span>(<span class="ident">arc</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="comment">// TODO: consider making tolerance configurable</span>
-                        <span class="ident">arc</span>.<span class="ident">to_cubic_beziers</span>(<span class="number">0.1</span>, <span class="op">|</span><span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span><span class="op">|</span> {
-                            <span class="ident">path</span>.<span class="ident">curve_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>);
-                        });
+                <span class="string">b&#39;h&#39;</span> <span class="op">|</span> <span class="string">b&#39;H&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
+                    <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
+                    <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;h&#39;</span> {
+                        <span class="ident">x</span> <span class="op">+</span><span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">x</span>;
                     }
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">p</span>);
-                    }
+                    <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">y</span>);
+                    <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">pt</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">pt</span>);
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
                 }
+                <span class="string">b&#39;v&#39;</span> <span class="op">|</span> <span class="string">b&#39;V&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
+                    <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
+                    <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;v&#39;</span> {
+                        <span class="ident">y</span> <span class="op">+</span><span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">y</span>;
+                    }
+                    <span class="kw">let</span> <span class="ident">pt</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">x</span>, <span class="ident">y</span>);
+                    <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">pt</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">pt</span>;
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">pt</span>);
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
+                }
+                <span class="string">b&#39;q&#39;</span> <span class="op">|</span> <span class="string">b&#39;Q&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="ident">path</span>.<span class="ident">quad_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>);
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p1</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p2</span>;
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
+                }
+                <span class="string">b&#39;t&#39;</span> <span class="op">|</span> <span class="string">b&#39;T&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">last_ctrl</span> {
+                        <span class="prelude-val">Some</span>(<span class="ident">ctrl</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="number">2.0</span> <span class="op">*</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">to_vec2</span>() <span class="op">-</span> <span class="ident">ctrl</span>.<span class="ident">to_vec2</span>()).<span class="ident">to_point</span>(),
+                        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>,
+                    };
+                    <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="ident">path</span>.<span class="ident">quad_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>);
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p1</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p2</span>;
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
+                }
+                <span class="string">b&#39;c&#39;</span> <span class="op">|</span> <span class="string">b&#39;C&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="kw">let</span> <span class="ident">p3</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="ident">path</span>.<span class="ident">curve_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>);
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p2</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p3</span>;
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
+                }
+                <span class="string">b&#39;s&#39;</span> <span class="op">|</span> <span class="string">b&#39;S&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">last_ctrl</span> {
+                        <span class="prelude-val">Some</span>(<span class="ident">ctrl</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="number">2.0</span> <span class="op">*</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>.<span class="ident">to_vec2</span>() <span class="op">-</span> <span class="ident">ctrl</span>.<span class="ident">to_vec2</span>()).<span class="ident">to_point</span>(),
+                        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lexer</span>.<span class="ident">last_pt</span>,
+                    };
+                    <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="kw">let</span> <span class="ident">p3</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="ident">path</span>.<span class="ident">curve_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>);
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p2</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p3</span>;
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
+                }
+                <span class="string">b&#39;a&#39;</span> <span class="op">|</span> <span class="string">b&#39;A&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">radii</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number_pair</span>()<span class="question-mark">?</span>;
+                    <span class="kw">let</span> <span class="ident">x_rotation</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>.<span class="ident">to_radians</span>();
+                    <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
+                    <span class="kw">let</span> <span class="ident">large_arc</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
+                    <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
+                    <span class="kw">let</span> <span class="ident">sweep</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_number</span>()<span class="question-mark">?</span>;
+                    <span class="ident">lexer</span>.<span class="ident">opt_comma</span>();
+                    <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">lexer</span>.<span class="ident">get_maybe_relative</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+                    <span class="kw">let</span> <span class="ident">svg_arc</span> <span class="op">=</span> <span class="ident">SvgArc</span> {
+                        <span class="ident">from</span>: <span class="ident">lexer</span>.<span class="ident">last_pt</span>,
+                        <span class="ident">to</span>: <span class="ident">p</span>,
+                        <span class="ident">radii</span>: <span class="ident">radii</span>.<span class="ident">to_vec2</span>(),
+                        <span class="ident">x_rotation</span>,
+                        <span class="ident">large_arc</span>: <span class="ident">large_arc</span> <span class="op">!</span><span class="op">=</span> <span class="number">0.0</span>,
+                        <span class="ident">sweep</span>: <span class="ident">sweep</span> <span class="op">!</span><span class="op">=</span> <span class="number">0.0</span>,
+                    };
 
-                <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p</span>;
-                <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;z&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;Z&#39;</span> {
-                <span class="ident">path</span>.<span class="ident">close_path</span>();
-            <span class="comment">// TODO: implicit moveto</span>
-            } <span class="kw">else</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">SvgParseError</span>::<span class="ident">UnknownCommand</span>(<span class="ident">c</span> <span class="kw">as</span> <span class="ident">char</span>));
-            };
+                    <span class="kw">match</span> <span class="ident">Arc</span>::<span class="ident">from_svg_arc</span>(<span class="kw-2">&amp;</span><span class="ident">svg_arc</span>) {
+                        <span class="prelude-val">Some</span>(<span class="ident">arc</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                            <span class="comment">// TODO: consider making tolerance configurable</span>
+                            <span class="ident">arc</span>.<span class="ident">to_cubic_beziers</span>(<span class="number">0.1</span>, <span class="op">|</span><span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span><span class="op">|</span> {
+                                <span class="ident">path</span>.<span class="ident">curve_to</span>(<span class="ident">p1</span>, <span class="ident">p2</span>, <span class="ident">p3</span>);
+                            });
+                        }
+                        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {
+                            <span class="ident">path</span>.<span class="ident">line_to</span>(<span class="ident">p</span>);
+                        }
+                    }
+
+                    <span class="ident">last_ctrl</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">p</span>);
+                    <span class="ident">lexer</span>.<span class="ident">last_pt</span> <span class="op">=</span> <span class="ident">p</span>;
+                    <span class="ident">last_cmd</span> <span class="op">=</span> <span class="ident">c</span>;
+                }
+                <span class="string">b&#39;z&#39;</span> <span class="op">|</span> <span class="string">b&#39;Z&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="ident">path</span>.<span class="ident">close_path</span>();
+                    <span class="comment">// TODO: implicit moveto</span>
+                }
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">SvgParseError</span>::<span class="ident">UnknownCommand</span>(<span class="ident">c</span> <span class="kw">as</span> <span class="ident">char</span>)),
+            }
         }
         <span class="prelude-val">Ok</span>(<span class="ident">path</span>)
     }
@@ -732,10 +811,25 @@
 <span class="doccomment">/// An error which can be returned when parsing an SVG.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SvgParseError</span> {
+    <span class="doccomment">/// A number was expected.</span>
     <span class="ident">Wrong</span>,
+    <span class="doccomment">/// The input string ended while still expecting input.</span>
     <span class="ident">UnexpectedEof</span>,
+    <span class="doccomment">/// Encountered an unknown command letter.</span>
     <span class="ident">UnknownCommand</span>(<span class="ident">char</span>),
 }
+
+<span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">SvgParseError</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">SvgParseError</span>::<span class="ident">Wrong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Unable to parse a number&quot;</span>),
+            <span class="ident">SvgParseError</span>::<span class="ident">UnexpectedEof</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Unexpected EOF&quot;</span>),
+            <span class="ident">SvgParseError</span>::<span class="ident">UnknownCommand</span>(<span class="ident">letter</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Unknown command, \&quot;{}\&quot;&quot;</span>, <span class="ident">letter</span>),
+        }
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Error</span> <span class="kw">for</span> <span class="ident">SvgParseError</span> {}
 
 <span class="kw">struct</span> <span class="ident">SvgLexer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
