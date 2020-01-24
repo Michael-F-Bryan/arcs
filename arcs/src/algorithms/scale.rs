@@ -28,10 +28,8 @@ impl<S: ScaleNonUniform> Scale for S {
 
 impl Scale for Arc {
     fn scale(&mut self, scale_factor: f64) {
-        let mut centre = self.centre();
-        centre.scale(scale_factor);
         *self = Arc::from_centre_radius(
-            centre, 
+            self.centre().scaled(scale_factor), 
             self.radius() * scale_factor, 
             self.start_angle(), 
             self.sweep_angle(),
