@@ -43,54 +43,95 @@ mod tests {
     use super::*;
     use crate::primitives::{Arc, Line};
     use crate::Vector;
+    use crate::algorithms::{AffineTransformable, Translate};
+    use kurbo::Affine;
 
     #[test]
-    fn vector() {
+    fn scale_vector() {
         let original = Vector::new(1.0, 1.0);
-        let factor = 2.0;
+        let scale_factor = 2.0;
 
-        let actual = original.scaled(factor);
+        let actual = original.scaled(scale_factor);
         let expected = Vector::new(2.0, 2.0);
 
         assert_eq!(actual, expected);
     }
 
     #[test]
-    fn line() {
+    fn scale_line() {
         let start = Vector::new(2.0, 4.0);
         let end = Vector::new(3.0, -5.0);
         let original = Line::new(start, end);
-        let factor = 1.5;
+        let scale_factor = 1.5;
 
-        let actual = original.scaled(factor);
+        let actual = original.scaled(scale_factor);
         let expected = Line::new(Vector::new(3.0, 6.0), Vector::new(4.5, -7.5));
 
         assert_eq!(actual, expected);
-
-        // scale by line mid-point as reference
-        // let actual = original.scaled(factor, start + original.displacement() * 0.5);
-        // let expected = Line::new(Vector::new(1.75, 6.25), Vector::new(3.25, -7.25));
-
-        // assert_eq!(actual, expected);
     }
 
     #[test]
-    fn arc() {
-        let centre = Vector::new(-1.4, 2.0);
+    fn scale_line_around_mid_point() {
+        let start = Vector::new(2.0, 4.0);
+        let end = Vector::new(3.0, -5.0);
+        let original = Line::new(start, end);
+        let scale_factor = 1.5;
+        let mid_point = start + original.displacement() * 0.5;
+        let expected = Line::new(Vector::new(1.75, 6.25), Vector::new(3.25, -7.25));
+
+        // we can either use explicit transformation methods:
+        let mut transformed = original.translated(Vector::zero() - mid_point);
+        transformed.scale(scale_factor);
+        transformed.translate(mid_point);
+
+        assert_eq!(transformed, expected);
+
+        // Or compose an `Affine` and pass it directly to the `transform` method:
+        // keep in mind that transforms get composed *in reverse execution order*
+        let translate_to_origin = Affine::translate(Vector::zero() - mid_point);
+        let scale = Affine::scale(scale_factor);
+        let translate_back = Affine::translate(mid_point);
+        let combined_transform = translate_back * scale * translate_to_origin;
+
+        let transformed = original.transformed(combined_transform);
+
+        assert_eq!(transformed, expected);
+    }
+
+    #[test]
+    fn scale_arc() {
+        let x = -1.4;
+        let y = 2.0;
+        let centre = Vector::new(x, y);
         let radius = 5.0;
         let start_angle = 0.5;
         let sweep_angle = 1.0;
         let original = Arc::from_centre_radius(centre, radius, start_angle, sweep_angle);
-        let factor = 2.0;
+        let scale_factor = 2.0;
 
-        let actual = original.scaled(factor);
-        let expected = Arc::from_centre_radius(Vector::new(-2.8, 4.0), radius * factor, start_angle, sweep_angle);
+        let actual = original.scaled(scale_factor);
+        let expected = Arc::from_centre_radius(Vector::new(x * scale_factor, y * scale_factor), radius * scale_factor, start_angle, sweep_angle);
 
         assert_eq!(actual, expected);
+    }
 
-        // let actual = original.scaled(factor, centre);
-        // let expected = Arc::from_centre_radius(centre, radius * factor, start_angle, sweep_angle);
+    #[test]
+    fn scale_arc_around_centre() {
+        let x = -1.4;
+        let y = 2.0;
+        let centre = Vector::new(x, y);
+        let radius = 5.0;
+        let start_angle = 0.5;
+        let sweep_angle = 1.0;
+        let original = Arc::from_centre_radius(centre, radius, start_angle, sweep_angle);
+        let scale_factor = 2.0;
 
-        // assert_eq!(actual, expected);
+        let expected = Arc::from_centre_radius(centre, radius * scale_factor, start_angle, sweep_angle);
+
+        let mut transformed = original.translated(Vector::zero() - centre);
+        transformed.scale(scale_factor);
+        transformed.translate(centre);
+
+        assert_eq!(transformed, expected);
     }
 }
