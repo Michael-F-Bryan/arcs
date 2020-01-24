@@ -37,15 +37,6 @@ impl Scale for Arc {
     }
 }
 
-impl Scale for BoundingBox {
-    fn scale(&mut self, scale_factor: f64) {
-        *self = BoundingBox::new(
-            self.bottom_left().scaled(scale_factor),
-            self.top_right().scaled(scale_factor)
-        );
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

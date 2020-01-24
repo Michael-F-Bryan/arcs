@@ -1,5 +1,6 @@
 use crate::{
     algorithms::{AffineTransformable},
+    components::{BoundingBox},
 };
 use kurbo::Affine;
 
@@ -23,6 +24,15 @@ impl<A: AffineTransformable> ScaleNonUniform for A {
     fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64){
         // TODO: Change to `Affine::scale_non_uniform()` after crates.io update
         self.transform(Affine::new([factor_x, 0.0, 0.0, factor_y, 0.0, 0.0]));
+    }
+}
+
+impl ScaleNonUniform for BoundingBox {
+    fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64) {
+        *self = BoundingBox::new(
+            self.bottom_left().scaled_non_uniform(factor_x, factor_y),
+            self.top_right().scaled_non_uniform(factor_x, factor_y)
+        );
     }
 }
 
