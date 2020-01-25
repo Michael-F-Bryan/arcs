@@ -1,7 +1,10 @@
 use crate::{
-    primitives::{Arc, Line, Point},
+    primitives::{Arc},
     Vector,
+    algorithms::{AffineTransformable},
+    components::{BoundingBox},
 };
+use kurbo::Affine;
 
 /// Something which can be moved around "rigidly" in *Drawing Space*.
 pub trait Translate {
@@ -18,36 +21,28 @@ pub trait Translate {
     }
 }
 
-impl<'t, T: Translate + ?Sized> Translate for &'t mut T {
+impl<A: AffineTransformable> Translate for A {
     fn translate(&mut self, displacement: Vector) {
-        (*self).translate(displacement);
-    }
-}
-
-impl Translate for Vector {
-    fn translate(&mut self, displacement: Vector) { *self += displacement; }
-}
-
-impl Translate for Point {
-    fn translate(&mut self, displacement: Vector) {
-        self.location += displacement;
-    }
-}
-
-impl Translate for Line {
-    fn translate(&mut self, displacement: Vector) {
-        self.start += displacement;
-        self.end += displacement;
+        self.transform(Affine::translate(displacement));
     }
 }
 
 impl Translate for Arc {
     fn translate(&mut self, displacement: Vector) {
         *self = Arc::from_centre_radius(
-            self.centre() + displacement,
+            self.centre().translated(displacement),
             self.radius(),
             self.start_angle(),
             self.sweep_angle(),
+        );
+    }
+}
+
+impl Translate for BoundingBox {
+    fn translate(&mut self, displacement: Vector) {
+        *self = BoundingBox::new_unchecked(
+            self.bottom_left().translated(displacement),
+            self.top_right().translated(displacement)
         );
     }
 }
@@ -57,12 +52,25 @@ mod tests {
     use super::*;
 
     #[test]
-    fn vector() {
+    fn translate_vector() {
         let original = Vector::new(3.0, 4.0);
         let delta = Vector::new(-5.0, 2.5);
 
         let got = original.translated(delta);
 
         assert_eq!(got, original + delta);
+    }
+
+    #[test]
+    fn translate_bounding_box() {
+        let first = Vector::new(-2.0, 1.5);
+        let second = Vector::new(4.0, 3.7);
+        let displacement = Vector::new(1.0, -1.0);
+        let original = BoundingBox::new(first, second);
+
+        let expected = BoundingBox::new(Vector::new(-2.0 + 1.0, 1.5 + -1.0), Vector::new(4.0 + 1.0, 3.7 + -1.0));
+        let actual = original.translated(displacement);
+
+        assert_eq!(actual, expected);
     }
 }
