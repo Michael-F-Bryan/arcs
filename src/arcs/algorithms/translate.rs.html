@@ -74,12 +74,21 @@
 <span id="74">74</span>
 <span id="75">75</span>
 <span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">primitives</span>::{<span class="ident">Arc</span>},
+    <span class="ident">algorithms</span>::<span class="ident">AffineTransformable</span>,
+    <span class="ident">components</span>::{<span class="ident">BoundingBox</span>, <span class="ident">Viewport</span>},
+    <span class="ident">primitives</span>::<span class="ident">Arc</span>,
     <span class="ident">Vector</span>,
-    <span class="ident">algorithms</span>::{<span class="ident">AffineTransformable</span>},
-    <span class="ident">components</span>::{<span class="ident">BoundingBox</span>},
 };
 <span class="kw">use</span> <span class="ident">kurbo</span>::<span class="ident">Affine</span>;
 
@@ -119,8 +128,14 @@
     <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">displacement</span>: <span class="ident">Vector</span>) {
         <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="ident">BoundingBox</span>::<span class="ident">new_unchecked</span>(
             <span class="self">self</span>.<span class="ident">bottom_left</span>().<span class="ident">translated</span>(<span class="ident">displacement</span>),
-            <span class="self">self</span>.<span class="ident">top_right</span>().<span class="ident">translated</span>(<span class="ident">displacement</span>)
+            <span class="self">self</span>.<span class="ident">top_right</span>().<span class="ident">translated</span>(<span class="ident">displacement</span>),
         );
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Translate</span> <span class="kw">for</span> <span class="ident">Viewport</span> {
+    <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">displacement</span>: <span class="ident">Vector</span>) {
+        <span class="self">self</span>.<span class="ident">centre</span>.<span class="ident">translate</span>(<span class="ident">displacement</span>);
     }
 }
 
@@ -145,7 +160,10 @@
         <span class="kw">let</span> <span class="ident">displacement</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">1.0</span>, <span class="op">-</span><span class="number">1.0</span>);
         <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span> <span class="ident">BoundingBox</span>::<span class="ident">new</span>(<span class="ident">first</span>, <span class="ident">second</span>);
 
-        <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">BoundingBox</span>::<span class="ident">new</span>(<span class="ident">Vector</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">2.0</span> <span class="op">+</span> <span class="number">1.0</span>, <span class="number">1.5</span> <span class="op">+</span> <span class="op">-</span><span class="number">1.0</span>), <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">4.0</span> <span class="op">+</span> <span class="number">1.0</span>, <span class="number">3.7</span> <span class="op">+</span> <span class="op">-</span><span class="number">1.0</span>));
+        <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">BoundingBox</span>::<span class="ident">new</span>(
+            <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">2.0</span> <span class="op">+</span> <span class="number">1.0</span>, <span class="number">1.5</span> <span class="op">+</span> <span class="op">-</span><span class="number">1.0</span>),
+            <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">4.0</span> <span class="op">+</span> <span class="number">1.0</span>, <span class="number">3.7</span> <span class="op">+</span> <span class="op">-</span><span class="number">1.0</span>),
+        );
         <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">original</span>.<span class="ident">translated</span>(<span class="ident">displacement</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">actual</span>, <span class="ident">expected</span>);
