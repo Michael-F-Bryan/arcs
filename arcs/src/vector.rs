@@ -178,9 +178,7 @@ impl DivAssign<f64> for Vector {
 }
 
 impl From<Vector> for Vec2 {
-    fn from(v: Vector) -> Self {
-        Vec2::new(v.x, v.y)
-    }
+    fn from(v: Vector) -> Self { Vec2::new(v.x, v.y) }
 }
 
 /// How something may be oriented.

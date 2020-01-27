@@ -1,7 +1,5 @@
 use crate::{
-    primitives::{Arc},
-    algorithms::ScaleNonUniform,
-    components::{BoundingBox},
+    algorithms::ScaleNonUniform, primitives::Arc,
 };
 
 /// Something which can be scaled in *Drawing Space*
@@ -9,15 +7,14 @@ pub trait Scale {
     fn scale(&mut self, scale_factor: f64);
 
     fn scaled(&self, scale_factor: f64) -> Self
-    where 
+    where
         Self: Sized + Clone,
-        {
-            let mut clone = self.clone();
-            clone.scale(scale_factor);
+    {
+        let mut clone = self.clone();
+        clone.scale(scale_factor);
 
-            clone
-        }
-
+        clone
+    }
 }
 
 impl<S: ScaleNonUniform> Scale for S {
@@ -29,21 +26,23 @@ impl<S: ScaleNonUniform> Scale for S {
 impl Scale for Arc {
     fn scale(&mut self, scale_factor: f64) {
         *self = Arc::from_centre_radius(
-            self.centre().scaled(scale_factor), 
-            self.radius() * scale_factor, 
-            self.start_angle(), 
+            self.centre().scaled(scale_factor),
+            self.radius() * scale_factor,
+            self.start_angle(),
             self.sweep_angle(),
-        );   
+        );
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::primitives::{Arc, Line};
-    use crate::Vector;
-    use crate::algorithms::{AffineTransformable, Translate};
-    use crate::components::{BoundingBox};
+    use crate::{
+        algorithms::{AffineTransformable, Translate},
+        components::BoundingBox,
+        primitives::{Arc, Line},
+        Vector,
+    };
     use kurbo::Affine;
 
     #[test]
@@ -77,7 +76,8 @@ mod tests {
         let original = Line::new(start, end);
         let scale_factor = 1.5;
         let mid_point = start + original.displacement() * 0.5;
-        let expected = Line::new(Vector::new(1.75, 6.25), Vector::new(3.25, -7.25));
+        let expected =
+            Line::new(Vector::new(1.75, 6.25), Vector::new(3.25, -7.25));
 
         // we can either use explicit transformation methods:
         let mut transformed = original.translated(Vector::zero() - mid_point);
@@ -86,8 +86,9 @@ mod tests {
 
         assert_eq!(transformed, expected);
 
-        // Or compose an `Affine` and pass it directly to the `transform` method:
-        // keep in mind that transforms get composed *in reverse execution order*
+        // Or compose an `Affine` and pass it directly to the `transform`
+        // method: keep in mind that transforms get composed *in reverse
+        // execution order*
         let translate_to_origin = Affine::translate(Vector::zero() - mid_point);
         let scale = Affine::scale(scale_factor);
         let translate_back = Affine::translate(mid_point);
@@ -106,11 +107,17 @@ mod tests {
         let radius = 5.0;
         let start_angle = 0.5;
         let sweep_angle = 1.0;
-        let original = Arc::from_centre_radius(centre, radius, start_angle, sweep_angle);
+        let original =
+            Arc::from_centre_radius(centre, radius, start_angle, sweep_angle);
         let scale_factor = 2.0;
 
         let actual = original.scaled(scale_factor);
-        let expected = Arc::from_centre_radius(Vector::new(x * scale_factor, y * scale_factor), radius * scale_factor, start_angle, sweep_angle);
+        let expected = Arc::from_centre_radius(
+            Vector::new(x * scale_factor, y * scale_factor),
+            radius * scale_factor,
+            start_angle,
+            sweep_angle,
+        );
 
         assert_eq!(actual, expected);
     }
@@ -123,10 +130,16 @@ mod tests {
         let radius = 5.0;
         let start_angle = 0.5;
         let sweep_angle = 1.0;
-        let original = Arc::from_centre_radius(centre, radius, start_angle, sweep_angle);
+        let original =
+            Arc::from_centre_radius(centre, radius, start_angle, sweep_angle);
         let scale_factor = 2.0;
 
-        let expected = Arc::from_centre_radius(centre, radius * scale_factor, start_angle, sweep_angle);
+        let expected = Arc::from_centre_radius(
+            centre,
+            radius * scale_factor,
+            start_angle,
+            sweep_angle,
+        );
 
         let mut transformed = original.translated(Vector::zero() - centre);
         transformed.scale(scale_factor);
@@ -142,7 +155,8 @@ mod tests {
         let scale_factor = 1.5;
         let original = BoundingBox::new(first, second);
 
-        let expected = BoundingBox::new(Vector::new(-3.0, 2.25), Vector::new(6.0, 5.25));
+        let expected =
+            BoundingBox::new(Vector::new(-3.0, 2.25), Vector::new(6.0, 5.25));
         let actual = original.scaled(scale_factor);
 
         assert_eq!(actual, expected);

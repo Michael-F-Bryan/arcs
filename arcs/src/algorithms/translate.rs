@@ -1,8 +1,6 @@
 use crate::{
-    primitives::{Arc},
+    algorithms::AffineTransformable, components::BoundingBox, primitives::Arc,
     Vector,
-    algorithms::{AffineTransformable},
-    components::{BoundingBox},
 };
 use kurbo::Affine;
 
@@ -42,7 +40,7 @@ impl Translate for BoundingBox {
     fn translate(&mut self, displacement: Vector) {
         *self = BoundingBox::new_unchecked(
             self.bottom_left().translated(displacement),
-            self.top_right().translated(displacement)
+            self.top_right().translated(displacement),
         );
     }
 }
@@ -68,7 +66,10 @@ mod tests {
         let displacement = Vector::new(1.0, -1.0);
         let original = BoundingBox::new(first, second);
 
-        let expected = BoundingBox::new(Vector::new(-2.0 + 1.0, 1.5 + -1.0), Vector::new(4.0 + 1.0, 3.7 + -1.0));
+        let expected = BoundingBox::new(
+            Vector::new(-2.0 + 1.0, 1.5 + -1.0),
+            Vector::new(4.0 + 1.0, 3.7 + -1.0),
+        );
         let actual = original.translated(displacement);
 
         assert_eq!(actual, expected);

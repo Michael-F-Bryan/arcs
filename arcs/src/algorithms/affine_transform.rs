@@ -1,5 +1,5 @@
 use crate::{
-    primitives::{Point, Line,},
+    primitives::{Line, Point},
     Vector,
 };
 use kurbo::Affine;
@@ -8,20 +8,18 @@ pub trait AffineTransformable {
     fn transform(&mut self, affine: Affine);
 
     fn transformed(&self, affine: Affine) -> Self
-    where 
+    where
         Self: Sized + Clone,
-        {
-            let mut clone = self.clone();
-            clone.transform(affine);
+    {
+        let mut clone = self.clone();
+        clone.transform(affine);
 
-            clone
-        }
+        clone
+    }
 }
 
-impl <'t, T: AffineTransformable + ?Sized> AffineTransformable for &'t mut T {
-    fn transform(&mut self, affine: Affine) {
-        (*self).transform(affine);
-    }
+impl<'t, T: AffineTransformable + ?Sized> AffineTransformable for &'t mut T {
+    fn transform(&mut self, affine: Affine) { (*self).transform(affine); }
 }
 
 impl AffineTransformable for Vector {
@@ -33,9 +31,7 @@ impl AffineTransformable for Vector {
 }
 
 impl AffineTransformable for Point {
-    fn transform(&mut self, affine: Affine) {
-        self.location.transform(affine);
-    }
+    fn transform(&mut self, affine: Affine) { self.location.transform(affine); }
 }
 
 impl AffineTransformable for Line {
@@ -44,4 +40,3 @@ impl AffineTransformable for Line {
         self.end.transform(affine);
     }
 }
-
