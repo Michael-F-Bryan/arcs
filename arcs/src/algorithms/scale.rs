@@ -1,5 +1,5 @@
 use crate::{
-    algorithms::ScaleNonUniform, primitives::Arc,
+    algorithms::ScaleNonUniform, primitives::Arc, components::Viewport
 };
 
 /// Something which can be scaled in *Drawing Space*
@@ -31,6 +31,14 @@ impl Scale for Arc {
             self.start_angle(),
             self.sweep_angle(),
         );
+    }
+}
+
+impl Scale for Viewport {
+    /// Zoom the viewport, where a positive `scale_factor` will zoom in.
+    fn scale(&mut self, scale_factor: f64) {
+        assert!(scale_factor.is_finite() && scale_factor != 0.0);
+        self.pixels_per_drawing_unit /= scale_factor;
     }
 }
 

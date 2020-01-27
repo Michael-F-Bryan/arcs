@@ -1,5 +1,7 @@
 use crate::{
-    algorithms::AffineTransformable, components::BoundingBox, primitives::Arc,
+    algorithms::AffineTransformable,
+    components::{BoundingBox, Viewport},
+    primitives::Arc,
     Vector,
 };
 use kurbo::Affine;
@@ -42,6 +44,12 @@ impl Translate for BoundingBox {
             self.bottom_left().translated(displacement),
             self.top_right().translated(displacement),
         );
+    }
+}
+
+impl Translate for Viewport {
+    fn translate(&mut self, displacement: Vector) {
+        self.centre.translate(displacement);
     }
 }
 

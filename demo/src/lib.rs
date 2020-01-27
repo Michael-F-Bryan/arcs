@@ -87,7 +87,7 @@ fn draw(canvas: &HtmlCanvasElement, model: &mut Model) {
 
     let mut system = model.window.render_system(ctx, model.canvas_size);
     RunNow::setup(&mut system, &mut model.world);
-    RunNow::run_now(&mut system, &mut model.world);
+    RunNow::run_now(&mut system, &model.world);
 }
 
 fn parent_size(element: &HtmlElement) -> Option<Size> {
