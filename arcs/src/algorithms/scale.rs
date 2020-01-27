@@ -1,5 +1,5 @@
 use crate::{
-    algorithms::ScaleNonUniform, primitives::Arc, components::Viewport
+    algorithms::ScaleNonUniform, components::Viewport, primitives::Arc,
 };
 
 /// Something which can be scaled in *Drawing Space*

@@ -16,16 +16,16 @@ travis-ci = { repository = "Michael-F-Bryan/arcs", branch = "master" }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0"
-log = "0.4.8"
+anyhow = "1"
+log = "0.4"
 piet = "0.0.7"
 specs = "0.15"
 specs-derive = "0.4"
 shred-derive = "0.6"
 kurbo = "0.5"
 shred = "0.9"
-inventory = "0.1.5"
 cgmath = "0.17.0"
+lazy_static = "1"
 
 [dev-dependencies]
 piet-common = "0.0.7"

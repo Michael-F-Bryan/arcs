@@ -6,12 +6,11 @@ use std::{
 
 /// A vtable which gives the engine reflection-like abilities.
 #[derive(Copy, Clone)]
-pub struct ComponentVtable {
+pub(crate) struct ComponentVtable {
     type_id: TypeId,
     name: &'static str,
     register: fn(world: &mut World),
     get_cloned: fn(world: &World, entity: Entity) -> Option<Box<dyn Any>>,
-    set: fn(world: &mut World, entity: Entity, value: &dyn Any),
     debug: fn(item: &dyn Any, f: &mut Formatter<'_>) -> fmt::Result,
 }
 
@@ -34,17 +33,6 @@ impl ComponentVtable {
                     .get(entity)
                     .cloned()
                     .map(|item| Box::new(item) as Box<dyn Any>)
-            },
-            set: |world, entity, value| {
-                let value: &T = match value.downcast_ref() {
-                    Some(boxed) => &*boxed,
-                    None => panic!("Expected a {}", any::type_name::<T>()),
-                };
-
-                world
-                    .write_storage::<T>()
-                    .insert(entity, value.clone())
-                    .unwrap();
             },
             debug: |item, f| match item.downcast_ref::<T>() {
                 Some(item) => Debug::fmt(item, f),
@@ -77,16 +65,4 @@ impl ComponentVtable {
     ) -> Option<Box<dyn Any>> {
         (self.get_cloned)(world, entity)
     }
-
-    /// Associate the entity with a new [`Component`] value.
-    pub(crate) fn set(
-        &self,
-        world: &mut World,
-        entity: Entity,
-        value: &dyn Any,
-    ) {
-        (self.set)(world, entity, value);
-    }
 }
-
-inventory::collect!(ComponentVtable);

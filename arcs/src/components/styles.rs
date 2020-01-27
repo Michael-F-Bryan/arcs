@@ -10,8 +10,6 @@ pub struct PointStyle {
     pub radius: Dimension,
 }
 
-decl_component!(PointStyle);
-
 impl Default for PointStyle {
     fn default() -> PointStyle {
         PointStyle {
@@ -28,8 +26,6 @@ pub struct LineStyle {
     pub width: Dimension,
 }
 
-decl_component!(LineStyle);
-
 impl Default for LineStyle {
     fn default() -> LineStyle {
         LineStyle {
@@ -44,8 +40,6 @@ impl Default for LineStyle {
 pub struct WindowStyle {
     pub background_colour: Color,
 }
-
-decl_component!(WindowStyle);
 
 impl Default for WindowStyle {
     fn default() -> WindowStyle {
