@@ -58,22 +58,21 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Common components used by the `arcs` CAD library.</span>
 
-<span class="doccomment">/// A macro which, coupled with [`crate::components::ComponentVtable`], allows</span>
-<span class="doccomment">/// the CAD engine to do things like component discovery (for</span>
-<span class="doccomment">/// [`crate::components::register()`]) and undo/redo.</span>
-<span class="attribute">#[<span class="ident">macro_export</span>]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">decl_component</span> {
-    (<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="ident">inventory</span>::<span class="macro">submit</span><span class="macro">!</span> {
-            <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">components</span>::<span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">type</span><span class="op">&gt;</span>()
-        }
-    };
-}
-
-<span class="kw">mod</span> <span class="macro-nonterminal">bounding_box</span>;
+<span class="kw">mod</span> <span class="ident">bounding_box</span>;
 <span class="kw">mod</span> <span class="ident">dimension</span>;
 <span class="kw">mod</span> <span class="ident">drawing_object</span>;
 <span class="kw">mod</span> <span class="ident">layer</span>;
@@ -89,15 +88,38 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">name</span>::{<span class="ident">Name</span>, <span class="ident">NameTable</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">styles</span>::{<span class="ident">LineStyle</span>, <span class="ident">PointStyle</span>, <span class="ident">WindowStyle</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">viewport</span>::<span class="ident">Viewport</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">vtable</span>::<span class="ident">ComponentVtable</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use</span> <span class="ident">vtable</span>::<span class="ident">ComponentVtable</span>;
 
 <span class="kw">use</span> <span class="ident">specs</span>::{<span class="ident">Entity</span>, <span class="ident">World</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">Any</span>;
 
+<span class="doccomment">/// Get an iterator over the [`ComponentVtable`] for all known [`Component`]</span>
+<span class="doccomment">/// types.</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">known_components</span>(
+) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">ComponentVtable</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> {
+    <span class="ident">lazy_static</span>::<span class="macro">lazy_static</span><span class="macro">!</span> {
+        <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">VTABLES</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ComponentVtable</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">BoundingBox</span><span class="op">&gt;</span>(),
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">DrawingObject</span><span class="op">&gt;</span>(),
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">Layer</span><span class="op">&gt;</span>(),
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">Name</span><span class="op">&gt;</span>(),
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">LineStyle</span><span class="op">&gt;</span>(),
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">PointStyle</span><span class="op">&gt;</span>(),
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">WindowStyle</span><span class="op">&gt;</span>(),
+            <span class="ident">ComponentVtable</span>::<span class="ident">for_type</span>::<span class="op">&lt;</span><span class="ident">Viewport</span><span class="op">&gt;</span>(),
+        ];
+    }
+
+    <span class="ident">VTABLES</span>.<span class="ident">iter</span>()
+}
+
 <span class="doccomment">/// Register all [`specs::Component`]s.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register</span>(<span class="ident">world</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">World</span>) {
-    <span class="kw">for</span> <span class="ident">vtable</span> <span class="kw">in</span> <span class="ident">inventory</span>::<span class="ident">iter</span>::<span class="op">&lt;</span><span class="ident">ComponentVtable</span><span class="op">&gt;</span> {
-        <span class="ident">vtable</span>.<span class="ident">register</span>(<span class="ident">world</span>);
+    <span class="ident">log</span>::<span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;Registering all components&quot;</span>);
+
+    <span class="kw">for</span> <span class="ident">component</span> <span class="kw">in</span> <span class="ident">known_components</span>() {
+        <span class="ident">log</span>::<span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;Registering {}&quot;</span>, <span class="ident">component</span>.<span class="ident">name</span>());
+        <span class="ident">component</span>.<span class="ident">register</span>(<span class="ident">world</span>);
     }
 }
 
@@ -106,18 +128,18 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Note</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// This requires the [`decl_component!()`] macro to have been invoked on</span>
-<span class="doccomment">/// the [`specs::Component`].</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">attached_to_entity</span>(
+<span class="doccomment">/// This only works on [`specs::Component`]s from the [`known_components()`]</span>
+<span class="doccomment">/// list.</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">attached_to_entity</span>(
     <span class="ident">world</span>: <span class="kw-2">&amp;</span><span class="ident">World</span>,
     <span class="ident">entity</span>: <span class="ident">Entity</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">ComponentVtable</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Any</span><span class="op">&gt;</span>)<span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;_</span> {
-    <span class="ident">inventory</span>::<span class="ident">iter</span>::<span class="op">&lt;</span><span class="ident">ComponentVtable</span><span class="op">&gt;</span>
-        .<span class="ident">into_iter</span>()
-        .<span class="ident">filter_map</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">vtable</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">vtable</span>.<span class="ident">get_cloned</span>(<span class="ident">world</span>, <span class="ident">entity</span>) {
+    <span class="ident">known_components</span>().<span class="ident">into_iter</span>().<span class="ident">filter_map</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">vtable</span><span class="op">|</span> {
+        <span class="kw">match</span> <span class="ident">vtable</span>.<span class="ident">get_cloned</span>(<span class="ident">world</span>, <span class="ident">entity</span>) {
             <span class="prelude-val">Some</span>(<span class="ident">got</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>((<span class="ident">vtable</span>, <span class="ident">got</span>)),
             <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
-        })
+        }
+    })
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "arcs";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
