@@ -23,7 +23,6 @@ use std::any::Any;
 
 /// Get an iterator over the [`ComponentVtable`] for all known [`Component`]
 /// types.
-#[cfg(any(windows, unix, rustdoc))]
 pub(crate) fn known_components(
 ) -> impl Iterator<Item = &'static ComponentVtable> + 'static {
     lazy_static::lazy_static! {
@@ -44,7 +43,10 @@ pub(crate) fn known_components(
 
 /// Register all [`specs::Component`]s.
 pub fn register(world: &mut World) {
+    log::debug!("Registering all components");
+
     for component in known_components() {
+        log::debug!("Registering {}", component.name());
         component.register(world);
     }
 }
