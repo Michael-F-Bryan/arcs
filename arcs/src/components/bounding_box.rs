@@ -1,6 +1,8 @@
 use crate::{algorithms::Bounded, Vector};
 use specs::prelude::*;
 use specs_derive::Component;
+use aabb_quadtree::{QuadTree, Spatial};
+use euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 
 /// An axis-aligned bounding box.
 #[derive(Debug, Copy, Clone, PartialEq, Component)]
@@ -8,6 +10,16 @@ use specs_derive::Component;
 pub struct BoundingBox {
     bottom_left: Vector,
     top_right: Vector,
+}
+
+impl Spatial<u64> for BoundingBox {
+    fn aabb(&self) -> TypedRect<f32, u64> {
+        let bb = self;
+        TypedRect::<f32, u64>::new(
+            // TypedRects have their origin at the bottom left corner (this is undocumented!)
+            TypedPoint2D::new(bb.bottom_left().x as f32, bb.bottom_left().y as f32),
+            TypedSize2D::new(bb.width() as f32, bb.height() as f32))
+    }
 }
 
 impl BoundingBox {
@@ -57,6 +69,8 @@ impl BoundingBox {
     pub fn area(self) -> f64 { self.width() * self.height() }
 
     pub fn diagonal(self) -> Vector { self.top_right - self.bottom_left }
+
+    pub fn center(self) -> Vector { self.bottom_left() + self.diagonal() * 0.5 }
 
     /// Merge two [`BoundingBox`]es.
     pub fn merge(left: BoundingBox, right: BoundingBox) -> BoundingBox {
@@ -128,5 +142,54 @@ mod tests {
         let got = BoundingBox::around(corners).unwrap();
 
         assert_eq!(got, original);
+    }
+
+    use crate::{
+        primitives::{Line, Arc},
+        components::BoundingBox,
+        Vector,
+        algorithms::{Bounded},
+    };
+    use aabb_quadtree::{QuadTree, Spatial, ItemId};
+    use euclid::{TypedRect};
+    use std::f64::consts::PI;
+    
+    #[test]
+    fn line_insertion() {
+        let line0 = Line::new(Vector::new(2.0, 1.0), Vector::new(5.0, -1.0));
+        let bb = line0.bounding_box();
+        // Size needs to be bigger then everything we plan on drawing :/
+        let max_size = 1_000_000.0;
+        let size = BoundingBox::new(Vector::new(-max_size, -max_size), Vector::new(max_size, max_size)).aabb();
+        // I don't really understand why we need to specify A -> [(ItemId, TypedRect<f32, u64>); 0]
+        let mut qt: QuadTree<BoundingBox, u64, [(ItemId, TypedRect<f32, u64>); 0]> = QuadTree::new(
+            size,
+            true,
+            4,
+            16,
+            8,
+            4
+        );
+
+        let id = qt.insert(bb).unwrap();
+        assert_eq!(*qt.get(id).unwrap(), bb);
+
+        // simulate cursor query at line start
+        let cursor_pos = Vector::new(2.0, 1.0);
+        let cursor_circle = Arc::from_centre_radius(cursor_pos, 1.0, 0.0, 2.0 * PI);
+
+        let query = qt.query(cursor_circle.bounding_box().aabb());
+        assert_eq!(query.len(), 1);
+        assert_eq!(query[0].2, id);
+
+        // simulate cursor query at line end
+        let cursor_pos = Vector::new(5.0, -1.0);
+        let cursor_circle = Arc::from_centre_radius(cursor_pos, 1.0, 0.0, 2.0 * PI);
+
+        let query = qt.query(cursor_circle.bounding_box().aabb());
+        // This query fails :/
+        assert_eq!(query.len(), 1);
+        assert_eq!(query[0].2, id);
+
     }
 }
