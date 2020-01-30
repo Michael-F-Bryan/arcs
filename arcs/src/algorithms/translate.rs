@@ -2,7 +2,7 @@ use crate::{
     algorithms::AffineTransformable,
     components::{BoundingBox, Viewport},
     primitives::Arc,
-    Vector,
+    Transform, Vector,
 };
 use kurbo::Affine;
 
@@ -23,7 +23,10 @@ pub trait Translate {
 
 impl<A: AffineTransformable> Translate for A {
     fn translate(&mut self, displacement: Vector) {
-        self.transform(Affine::translate(displacement));
+        self.transform(Transform::create_translation(
+            displacement.x,
+            displacement.y,
+        ));
     }
 }
 

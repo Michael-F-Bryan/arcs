@@ -34,7 +34,7 @@ impl Length for Vector {
     ///
     /// assert_eq!(vector.length(), 5.0);
     /// ```
-    fn length(&self) -> f64 { Vector::length(*self) }
+    fn length(&self) -> f64 { euclid::Vector2D::length(self) }
 }
 
 impl Length for Arc {

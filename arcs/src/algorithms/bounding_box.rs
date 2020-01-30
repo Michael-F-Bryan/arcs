@@ -46,7 +46,7 @@ impl Bounded for Arc {
     fn bounding_box(&self) -> BoundingBox {
         use std::f64::consts::{FRAC_PI_2, PI};
 
-        let Vector { x, y } = self.centre();
+        let (x, y) = self.centre().to_tuple();
         let r = self.radius();
 
         let mut bounds = BoundingBox::new(self.start(), self.end());

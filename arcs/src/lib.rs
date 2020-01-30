@@ -10,4 +10,7 @@ pub mod systems;
 mod vector;
 pub mod window;
 
-pub use vector::{Orientation, Vector};
+pub use vector::{
+    centre_of_three_points, CanvasSpace, DrawingSpace, Orientation, Transform,
+    Vector,
+};

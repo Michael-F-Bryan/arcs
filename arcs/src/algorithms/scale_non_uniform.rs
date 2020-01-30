@@ -1,4 +1,6 @@
-use crate::{algorithms::AffineTransformable, components::BoundingBox};
+use crate::{
+    algorithms::AffineTransformable, components::BoundingBox, Transform,
+};
 use kurbo::Affine;
 
 /// Something which can be scaled **non-uniform** in x and y directions in
@@ -19,8 +21,7 @@ pub trait ScaleNonUniform {
 
 impl<A: AffineTransformable> ScaleNonUniform for A {
     fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64) {
-        // TODO: Change to `Affine::scale_non_uniform()` after crates.io update
-        self.transform(Affine::new([factor_x, 0.0, 0.0, factor_y, 0.0, 0.0]));
+        self.transform(Transform::create_scale(factor_x, factor_y));
     }
 }
 

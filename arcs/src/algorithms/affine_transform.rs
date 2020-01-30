@@ -1,42 +1,53 @@
 use crate::{
     primitives::{Line, Point},
-    Vector,
+    DrawingSpace, Vector,
 };
+use euclid::Transform2D;
 use kurbo::Affine;
 
-pub trait AffineTransformable {
-    fn transform(&mut self, affine: Affine);
+pub trait AffineTransformable<Space = DrawingSpace> {
+    fn transform(&mut self, transform: Transform2D<f64, Space, Space>);
 
-    fn transformed(&self, affine: Affine) -> Self
+    fn transformed(&self, transform: Transform2D<f64, Space, Space>) -> Self
     where
         Self: Sized + Clone,
     {
         let mut clone = self.clone();
-        clone.transform(affine);
+        clone.transform(transform);
 
         clone
     }
 }
 
-impl<'t, T: AffineTransformable + ?Sized> AffineTransformable for &'t mut T {
-    fn transform(&mut self, affine: Affine) { (*self).transform(affine); }
+impl<'t, S, T: AffineTransformable<S> + ?Sized> AffineTransformable<S>
+    for &'t mut T
+{
+    fn transform(&mut self, transform: Transform2D<f64, S, S>) {
+        (*self).transform(transform);
+    }
 }
 
-impl AffineTransformable for Vector {
-    fn transform(&mut self, affine: Affine) {
-        let new_pos = affine * *self;
-        self.x = new_pos.x;
-        self.y = new_pos.y;
+impl<Space> AffineTransformable<Space> for euclid::Vector2D<f64, Space> {
+    fn transform(&mut self, transform: Transform2D<f64, Space, Space>) {
+        *self = transform.transform_vector(*self);
     }
 }
 
 impl AffineTransformable for Point {
-    fn transform(&mut self, affine: Affine) { self.location.transform(affine); }
+    fn transform(
+        &mut self,
+        transform: Transform2D<f64, DrawingSpace, DrawingSpace>,
+    ) {
+        self.location.transform(transform);
+    }
 }
 
 impl AffineTransformable for Line {
-    fn transform(&mut self, affine: Affine) {
-        self.start.transform(affine);
-        self.end.transform(affine);
+    fn transform(
+        &mut self,
+        transform: Transform2D<f64, DrawingSpace, DrawingSpace>,
+    ) {
+        self.start.transform(transform);
+        self.end.transform(transform);
     }
 }

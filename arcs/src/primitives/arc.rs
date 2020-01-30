@@ -34,10 +34,10 @@ impl Arc {
         end: Vector,
     ) -> Option<Self> {
         debug_assert!(
-            Vector::orientation(start, middle, end) != Orientation::Collinear
+            Orientation::of(start, middle, end) != Orientation::Collinear
         );
 
-        let centre = Vector::centre_of_three_points(start, middle, end)?;
+        let centre = crate::centre_of_three_points(start, middle, end)?;
         let radius = (start - centre).length();
         let start_angle = (start - centre).angle();
         let sweep_angle = sweep_angle_from_3_points(start, middle, end, centre);
@@ -100,13 +100,14 @@ fn sweep_angle_from_3_points(
     centre: Vector,
 ) -> f64 {
     debug_assert!(
-        Vector::orientation(start, middle, end) != Orientation::Collinear
+        Orientation::of(start, middle, end) != Orientation::Collinear
     );
 
     let start_ray = start - centre;
     let end_ray = end - centre;
     let orientation = Vector::orientation(start, middle, end);
-    let angular_difference = end_ray.angle() - start_ray.angle();
+    let angular_difference =
+        end_ray.angle_from_x_axis() - start_ray.angle_from_x_axis();
 
     if angular_difference > 0.0 && orientation == Orientation::Clockwise {
         angular_difference - 2.0 * PI
