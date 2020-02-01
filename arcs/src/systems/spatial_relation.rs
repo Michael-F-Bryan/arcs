@@ -1,5 +1,5 @@
 use crate::{
-    components::{SpatialEntity, DrawingObject, Space},
+    components::{SpatialEntity, DrawingObject, Space, BoundingBox},
     algorithms::{Bounded},
 };
 use specs::prelude::*;
@@ -18,7 +18,7 @@ impl SpatialRelation {
 
     pub fn new(world: &World) -> Self {        
         SpatialRelation {
-            changes: world.write_storage::<DrawingObject>().register_reader(),
+            changes: world.write_storage::<BoundingBox>().register_reader(),
             to_insert: BitSet::new(),
             to_update: BitSet::new(),
             to_remove: BitSet::new(),
@@ -29,7 +29,7 @@ impl SpatialRelation {
 impl<'world> System<'world> for SpatialRelation {
     type SystemData = (
         Write<'world, Space>,
-        ReadStorage<'world, DrawingObject>,
+        ReadStorage<'world, BoundingBox>,
         Entities<'world>
     );
 
@@ -38,10 +38,10 @@ impl<'world> System<'world> for SpatialRelation {
         self.to_insert.clear();
         self.to_update.clear();
 
-        let (mut space, drawing_objects, entities) = data;
+        let (mut space, bounds, entities) = data;
 
         // find out which items have changed since we were last polled
-        for event in drawing_objects.channel().read(&mut self.changes) {
+        for event in bounds.channel().read(&mut self.changes) {
             match *event {
                 ComponentEvent::Inserted(id) => {
                     self.to_insert.add(id);
@@ -55,18 +55,16 @@ impl<'world> System<'world> for SpatialRelation {
             }
         }
 
-        for (ent, drawing_object, _) in
-            (&entities, &drawing_objects, &self.to_insert).join()
+        for (ent, bounding_box, _) in
+            (&entities, &bounds, &self.to_insert).join()
         {
-            let bb = drawing_object.geometry.bounding_box();
-            space.modify(SpatialEntity::new(bb, ent));
+            space.modify(SpatialEntity::new(*bounding_box, ent));
         }
 
-        for (ent, drawing_object, _) in
-            (&entities, &drawing_objects, &self.to_update).join()
+        for (ent, bounding_box, _) in
+            (&entities, &bounds, &self.to_update).join()
         {
-            let bb = drawing_object.geometry.bounding_box();
-            space.modify(SpatialEntity::new(bb, ent));
+            space.modify(SpatialEntity::new(*bounding_box, ent));
         }
 
         // FIXME: This iterator is always empty, why?
@@ -81,15 +79,14 @@ impl<'world> System<'world> for SpatialRelation {
             world,
         );
 
-        let drawing_storage = world.read_storage::<DrawingObject>();
+        let bounding_storage = world.read_storage::<BoundingBox>();
         let mut space = world.write_resource::<Space>();
 
         space.clear();
 
-        for entity in world.entities().join() {
-            if let Some(drawing) = drawing_storage.get(entity) {
-                space.modify(SpatialEntity::new(drawing.geometry.bounding_box(), entity));
-            }
+        for (entity, bounding_box) in (&world.entities(), &bounding_storage).join() {
+            println!("ent, bb: {:?}, {:?}", entity, bounding_box);
+            space.modify(SpatialEntity::new(*bounding_box, entity));
         }
     }
 }
@@ -97,10 +94,10 @@ impl<'world> System<'world> for SpatialRelation {
 #[cfg(test)]
 mod tests {
     use crate::{
-        components::{register, Layer, Name, DrawingObject, Geometry, LineStyle, Dimension, Space},
+        components::{register, Layer, Name, DrawingObject, Geometry, LineStyle, Dimension, Space, BoundingBox},
         {Point, Line},
-        systems::SpatialRelation,
-        algorithms::{Bounded},
+        systems::{SpatialRelation},
+        algorithms::Bounded,
     };
     use specs::prelude::*;
     use piet::Color;
@@ -134,6 +131,7 @@ mod tests {
                 width: Dimension::DrawingUnits(Length::new(5.0)),
                 stroke: Color::rgb8(0xff, 0, 0),
             })
+            .with(line.bounding_box())
             .build()
         ;
 
@@ -175,6 +173,7 @@ mod tests {
                 width: Dimension::DrawingUnits(Length::new(5.0)),
                 stroke: Color::rgb8(0xff, 0, 0),
             })
+            .with(line.bounding_box())
             .build()
         ;
 
@@ -194,6 +193,7 @@ mod tests {
                 width: Dimension::DrawingUnits(Length::new(5.0)),
                 stroke: Color::rgb8(0xff, 0, 0),
             })
+            .with(line.bounding_box())
             .build()
         ;
 
@@ -212,6 +212,7 @@ mod tests {
 
         // or collect into an vec
         let query: Vec<_> = space.query_point(Point::new(2.5, 0.5), 1.0).collect();
+        println!("query: {:#?}", query);
         assert!(!query.is_empty());
         assert_eq!(query.len(), 2);
         assert!((query[0].entity == first && query[1].entity == second) |
