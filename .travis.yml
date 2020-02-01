@@ -25,10 +25,20 @@ script:
   - wasm-pack build --dev --target web
 
 before_deploy:
+  # prepare API docs
   - cd $TRAVIS_BUILD_DIR/arcs
   - cargo doc --verbose
   - echo '<meta http-equiv="refresh" content="0; url=arcs/index.html" /> ' > target/doc/index.html
-  - cp -r target/doc $TRAVIS_BUILD_DIR/public
+  # then copy the docs to the public/crate_docs/ directory
+  - mkdir $TRAVIS_BUILD_DIR/public
+  - cp -r target/doc $TRAVIS_BUILD_DIR/public/crate_docs/
+  # do the same for the WebAssembly demo
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir public/demo/
+  - cp index.html $TRAVIS_BUILD_DIR/public/demo/
+  - cp -r demo/pkg/ $TRAVIS_BUILD_DIR/public/demo/
+  # going to the root GitHub Pages page should show the demo
+  - echo '<meta http-equiv="refresh" content="0; url=demo/index.html" /> ' > public/index.html
 
 deploy:
   provider: pages
