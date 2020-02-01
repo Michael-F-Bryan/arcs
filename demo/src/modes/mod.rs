@@ -1,9 +1,21 @@
-use arcs::{CanvasSpace, DrawingSpace};
+use arcs::{components::DrawingObject, CanvasSpace, DrawingSpace, Point};
 use euclid::Point2D;
+use specs::Entity;
 use std::fmt::Debug;
 
 /// A basic drawing canvas, as seen by the various [`State`]s.
 pub trait Drawing {
+    /// Get a list of all the entities which lie "under" a point, for some
+    /// definition of "under".
+    ///
+    /// Typically this will be implemented by the drawing canvas having some
+    /// sort of "pick box" where anything within, say, 3 pixels of something is
+    /// considered to be "under" it.
+    fn entities_under_point(
+        &self,
+        location: Point,
+    ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>>;
+
     /// An optimisation hint that the canvas doesn't need to be redrawn after
     /// this event handler returns.
     fn suppress_redraw(&mut self) {}
@@ -67,7 +79,7 @@ pub struct MouseEventArgs {
 }
 
 bitflags::bitflags! {
-    /// Which mouse button is pressed?
+    /// Which mouse button (or buttons) are pressed?
     pub struct MouseButtons: u8 {
         const LEFT_BUTTON = 0;
         const RIGHT_BUTTON = 1;
@@ -79,6 +91,8 @@ bitflags::bitflags! {
 pub struct KeyboardEventArgs {
     pub shift_pressed: bool,
     pub control_pressed: bool,
+    /// The semantic meaning of the key currently being pressed, if there is
+    /// one.
     pub key: Option<VirtualKeyCode>,
 }
 
