@@ -4,10 +4,10 @@ use crate::{
         BoundingBox, DrawingObject, Geometry, Layer, LineStyle, PointStyle,
         Viewport, WindowStyle,
     },
-    primitives::{Line, Point},
-    Vector,
+    CanvasSpace, DrawingSpace, Line, Point,
 };
-use kurbo::{Circle, Size};
+use euclid::{Point2D, Scale, Size2D};
+use kurbo::Circle;
 use piet::RenderContext;
 use shred_derive::SystemData;
 use specs::{join::MaybeJoin, prelude::*};
@@ -23,8 +23,8 @@ impl Window {
         let ent = world
             .create_entity()
             .with(Viewport {
-                centre: Vector::zero(),
-                pixels_per_drawing_unit: 1.0,
+                centre: Point::zero(),
+                pixels_per_drawing_unit: Scale::new(1.0),
             })
             .with(LineStyle::default())
             .with(PointStyle::default())
@@ -44,7 +44,7 @@ impl Window {
     pub fn render_system<'a, R>(
         &'a self,
         backend: R,
-        window_size: Size,
+        window_size: Size2D<f64, CanvasSpace>,
     ) -> impl System<'a> + 'a
     where
         R: RenderContext + 'a,
@@ -100,18 +100,19 @@ impl Window {
 #[derive(Debug)]
 struct RenderSystem<'window, B> {
     backend: B,
-    window_size: Size,
+    window_size: Size2D<f64, CanvasSpace>,
     window: &'window Window,
 }
 
 impl<'window, B> RenderSystem<'window, B> {
     /// Calculate the area of the drawing displayed by the viewport.
     fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox {
-        let scale = viewport.pixels_per_drawing_unit;
-        let width = scale * self.window_size.width;
-        let height = scale * self.window_size.height;
+        let window_size = viewport
+            .pixels_per_drawing_unit
+            .inv()
+            .transform_size(self.window_size);
 
-        BoundingBox::from_centre_and_dimensions(viewport.centre, width, height)
+        BoundingBox::from_centre_and_size(viewport.centre, window_size)
     }
 }
 
@@ -124,7 +125,7 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
         viewport: &Viewport,
     ) {
         match drawing_object.geometry {
-            Geometry::Point(ref point) => {
+            Geometry::Point(point) => {
                 self.render_point(
                     ent,
                     point,
@@ -150,15 +151,16 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
     fn render_point(
         &mut self,
         entity: Entity,
-        point: &Point,
+        point: Point,
         layer: Entity,
         styles: &Styling,
         viewport: &Viewport,
     ) {
         let style = resolve_point_style(styles, self.window, entity, layer);
 
+        let centre = self.to_canvas_coordinates(point, viewport);
         let shape = Circle {
-            center: self.to_viewport_coordinates(point.location, viewport),
+            center: kurbo::Point::new(centre.x, centre.y),
             radius: style.radius.in_pixels(viewport.pixels_per_drawing_unit),
         };
         log::trace!("Drawing {:?} as {:?} using {:?}", point, shape, style);
@@ -176,9 +178,9 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
     ) {
         let style = resolve_line_style(styles, self.window, entity, layer);
 
-        let start = self.to_viewport_coordinates(line.start, viewport);
-        let end = self.to_viewport_coordinates(line.end, viewport);
-        let shape = kurbo::Line::new(start, end);
+        let start = self.to_canvas_coordinates(line.start, viewport);
+        let end = self.to_canvas_coordinates(line.end, viewport);
+        let shape = kurbo::Line::new(start.to_tuple(), end.to_tuple());
         let stroke_width =
             style.width.in_pixels(viewport.pixels_per_drawing_unit);
         log::trace!("Drawing {:?} as {:?} using {:?}", line, shape, style);
@@ -186,13 +188,13 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
         self.backend.stroke(shape, &style.stroke, stroke_width);
     }
 
-    /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the
-    /// canvas.
-    fn to_viewport_coordinates(
+    /// Translates a [`crate::Point`] from drawing space to a location in
+    /// [`CanvasSpace`].
+    fn to_canvas_coordinates(
         &self,
-        point: Vector,
+        point: Point2D<f64, DrawingSpace>,
         viewport: &Viewport,
-    ) -> kurbo::Point {
+    ) -> Point2D<f64, CanvasSpace> {
         super::to_canvas_coordinates(point, viewport, self.window_size)
     }
 }

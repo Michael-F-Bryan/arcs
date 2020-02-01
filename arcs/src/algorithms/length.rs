@@ -1,7 +1,4 @@
-use crate::{
-    primitives::{Arc, Line},
-    Vector,
-};
+use crate::{Arc, Line, Vector};
 
 /// Something which has a finite length.
 pub trait Length {
@@ -17,8 +14,8 @@ impl Length for Line {
     /// Calculates the length of the line.
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, primitives::Line, Vector};
-    /// let line = Line::new(Vector::zero(), Vector::new(5.0, 0.0));
+    /// # use arcs::{algorithms::Length, Line, Point};
+    /// let line = Line::new(Point::zero(), Point::new(5.0, 0.0));
     ///
     /// assert_eq!(line.length(), 5.0);
     /// ```
@@ -34,39 +31,52 @@ impl Length for Vector {
     ///
     /// assert_eq!(vector.length(), 5.0);
     /// ```
-    fn length(&self) -> f64 { Vector::length(*self) }
+    fn length(&self) -> f64 { euclid::Vector2D::length(self) }
 }
 
 impl Length for Arc {
     /// Calculates the length of an [`Arc`].
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, primitives::Arc, Vector};
+    /// # use arcs::{algorithms::Length, Arc, Point, Angle};
     /// # use std::f64::consts::PI;
     /// let radius = 50.0;
-    /// let arc = Arc::from_centre_radius(Vector::zero(), radius, 0.0, 2.0 * PI);
+    /// let arc = Arc::from_centre_radius(
+    ///     Point::zero(),
+    ///     radius,
+    ///     Angle::zero(),
+    ///     Angle::two_pi(),
+    /// );
     ///
     /// assert_eq!(arc.length(), 2.0 * radius * PI);
     /// ```
-    fn length(&self) -> f64 { self.radius() * self.sweep_angle().abs() }
+    fn length(&self) -> f64 { self.radius() * self.sweep_angle().radians.abs() }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::f64::consts::PI;
+    use crate::{Angle, Point};
 
     #[test]
     fn line() {
-        let thing = Line::new(Vector::zero(), Vector::new(3.0, 4.0));
+        let thing = Line::new(Point::zero(), Point::new(3.0, 4.0));
 
         assert_eq!(thing.length(), 5.0);
     }
 
     #[test]
     fn arc() {
-        let arc = Arc::from_centre_radius(Vector::zero(), 10.0, 0.0, PI);
+        let arc = Arc::from_centre_radius(
+            Point::zero(),
+            10.0,
+            Angle::zero(),
+            Angle::pi(),
+        );
 
-        assert_eq!(arc.length(), arc.sweep_angle().abs() * arc.radius());
+        assert_eq!(
+            arc.length(),
+            arc.sweep_angle().radians.abs() * arc.radius()
+        );
     }
 }

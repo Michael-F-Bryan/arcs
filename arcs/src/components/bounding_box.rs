@@ -1,4 +1,5 @@
-use crate::{algorithms::Bounded, Vector};
+use crate::{algorithms::Bounded, DrawingSpace, Length, Point, Vector};
+use euclid::{num::Zero, Size2D};
 use specs::prelude::*;
 use specs_derive::Component;
 use aabb_quadtree::{Spatial};
@@ -8,8 +9,8 @@ use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 #[derive(Debug, Copy, Clone, PartialEq, Component)]
 #[storage(DenseVecStorage)]
 pub struct BoundingBox {
-    bottom_left: Vector,
-    top_right: Vector,
+    bottom_left: Point,
+    top_right: Point,
 }
 
 impl Spatial<f64> for BoundingBox {
@@ -24,21 +25,21 @@ impl Spatial<f64> for BoundingBox {
 
 impl BoundingBox {
     /// Create a new [`BoundingBox`] around two points.
-    pub fn new(first: Vector, second: Vector) -> Self {
+    pub fn new(first: Point, second: Point) -> Self {
         let min_x = f64::min(first.x, second.x);
         let min_y = f64::min(first.y, second.y);
         let max_x = f64::max(first.x, second.x);
         let max_y = f64::max(first.y, second.y);
 
         BoundingBox::new_unchecked(
-            Vector::new(min_x, min_y),
-            Vector::new(max_x, max_y),
+            Point::new(min_x, min_y),
+            Point::new(max_x, max_y),
         )
     }
 
     /// Create a new [`BoundingBox`] without ensuring the bottom-left and
     /// top-right corners are actually in the bottom-left and top-right.
-    pub fn new_unchecked(bottom_left: Vector, top_right: Vector) -> Self {
+    pub fn new_unchecked(bottom_left: Point, top_right: Point) -> Self {
         debug_assert!(bottom_left.x <= top_right.x);
         debug_assert!(bottom_left.y <= top_right.y);
 
@@ -48,25 +49,39 @@ impl BoundingBox {
         }
     }
 
-    pub fn from_centre_and_dimensions(
-        centre: Vector,
-        width: f64,
-        height: f64,
+    pub fn from_centre_and_size(
+        centre: Point,
+        size: Size2D<f64, DrawingSpace>,
     ) -> Self {
-        debug_assert!(width >= 0.0);
-        debug_assert!(height >= 0.0);
+        BoundingBox::from_centre_and_dimensions(
+            centre,
+            Length::new(size.width),
+            Length::new(size.height),
+        )
+    }
 
-        let diagonal = Vector::new(width / 2.0, height / 2.0);
+    pub fn from_centre_and_dimensions(
+        centre: Point,
+        width: Length,
+        height: Length,
+    ) -> Self {
+        debug_assert!(width >= Length::zero(), "{} should not be negative", width);
+        debug_assert!(height >= Length::zero(), "{} should not be negative", height);
+
+        let diagonal = Vector::from_lengths(width / 2.0, height / 2.0);
         let bottom_left = centre - diagonal;
         let top_right = centre + diagonal;
         BoundingBox::new_unchecked(bottom_left, top_right)
     }
 
-    pub fn width(self) -> f64 { self.top_right.x - self.bottom_left.x }
+    pub fn width(self) -> Length { Length::new(self.diagonal().x) }
 
-    pub fn height(self) -> f64 { self.top_right.y - self.bottom_left.y }
+    pub fn height(self) -> Length { Length::new(self.diagonal().y) }
 
-    pub fn area(self) -> f64 { self.width() * self.height() }
+    pub fn area(self) -> f64 {
+        let Vector { x, y, .. } = self.diagonal();
+        x * y
+    }
 
     pub fn diagonal(self) -> Vector { self.top_right - self.bottom_left }
 
@@ -91,16 +106,16 @@ impl BoundingBox {
             })
     }
 
-    pub fn bottom_left(self) -> Vector { self.bottom_left }
+    pub fn bottom_left(self) -> Point { self.bottom_left }
 
-    pub fn bottom_right(self) -> Vector {
-        self.bottom_left + Vector::new(self.width(), 0.0)
+    pub fn bottom_right(self) -> Point {
+        self.bottom_left + Vector::from_lengths(self.width(), Length::zero())
     }
 
-    pub fn top_right(self) -> Vector { self.top_right }
+    pub fn top_right(self) -> Point { self.top_right }
 
-    pub fn top_left(self) -> Vector {
-        self.bottom_left + Vector::new(0.0, self.height())
+    pub fn top_left(self) -> Point {
+        self.bottom_left + Vector::from_lengths(Length::zero(), self.height())
     }
 
     pub fn min_x(self) -> f64 { self.bottom_left.x }
@@ -130,8 +145,7 @@ mod tests {
 
     #[test]
     fn bounding_box_around_corners_gives_same_bounding_box() {
-        let original =
-            BoundingBox::new(Vector::zero(), Vector::new(10.0, 10.0));
+        let original = BoundingBox::new(Point::zero(), Point::new(10.0, 10.0));
         let corners = vec![
             original.bottom_left(),
             original.bottom_right(),

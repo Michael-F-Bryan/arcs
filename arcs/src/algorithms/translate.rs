@@ -1,15 +1,15 @@
 use crate::{
     algorithms::AffineTransformable,
     components::{BoundingBox, Viewport},
-    primitives::Arc,
-    Vector,
+    Arc, Transform, Vector,
 };
-use kurbo::Affine;
 
 /// Something which can be moved around "rigidly" in *Drawing Space*.
 pub trait Translate {
+    /// Translate this object in-place.
     fn translate(&mut self, displacement: Vector);
 
+    /// A convenience method for getting a translated copy of this object.
     fn translated(&self, displacement: Vector) -> Self
     where
         Self: Sized + Clone,
@@ -23,7 +23,10 @@ pub trait Translate {
 
 impl<A: AffineTransformable> Translate for A {
     fn translate(&mut self, displacement: Vector) {
-        self.transform(Affine::translate(displacement));
+        self.transform(Transform::create_translation(
+            displacement.x,
+            displacement.y,
+        ));
     }
 }
 
@@ -56,10 +59,11 @@ impl Translate for Viewport {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Point;
 
     #[test]
-    fn translate_vector() {
-        let original = Vector::new(3.0, 4.0);
+    fn translate_point() {
+        let original = Point::new(3.0, 4.0);
         let delta = Vector::new(-5.0, 2.5);
 
         let got = original.translated(delta);
@@ -69,14 +73,14 @@ mod tests {
 
     #[test]
     fn translate_bounding_box() {
-        let first = Vector::new(-2.0, 1.5);
-        let second = Vector::new(4.0, 3.7);
+        let first = Point::new(-2.0, 1.5);
+        let second = Point::new(4.0, 3.7);
         let displacement = Vector::new(1.0, -1.0);
         let original = BoundingBox::new(first, second);
 
         let expected = BoundingBox::new(
-            Vector::new(-2.0 + 1.0, 1.5 + -1.0),
-            Vector::new(4.0 + 1.0, 3.7 + -1.0),
+            Point::new(-2.0 + 1.0, 1.5 + -1.0),
+            Point::new(4.0 + 1.0, 3.7 + -1.0),
         );
         let actual = original.translated(displacement);
 
