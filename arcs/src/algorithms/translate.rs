@@ -57,10 +57,11 @@ impl Translate for Viewport {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Point;
 
     #[test]
-    fn translate_vector() {
-        let original = Vector::new(3.0, 4.0);
+    fn translate_point() {
+        let original = Point::new(3.0, 4.0);
         let delta = Vector::new(-5.0, 2.5);
 
         let got = original.translated(delta);

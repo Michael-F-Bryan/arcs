@@ -14,7 +14,7 @@ impl Length for Line {
     /// Calculates the length of the line.
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, primitives::Line, Vector};
+    /// # use arcs::{algorithms::Length, Line, Vector};
     /// let line = Line::new(Vector::zero(), Vector::new(5.0, 0.0));
     ///
     /// assert_eq!(line.length(), 5.0);
@@ -38,7 +38,7 @@ impl Length for Arc {
     /// Calculates the length of an [`Arc`].
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, primitives::Arc, Vector};
+    /// # use arcs::{algorithms::Length, Arc, Vector};
     /// # use std::f64::consts::PI;
     /// let radius = 50.0;
     /// let arc = Arc::from_centre_radius(Vector::zero(), radius, 0.0, 2.0 * PI);
@@ -51,11 +51,11 @@ impl Length for Arc {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Angle;
+    use crate::{Angle, Point};
 
     #[test]
     fn line() {
-        let thing = Line::new(Vector::zero(), Vector::new(3.0, 4.0));
+        let thing = Line::new(Point::zero(), Point::new(3.0, 4.0));
 
         assert_eq!(thing.length(), 5.0);
     }
@@ -63,7 +63,7 @@ mod tests {
     #[test]
     fn arc() {
         let arc = Arc::from_centre_radius(
-            Vector::zero(),
+            Point::zero(),
             10.0,
             Angle::zero(),
             Angle::pi(),

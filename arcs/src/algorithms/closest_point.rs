@@ -90,7 +90,7 @@ mod tests {
         let start = Point::new(1.0, 2.0);
         let end = Point::new(3.0, 10.0);
         let line = Line::new(start, end);
-        let midpoint = (start + end) / 2.0;
+        let midpoint = start + line.displacement() / 2.0;
 
         let got = line.closest_point(midpoint);
 

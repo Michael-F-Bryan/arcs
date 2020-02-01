@@ -62,6 +62,7 @@ pub fn to_drawing_coordinates(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use euclid::Scale;
 
     fn known_example() -> (
         Vec<(Point2D<f64, DrawingSpace>, Point2D<f64, CanvasSpace>)>,

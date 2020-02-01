@@ -1,7 +1,7 @@
 use arcs::{
     components::{Dimension, DrawingObject, Geometry, Layer, Name, PointStyle},
-    primitives::Point,
     window::Window,
+    Point,
 };
 use kurbo::Size;
 use log::Level;
