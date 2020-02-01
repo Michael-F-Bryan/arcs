@@ -35,7 +35,7 @@ before_deploy:
   # do the same for the WebAssembly demo
   - cd $TRAVIS_BUILD_DIR
   - mkdir public/demo/
-  - cp index.html $TRAVIS_BUILD_DIR/public/demo/
+  - cp demo/index.html $TRAVIS_BUILD_DIR/public/demo/
   - cp -r demo/pkg/ $TRAVIS_BUILD_DIR/public/demo/
   # going to the root GitHub Pages page should show the demo
   - echo '<meta http-equiv="refresh" content="0; url=demo/index.html" /> ' > public/index.html
