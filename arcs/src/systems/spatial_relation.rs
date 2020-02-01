@@ -1,13 +1,8 @@
 use crate::{
-    components::{SpatialEntity, BoundingBox, DrawingObject, Space},
+    components::{SpatialEntity, DrawingObject, Space},
     algorithms::{Bounded},
-    Vector,
-    primitives::Arc,
 };
 use specs::prelude::*;
-use aabb_quadtree::{QuadTree, ItemId, Spatial};
-use euclid::{TypedRect};
-use std::collections::HashMap;
 
 /// A [`System`] which keeps track of the spatial relation of entities
 #[derive(Debug)]
@@ -150,10 +145,6 @@ mod tests {
 
         // make sure we register all components
         register(&mut world);
-
-        // Setup our spatial system
-        let mut system = SpatialRelation::new(&world);
-        System::setup(&mut system, &mut world);
     
         let layer = Layer::create(
             world.create_entity(),
@@ -166,7 +157,7 @@ mod tests {
     
         // Add a line to our world
         let line = Line::new(Vector::new(2.0, 1.0), Vector::new(5.0, -1.0));
-        let first = world
+        let _first = world
             .create_entity()
             .with(DrawingObject {
                 geometry: Geometry::Line(line),
@@ -178,8 +169,12 @@ mod tests {
             })
             .build()
         ;
+
+        // Setup our spatial system
+        let mut system = SpatialRelation::new(&world);
+        System::setup(&mut system, &mut world);
         
-        // And add another
+        // make some changes after the initial setup
         let line = Line::new(Vector::new(3.0, 0.0), Vector::new(-1.0, 2.0));
         let _second = world
             .create_entity()
@@ -194,26 +189,16 @@ mod tests {
             .build()
         ;
 
-        // // Test if the system works
-        // system.run_now(&world);
-        // let query = system.query_point(Vector::new(3.0, -0.5));
-        // assert!(query != None);
-        // assert_eq!(query.unwrap().len(), 1);
+        // Test if the system works
+        system.run_now(&world);
+        let space = world.read_resource::<Space>();
 
-        // let query = system.query_point(Vector::new(2.5, 0.5));
-        // assert!(query != None);
-        // assert_eq!(query.unwrap().len(), 2);
+        let query = space.query_point(Vector::new(3.0, -0.5));
+        assert!(query != None);
+        assert_eq!(query.unwrap().len(), 1);
 
-        // // Test removing
-        // world.delete_entity(first).unwrap();
-        // world.maintain();
-
-        // system.run_now(&world);
-        // let query = system.query_point(Vector::new(3.0, -0.5));
-        // assert!(query == None);
-
-        // Test modifying
-        // TODO
-
+        let query = space.query_point(Vector::new(2.5, 0.5));
+        assert!(query != None);
+        assert_eq!(query.unwrap().len(), 2);
     }
 }

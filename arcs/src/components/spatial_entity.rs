@@ -1,6 +1,8 @@
 use crate::{
     components::BoundingBox,
     Vector,
+    primitives::{Arc},
+    algorithms::{Bounded},
 };
 use specs::{Entity, world::Index};
 use aabb_quadtree::{QuadTree, Spatial, ItemId};
@@ -56,6 +58,10 @@ impl Space {
     // FIXME: Hard-code is bad-bad
     const WORLD_RADIUS: f64 = 1_000_000.0;
 
+    // FIXME: We need to supply this in *DrawingUnits*
+    // as 1[meter] f.e. becomes meaningless when zoomed far in/out
+    const QUERY_POINT_RADIUS: f64 = 1.0;
+
     fn default_tree() -> QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]> {
         // Initialize quadtree
         let size = BoundingBox::new(
@@ -85,11 +91,27 @@ impl Space {
     }
 
     pub fn modify(&mut self, spatial: SpatialEntity) {
-        unimplemented!();
+        let entity_id = spatial.entity.id();
+        if self.ids.contains_key(&entity_id) {
+            let item_id = self.ids[&entity_id];
+
+            // remove old item
+            self.quadtree.remove(item_id);
+            self.ids.remove(&entity_id);
+
+            // Add modified
+            self.insert(spatial);
+        }
     }
 
     pub fn remove_by_id(&mut self, id: Index) {
-        unimplemented!();
+        if self.ids.contains_key(&id) {
+            let item_id = self.ids[&id];
+
+            // remove old item
+            self.quadtree.remove(item_id);
+            self.ids.remove(&id);
+        }
     }
 
     pub fn len(&self) -> usize {
@@ -97,7 +119,16 @@ impl Space {
     }
 
     pub fn query_point(&self, point: Vector) -> Option<Vec<Entity>> {
-        unimplemented!();
+        let cursor_circle = Arc::from_centre_radius(point, 1.0, 0.0, 2.0 * std::f64::consts::PI);
+        let query = self.quadtree.query(cursor_circle.bounding_box().aabb());
+        
+        if query.is_empty() {
+            None
+        }
+        else {
+            let query_result: Vec<_> = query.iter().map(|q| q.0.entity).collect();
+            Some(query_result)
+        }
     }
 
     pub fn query_region(&self, region: BoundingBox) -> Option<Vec<Entity>> {
