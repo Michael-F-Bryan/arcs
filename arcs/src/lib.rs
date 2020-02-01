@@ -4,13 +4,17 @@
 #![forbid(unsafe_code)]
 
 pub mod algorithms;
+mod arc;
 pub mod components;
-pub mod primitives;
+mod line;
 pub mod systems;
-mod vector;
+mod types;
 pub mod window;
 
-pub use vector::{
-    centre_of_three_points, CanvasSpace, DrawingSpace, Orientation, Transform,
-    Vector,
+pub use arc::Arc;
+pub use line::Line;
+
+pub use types::{
+    centre_of_three_points, Angle, CanvasSpace, DrawingSpace, Length,
+    Orientation, Point, Transform, Vector,
 };

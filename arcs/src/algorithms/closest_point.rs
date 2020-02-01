@@ -45,7 +45,7 @@ impl ClosestPoint for Line {
         } else if t >= 1.0 {
             self.end
         } else {
-            start + t * displacement
+            start + euclid::Scale::new(t).transform_vector(displacement)
         })
     }
 }

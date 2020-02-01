@@ -1,7 +1,6 @@
 use crate::{
     components::{BoundingBox, Geometry},
-    primitives::{Arc, Line, Point},
-    Vector,
+    Angle, Arc, Line, Point,
 };
 
 /// Calculate an axis-aligned bounding box around the item.
@@ -19,10 +18,6 @@ impl Bounded for BoundingBox {
 }
 
 impl Bounded for Point {
-    fn bounding_box(&self) -> BoundingBox { self.location.bounding_box() }
-}
-
-impl Bounded for Vector {
     fn bounding_box(&self) -> BoundingBox { BoundingBox::new(*self, *self) }
 }
 
@@ -51,20 +46,20 @@ impl Bounded for Arc {
 
         let mut bounds = BoundingBox::new(self.start(), self.end());
 
-        if self.contains_angle(0.0) {
-            let right = Vector::new(x + r, y);
+        if self.contains_angle(Angle::zero()) {
+            let right = Point::new(x + r, y);
             bounds = BoundingBox::new(bounds.bottom_left(), right);
         }
-        if self.contains_angle(FRAC_PI_2) {
-            let top = Vector::new(x, y + r);
+        if self.contains_angle(Angle::frac_pi_2()) {
+            let top = Point::new(x, y + r);
             bounds = BoundingBox::new(bounds.bottom_left(), top);
         }
-        if self.contains_angle(PI) {
-            let left = Vector::new(x - r, y);
+        if self.contains_angle(Angle::pi()) {
+            let left = Point::new(x - r, y);
             bounds = BoundingBox::new(bounds.top_right(), left);
         }
-        if self.contains_angle(3.0 * FRAC_PI_2) {
-            let bottom = Vector::new(x, y - r);
+        if self.contains_angle(Angle::pi() + Angle::frac_pi_2()) {
+            let bottom = Point::new(x, y - r);
             bounds = BoundingBox::new(bounds.top_right(), bottom);
         }
 
@@ -78,14 +73,14 @@ mod tests {
 
     #[test]
     fn bounding_box_around_line() {
-        let start = Vector::zero();
-        let end = Vector::new(3.0, 4.0);
+        let start = Point::zero();
+        let end = Point::new(3.0, 4.0);
         let line = Line::new(start, end);
 
         let bounds = line.bounding_box();
 
-        assert_eq!(bounds.width(), 3.0);
-        assert_eq!(bounds.height(), 4.0);
+        assert_eq!(bounds.width(), Length::new(3.0));
+        assert_eq!(bounds.height(), Length::new(4.0));
         assert_eq!(bounds.bottom_left(), start);
         assert_eq!(bounds.top_right(), end);
     }

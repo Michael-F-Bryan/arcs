@@ -1,11 +1,12 @@
-use kurbo::{Affine, Vec2};
-
 pub enum CanvasSpace {}
 
 pub enum DrawingSpace {}
 
 pub type Vector = euclid::Vector2D<f64, DrawingSpace>;
 pub type Transform = euclid::Transform2D<f64, DrawingSpace, DrawingSpace>;
+pub type Angle = euclid::Angle<f64>;
+pub type Point = euclid::Point2D<f64, DrawingSpace>;
+pub type Length = euclid::Length<f64, DrawingSpace>;
 
 /// How something may be oriented.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -16,7 +17,7 @@ pub enum Orientation {
 }
 
 impl Orientation {
-    pub fn of(first: Vector, second: Vector, third: Vector) -> Orientation {
+    pub fn of(first: Point, second: Point, third: Point) -> Orientation {
         let value = (second.y - first.y) * (third.x - second.x)
             - (second.x - first.x) * (third.y - second.y);
 
@@ -31,10 +32,16 @@ impl Orientation {
 }
 
 pub fn centre_of_three_points(
-    first: Vector,
-    second: Vector,
-    third: Vector,
-) -> Option<Vector> {
+    first: Point,
+    second: Point,
+    third: Point,
+) -> Option<Point> {
+    // it's easier to do the math using vectors, but for semantic correctness we
+    // accept points
+    let first = first.to_vector();
+    let second = second.to_vector();
+    let third = third.to_vector();
+
     let temp = Vector::dot(second, second);
     let bc = (Vector::dot(first, first) - temp) / 2.0;
     let cd = (temp - third.x * third.x - third.y * third.y) / 2.0;
@@ -51,7 +58,7 @@ pub fn centre_of_three_points(
     let y =
         ((first.x - second.x) * cd - (second.x - third.x) * bc) / determinant;
 
-    Some(Vector::new(x, y))
+    Some(Point::new(x, y))
 }
 
 #[cfg(test)]
@@ -60,23 +67,12 @@ mod tests {
 
     #[test]
     fn find_centre_of_three_points() {
-        let a = Vector::new(1.0, 0.0);
-        let b = Vector::new(-1.0, 0.0);
-        let c = Vector::new(0.0, 1.0);
+        let a = Point::new(1.0, 0.0);
+        let b = Point::new(-1.0, 0.0);
+        let c = Point::new(0.0, 1.0);
 
-        let centre = Vector::centre_of_three_points(a, b, c).unwrap();
+        let centre = centre_of_three_points(a, b, c).unwrap();
 
         assert_eq!(centre, Vector::zero());
-    }
-
-    #[test]
-    fn find_a_quarter_of_the_way_between_points() {
-        let start = Vector::new(0.0, 0.0);
-        let end = Vector::new(40.0, 8.0);
-        let expected = Vector::new(10.0, 2.0);
-
-        let got = Vector::lerp(start, end, 0.25);
-
-        assert_eq!(got, expected);
     }
 }
