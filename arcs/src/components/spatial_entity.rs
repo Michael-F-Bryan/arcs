@@ -120,8 +120,12 @@ impl Space {
 
     pub fn query_point(&self, point: Vector) -> Option<Vec<Entity>> {
         let cursor_circle = Arc::from_centre_radius(point, Self::QUERY_POINT_RADIUS, 0.0, 2.0 * std::f64::consts::PI);
-        let query = self.quadtree.query(cursor_circle.bounding_box().aabb());
-        
+        self.query_region(cursor_circle.bounding_box())
+    }
+
+    pub fn query_region(&self, region: BoundingBox) -> Option<Vec<Entity>> {
+        let query = self.quadtree.query(region.aabb());
+
         if query.is_empty() {
             None
         }
@@ -129,10 +133,6 @@ impl Space {
             let query_result: Vec<_> = query.iter().map(|q| q.0.entity).collect();
             Some(query_result)
         }
-    }
-
-    pub fn query_region(&self, region: BoundingBox) -> Option<Vec<Entity>> {
-        unimplemented!();
     }
 
     pub fn clear(&mut self) {
