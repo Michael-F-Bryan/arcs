@@ -60,6 +60,11 @@ impl Default for Space {
 impl Space {
     // FIXME: Hard-code is bad-bad
     const WORLD_RADIUS: f64 = 1_000_000.0;
+    const TREE_ALLOW_DUPLICATES: bool = true;
+    const TREE_MIN_CHILDREN: usize = 4;
+    const TREE_MAX_CHILDREN: usize = 16;
+    const TREE_MAX_DEPTH: usize = 8;
+    const TREE_SIZE_HINT: usize = 4;
 
     fn default_tree() -> SpatialTree{
         // Initialize quadtree
@@ -69,11 +74,11 @@ impl Space {
             ).aabb();
         let quadtree: SpatialTree = QuadTree::new(
             size,
-            true,
-            4,
-            16,
-            8,
-            4
+            Self::TREE_ALLOW_DUPLICATES,
+            Self::TREE_MIN_CHILDREN,
+            Self::TREE_MAX_CHILDREN,
+            Self::TREE_MAX_DEPTH,
+            Self::TREE_SIZE_HINT,
         );
 
         quadtree
