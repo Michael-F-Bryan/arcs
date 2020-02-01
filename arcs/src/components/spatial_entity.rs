@@ -9,6 +9,8 @@ use aabb_quadtree::{QuadTree, Spatial, ItemId};
 use euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 use std::collections::HashMap;
 
+pub(crate) type SpatialTree = QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>;
+
 /// A intermediate struct that maps an [`Entity`] to its [`BoundingBox`]
 /// 
 /// This is used to populate an efficient spatial lookup structure like a `QuadTree`
@@ -41,7 +43,7 @@ impl SpatialEntity {
 /// a given spatial point or region
 #[derive(Debug)]
 pub struct Space {
-    quadtree: QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>,
+    quadtree: SpatialTree,
     ids: HashMap<Index, ItemId>
 }
 
@@ -62,13 +64,13 @@ impl Space {
     // as 1[meter] f.e. becomes meaningless when zoomed far in/out
     const QUERY_POINT_RADIUS: f64 = 1.0;
 
-    fn default_tree() -> QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]> {
+    fn default_tree() -> SpatialTree{
         // Initialize quadtree
         let size = BoundingBox::new(
             Vector::new(-Self::WORLD_RADIUS, -Self::WORLD_RADIUS),
             Vector::new(Self::WORLD_RADIUS, Self::WORLD_RADIUS)
             ).aabb();
-        let quadtree: QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]> = QuadTree::new(
+        let quadtree: SpatialTree = QuadTree::new(
             size,
             true,
             4,
@@ -82,11 +84,8 @@ impl Space {
 
     pub fn insert(&mut self, spatial: SpatialEntity) {
         let entity_id = spatial.entity.id();
-        match self.quadtree.insert(spatial) {
-            Some(id) => {
-                self.ids.insert(entity_id, id);
-            },
-            None => ()
+        if let Some(id) = self.quadtree.insert(spatial) {
+            self.ids.insert(entity_id, id);
         }
     }
 
@@ -116,6 +115,10 @@ impl Space {
 
     pub fn len(&self) -> usize {
         self.ids.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ids.is_empty()
     }
 
     pub fn query_point(&self, point: Vector) -> Option<Vec<Entity>> {
