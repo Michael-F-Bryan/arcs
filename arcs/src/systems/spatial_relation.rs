@@ -40,7 +40,6 @@ impl<'world> System<'world> for SpatialRelation {
 
         // find out which items have changed since we were last polled
         for event in drawing_objects.channel().read(&mut self.changes) {
-            println!("Event is {:#?}", event);
             match *event {
                 ComponentEvent::Inserted(id) => {
                     self.to_insert.add(id);
@@ -94,6 +93,7 @@ mod tests {
         components::{register, Layer, Name, DrawingObject, Geometry, LineStyle, Dimension, Space},
         {Point, Line},
         systems::SpatialRelation,
+        algorithms::{Bounded},
     };
     use specs::prelude::*;
     use piet::Color;
@@ -117,7 +117,7 @@ mod tests {
     
         // Add a line to our world
         let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
-        let _first = world
+        let first = world
             .create_entity()
             .with(DrawingObject {
                 geometry: Geometry::Line(line),
@@ -136,6 +136,7 @@ mod tests {
 
         let space = world.read_resource::<Space>();
         assert_eq!(space.len(), 1);
+        assert_eq!(space.iter().next().unwrap().entity, first);
 
     }
 
@@ -193,12 +194,17 @@ mod tests {
         system.run_now(&world);
         let space = world.read_resource::<Space>();
 
-        let query = space.query_point(Point::new(3.0, -0.5));
-        assert!(query != None);
-        assert_eq!(query.unwrap().len(), 1);
+        let mut query = space.query_point(Point::new(3.0, -0.5), 1.0);
+        match query.next() {
+            None => assert!(false),
+            Some(spatial_entity) => {
+                let draw = world.read_storage::<DrawingObject>();
+                assert_eq!(spatial_entity.bounds, draw.get(spatial_entity.entity).unwrap().geometry.bounding_box())
+            }
+        }
 
-        let query = space.query_point(Point::new(2.5, 0.5));
-        assert!(query != None);
-        assert_eq!(query.unwrap().len(), 2);
+        // let query = space.query_point(Point::new(2.5, 0.5), 1.0);
+        // assert!(query != None);
+        // assert_eq!(query.unwrap().len(), 2);
     }
 }

@@ -7,6 +7,7 @@ use specs::{Entity, world::Index};
 use aabb_quadtree::{QuadTree, Spatial, ItemId};
 use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 use std::collections::HashMap;
+use std::iter;
 use euclid::Angle;
 
 pub(crate) type SpatialTree = QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>;
@@ -14,7 +15,7 @@ pub(crate) type SpatialTree = QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f
 /// A intermediate struct that maps an [`Entity`] to its [`BoundingBox`]
 /// 
 /// This is used to populate an efficient spatial lookup structure like a `QuadTree`
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct SpatialEntity {
     pub bounds: BoundingBox,
     pub entity: Entity
@@ -59,10 +60,6 @@ impl Default for Space {
 impl Space {
     // FIXME: Hard-code is bad-bad
     const WORLD_RADIUS: f64 = 1_000_000.0;
-
-    // FIXME: We need to supply this in *DrawingUnits*
-    // as 1[meter] f.e. becomes meaningless when zoomed far in/out
-    const QUERY_POINT_RADIUS: f64 = 1.0;
 
     fn default_tree() -> SpatialTree{
         // Initialize quadtree
@@ -113,6 +110,12 @@ impl Space {
         }
     }
 
+    pub fn iter<'this>(
+        &'this self,
+    ) -> impl Iterator<Item = SpatialEntity> + 'this {
+        self.quadtree.iter().map(|(_, (ent, _))| *ent)
+    }
+
     pub fn len(&self) -> usize {
         self.ids.len()
     }
@@ -121,26 +124,23 @@ impl Space {
         self.ids.is_empty()
     }
 
-    pub fn query_point(&self, point: Point) -> Option<Vec<Entity>> {
+    // FIXME: radius in CanvasSpace in method signature
+    pub fn query_point<'this>(
+        &'this self, point: Point, radius: f64
+    ) -> impl Iterator<Item = SpatialEntity> + 'this {
         let cursor_circle = Arc::from_centre_radius(
             point,
-            Self::QUERY_POINT_RADIUS,
+            radius,
             Angle::radians(0.0),
             Angle::radians(2.0 * std::f64::consts::PI)
         );
         self.query_region(cursor_circle.bounding_box())
     }
 
-    pub fn query_region(&self, region: BoundingBox) -> Option<Vec<Entity>> {
-        let query = self.quadtree.query(region.aabb());
-
-        if query.is_empty() {
-            None
-        }
-        else {
-            let query_result: Vec<_> = query.iter().map(|q| q.0.entity).collect();
-            Some(query_result)
-        }
+    pub fn query_region<'this>(
+        &'this self, region: BoundingBox
+    ) -> impl Iterator<Item = SpatialEntity> + 'this {
+        self.quadtree.query(region.aabb()).into_iter().map(|q| *q.0)
     }
 
     pub fn clear(&mut self) {
