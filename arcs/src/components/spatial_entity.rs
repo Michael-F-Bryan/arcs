@@ -1,10 +1,15 @@
 use crate::{
     components::BoundingBox,
+    Vector,
 };
-use specs::Entity;
-use aabb_quadtree::{QuadTree, Spatial};
+use specs::{Entity, world::Index};
+use aabb_quadtree::{QuadTree, Spatial, ItemId};
 use euclid::{TypedRect, TypedPoint2D, TypedSize2D};
+use std::collections::HashMap;
 
+/// A intermediate struct that maps an [`Entity`] to its [`BoundingBox`]
+/// 
+/// This is used to populate an efficient spatial lookup structure like a `QuadTree`
 #[derive(Debug)]
 pub struct SpatialEntity {
     pub bounds: BoundingBox,
@@ -27,6 +32,69 @@ impl SpatialEntity {
             bounds,
             entity
         }
+    }
+}
+
+/// A global [`Resource`] for looking up which [`Entity`]s inhabit
+/// a given spatial point or region
+#[derive(Debug)]
+pub struct Space {
+    quadtree: QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>,
+    ids: HashMap<Index, ItemId>
+}
+
+impl Default for Space {
+    fn default() -> Self {
+        // Initialize quadtree
+        let size = BoundingBox::new(
+            Vector::new(-Self::WORLD_RADIUS, -Self::WORLD_RADIUS),
+            Vector::new(Self::WORLD_RADIUS, Self::WORLD_RADIUS)
+            ).aabb();
+        let quadtree: QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]> = QuadTree::new(
+            size,
+            true,
+            4,
+            16,
+            8,
+            4
+        );  
+        Space {
+            quadtree,
+            ids: HashMap::new()
+        }
+    }
+}
+
+impl Space {
+    // FIXME: Hard-code is bad-bad
+    const WORLD_RADIUS: f64 = 1_000_000.0;
+
+    pub fn insert(&mut self, spatial: SpatialEntity) {
+        unimplemented!();
+    }
+
+    pub fn modify(&mut self, spatial: SpatialEntity) {
+        unimplemented!();
+    }
+
+    pub fn remove_by_id(&mut self, id: Index) {
+        unimplemented!();
+    }
+
+    pub fn len(&self) -> usize {
+        self.ids.len()
+    }
+
+    pub fn query_point(&self, point: Vector) -> Option<Vec<Entity>> {
+        unimplemented!();
+    }
+
+    pub fn query_region(&self, region: BoundingBox) -> Option<Vec<Entity>> {
+        unimplemented!();
+    }
+
+    pub fn clear(&mut self) {
+        unimplemented!();
     }
 }
 

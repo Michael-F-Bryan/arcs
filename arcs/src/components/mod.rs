@@ -18,7 +18,7 @@ pub use name::{Name, NameTable};
 pub use styles::{LineStyle, PointStyle, WindowStyle};
 pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
-pub use spatial_entity::SpatialEntity;
+pub use spatial_entity::{SpatialEntity, Space};
 
 use specs::{Entity, World};
 use std::any::Any;
