@@ -1,9 +1,5 @@
-use crate::{
-    primitives::{Line, Point},
-    DrawingSpace, Vector,
-};
+use crate::{DrawingSpace, Line, Point};
 use euclid::Transform2D;
-use kurbo::Affine;
 
 pub trait AffineTransformable<Space = DrawingSpace> {
     fn transform(&mut self, transform: Transform2D<f64, Space, Space>);
@@ -38,7 +34,7 @@ impl AffineTransformable for Point {
         &mut self,
         transform: Transform2D<f64, DrawingSpace, DrawingSpace>,
     ) {
-        self.location.transform(transform);
+        *self = transform.transform_point(*self);
     }
 }
 

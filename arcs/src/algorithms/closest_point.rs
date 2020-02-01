@@ -1,33 +1,25 @@
-use crate::{
-    primitives::{Line, Point},
-    Vector,
-};
+use crate::{Line, Point, Vector};
+use euclid::Scale;
 use std::iter::FromIterator;
 
 /// Find the location on an object which is closest to a target point.
 pub trait ClosestPoint {
     /// Calculate the closest point to `target`.
-    fn closest_point(&self, target: Vector) -> Closest;
+    fn closest_point(&self, target: Point) -> Closest;
 }
 
 impl<'c, C: ClosestPoint + ?Sized> ClosestPoint for &'c C {
-    fn closest_point(&self, target: Vector) -> Closest {
+    fn closest_point(&self, target: Point) -> Closest {
         (*self).closest_point(target)
     }
 }
 
-impl ClosestPoint for Vector {
-    fn closest_point(&self, _target: Vector) -> Closest { Closest::One(*self) }
-}
-
 impl ClosestPoint for Point {
-    fn closest_point(&self, _target: Vector) -> Closest {
-        Closest::One(self.location)
-    }
+    fn closest_point(&self, _target: Point) -> Closest { Closest::One(*self) }
 }
 
 impl ClosestPoint for Line {
-    fn closest_point(&self, target: Vector) -> Closest {
+    fn closest_point(&self, target: Point) -> Closest {
         if self.length() == 0.0 {
             return Closest::One(self.start);
         }
@@ -45,7 +37,7 @@ impl ClosestPoint for Line {
         } else if t >= 1.0 {
             self.end
         } else {
-            start + euclid::Scale::new(t).transform_vector(displacement)
+            start + Scale::new(t).transform_vector(displacement)
         })
     }
 }
@@ -56,8 +48,8 @@ impl ClosestPoint for Line {
 pub enum Closest {
     /// There are infinitely solutions.
     Infinite,
-    One(Vector),
-    Many(Vec<Vector>),
+    One(Point),
+    Many(Vec<Point>),
 }
 
 impl Closest {
@@ -68,7 +60,7 @@ impl Closest {
         }
     }
 
-    pub fn points(&self) -> &[Vector] {
+    pub fn points(&self) -> &[Point] {
         match self {
             Closest::Infinite => &[],
             Closest::One(item) => std::slice::from_ref(item),
@@ -77,8 +69,8 @@ impl Closest {
     }
 }
 
-impl FromIterator<Vector> for Closest {
-    fn from_iter<I: IntoIterator<Item = Vector>>(iter: I) -> Closest {
+impl FromIterator<Point> for Closest {
+    fn from_iter<I: IntoIterator<Item = Point>>(iter: I) -> Closest {
         let items = Vec::from_iter(iter);
 
         match items.len() {
@@ -95,8 +87,8 @@ mod tests {
 
     #[test]
     fn on_the_line() {
-        let start = Vector::new(1.0, 2.0);
-        let end = Vector::new(3.0, 10.0);
+        let start = Point::new(1.0, 2.0);
+        let end = Point::new(3.0, 10.0);
         let line = Line::new(start, end);
         let midpoint = (start + end) / 2.0;
 
@@ -107,10 +99,10 @@ mod tests {
 
     #[test]
     fn closest_point_to_zero_length_line() {
-        let start = Vector::new(1.0, 2.0);
+        let start = Point::new(1.0, 2.0);
         let line = Line::new(start, start);
         assert_eq!(line.length(), 0.0);
-        let target = Vector::new(10.0, 0.0);
+        let target = Point::new(10.0, 0.0);
 
         let got = line.closest_point(target);
 
@@ -119,33 +111,33 @@ mod tests {
 
     #[test]
     fn away_from_the_line() {
-        let start = Vector::new(0.0, 0.0);
-        let end = Vector::new(10.0, 0.0);
+        let start = Point::new(0.0, 0.0);
+        let end = Point::new(10.0, 0.0);
         let line = Line::new(start, end);
 
-        let got = line.closest_point(Vector::new(5.0, 5.0));
+        let got = line.closest_point(Point::new(5.0, 5.0));
 
-        assert_eq!(got, Closest::One(Vector::new(5.0, 0.0)));
+        assert_eq!(got, Closest::One(Point::new(5.0, 0.0)));
     }
 
     #[test]
     fn past_the_end_of_the_line() {
-        let start = Vector::new(0.0, 0.0);
-        let end = Vector::new(10.0, 0.0);
+        let start = Point::new(0.0, 0.0);
+        let end = Point::new(10.0, 0.0);
         let line = Line::new(start, end);
 
-        let got = line.closest_point(Vector::new(15.0, 5.0));
+        let got = line.closest_point(Point::new(15.0, 5.0));
 
         assert_eq!(got, Closest::One(end));
     }
 
     #[test]
     fn before_the_start_of_the_line() {
-        let start = Vector::new(0.0, 0.0);
-        let end = Vector::new(10.0, 0.0);
+        let start = Point::new(0.0, 0.0);
+        let end = Point::new(10.0, 0.0);
         let line = Line::new(start, end);
 
-        let got = line.closest_point(Vector::new(-5.0, 5.0));
+        let got = line.closest_point(Point::new(-5.0, 5.0));
 
         assert_eq!(got, Closest::One(start));
     }

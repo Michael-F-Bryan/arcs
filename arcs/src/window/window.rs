@@ -4,7 +4,7 @@ use crate::{
         BoundingBox, DrawingObject, Geometry, Layer, LineStyle, PointStyle,
         Viewport, WindowStyle,
     },
-    CanvasSpace, DrawingSpace, Line, Point, Vector,
+    CanvasSpace, DrawingSpace, Line, Point,
 };
 use euclid::{Point2D, Scale, Size2D};
 use kurbo::Circle;

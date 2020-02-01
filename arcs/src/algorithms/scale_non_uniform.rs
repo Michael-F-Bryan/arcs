@@ -1,7 +1,6 @@
 use crate::{
     algorithms::AffineTransformable, components::BoundingBox, Transform,
 };
-use kurbo::Affine;
 
 /// Something which can be scaled **non-uniform** in x and y directions in
 /// *Drawing Space*

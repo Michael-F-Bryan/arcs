@@ -1,10 +1,8 @@
 use crate::{
     algorithms::AffineTransformable,
     components::{BoundingBox, Viewport},
-    primitives::Arc,
-    Transform, Vector,
+    Arc, Transform, Vector,
 };
-use kurbo::Affine;
 
 /// Something which can be moved around "rigidly" in *Drawing Space*.
 pub trait Translate {
@@ -72,14 +70,14 @@ mod tests {
 
     #[test]
     fn translate_bounding_box() {
-        let first = Vector::new(-2.0, 1.5);
-        let second = Vector::new(4.0, 3.7);
+        let first = Point::new(-2.0, 1.5);
+        let second = Point::new(4.0, 3.7);
         let displacement = Vector::new(1.0, -1.0);
         let original = BoundingBox::new(first, second);
 
         let expected = BoundingBox::new(
-            Vector::new(-2.0 + 1.0, 1.5 + -1.0),
-            Vector::new(4.0 + 1.0, 3.7 + -1.0),
+            Point::new(-2.0 + 1.0, 1.5 + -1.0),
+            Point::new(4.0 + 1.0, 3.7 + -1.0),
         );
         let actual = original.translated(displacement);
 

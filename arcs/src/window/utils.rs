@@ -1,5 +1,5 @@
 use crate::{components::Viewport, CanvasSpace, DrawingSpace};
-use euclid::{Point2D, Scale, Size2D, Transform2D, Vector2D};
+use euclid::{Point2D, Size2D, Transform2D, Vector2D};
 
 pub fn to_canvas_coordinates(
     point: Point2D<f64, DrawingSpace>,

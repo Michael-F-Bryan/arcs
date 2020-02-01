@@ -1,7 +1,4 @@
-use crate::{
-    primitives::{Arc, Line},
-    Vector,
-};
+use crate::{Arc, Line, Vector};
 
 /// Something which has a finite length.
 pub trait Length {

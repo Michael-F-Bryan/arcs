@@ -1,6 +1,4 @@
-use crate::{
-    algorithms::ScaleNonUniform, components::Viewport, primitives::Arc,
-};
+use crate::{algorithms::ScaleNonUniform, components::Viewport, Arc};
 
 /// Something which can be scaled in *Drawing Space*
 pub trait Scale {
@@ -38,7 +36,9 @@ impl Scale for Viewport {
     /// Zoom the viewport, where a positive `scale_factor` will zoom in.
     fn scale(&mut self, scale_factor: f64) {
         assert!(scale_factor.is_finite() && scale_factor != 0.0);
-        self.pixels_per_drawing_unit /= scale_factor;
+        self.pixels_per_drawing_unit = euclid::Scale::new(
+            self.pixels_per_drawing_unit.get() / scale_factor,
+        );
     }
 }
 
@@ -48,8 +48,7 @@ mod tests {
     use crate::{
         algorithms::{AffineTransformable, Translate},
         components::BoundingBox,
-        primitives::{Arc, Line},
-        Vector,
+        Arc, Line, Vector,
     };
     use kurbo::Affine;
 

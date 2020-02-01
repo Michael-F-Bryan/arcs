@@ -1,7 +1,4 @@
-use crate::{
-    primitives::{Arc, Line, Point},
-    Angle, Vector,
-};
+use crate::{Angle, Arc, Line, Point};
 use std::{
     iter,
     iter::{Chain, Once},
@@ -9,7 +6,7 @@ use std::{
 
 /// Approximate a shape with a bunch of points.
 pub trait Approximate {
-    type Iter: Iterator<Item = Vector>;
+    type Iter: Iterator<Item = Point>;
 
     /// Approximate the shape, ensuring the resulting path is within `tolerance`
     /// units of the original.
@@ -25,15 +22,15 @@ impl<'a, A: Approximate + ?Sized> Approximate for &'a A {
 }
 
 impl Approximate for Point {
-    type Iter = Once<Vector>;
+    type Iter = Once<Point>;
 
     fn approximate(&self, _tolerance: f64) -> Self::Iter {
-        std::iter::once(self.location)
+        std::iter::once(*self)
     }
 }
 
 impl Approximate for Line {
-    type Iter = Chain<Once<Vector>, Once<Vector>>;
+    type Iter = Chain<Once<Point>, Once<Point>>;
 
     fn approximate(&self, _tolerance: f64) -> Self::Iter {
         iter::once(self.start).chain(iter::once(self.end))
@@ -95,7 +92,7 @@ pub struct ApproximatedArc {
 }
 
 impl Iterator for ApproximatedArc {
-    type Item = Vector;
+    type Item = Point;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.i > self.steps {
@@ -116,7 +113,7 @@ mod tests {
     #[test]
     fn approximate_arc_with_points() {
         let arc = Arc::from_centre_radius(
-            Vector::zero(),
+            Point::zero(),
             100.0,
             Angle::zero(),
             Angle::frac_pi_2(),

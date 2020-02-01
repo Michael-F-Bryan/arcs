@@ -39,8 +39,6 @@ impl Bounded for Geometry {
 
 impl Bounded for Arc {
     fn bounding_box(&self) -> BoundingBox {
-        use std::f64::consts::{FRAC_PI_2, PI};
-
         let (x, y) = self.centre().to_tuple();
         let r = self.radius();
 
