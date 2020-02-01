@@ -31,7 +31,7 @@ containing a list of related features or concepts.
         ([`render_to_image.rs`](arcs/examples/render_to_image.rs))
 
 - [ ] Milestone: Online demo
-  - [ ] Render correctly to a HTML5 `<canvas>`
+  - [x] Render correctly to a HTML5 `<canvas>`
   - Interactive tools for creating drawing objects:
     - [ ] Point
     - [ ] Line
@@ -51,13 +51,13 @@ containing a list of related features or concepts.
   - [X] Approximation algorithm
   - [X] Translation algorithm
   - [X] Uniform scale algorithm
-  - [ ] Scaling algorithm without maintaining aspect ratio
-  - [ ] Calculate the length of a geometric primitive
+  - [x] Scaling algorithm without maintaining aspect ratio
+  - [x] Calculate the length of a geometric primitive
   - [ ] B-Splines
   - [ ] Interpolated splines
   - [ ] Bézier curves
   - [ ] Elliptical sections
-  - [ ] Closest point algorithm for all geometric primitives
+  - [x] Closest point algorithm for all geometric primitives
 
 ## Building the WebAssembly Demo
 
