@@ -1,3 +1,5 @@
+pub mod modes;
+
 use arcs::{
     components::{Dimension, DrawingObject, Geometry, Layer, Name, PointStyle},
     window::Window,
