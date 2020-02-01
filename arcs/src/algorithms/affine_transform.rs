@@ -1,9 +1,39 @@
 use crate::{DrawingSpace, Line, Point};
 use euclid::Transform2D;
 
+/// Something which can be transformed using an arbitrary [`Transform2D`] matrix
+/// and still be semantically valid.
+///
+/// This is often referred to as an [Affine Transformation][wiki] in
+/// mathematics.
+///
+/// # Examples
+///
+/// You can use the various methods and constructors on [`euclid::Transform2D`]
+/// to build up the overall transform matrix to be applied.
+///
+/// ```rust
+/// use arcs::{Point, Angle, algorithms::AffineTransformable};
+/// use euclid::{Transform2D, approxeq::ApproxEq};
+///
+/// let point = Point::new(10.0, 10.0);
+/// let transform_matrix = Transform2D::create_translation(-1.0, 1.0) // move the point
+///     .post_rotate(Angle::degrees(180.0)) // then rotate 180 degrees
+///     .post_scale(-1.0, 1.0); // then flip about y-axis
+///
+/// let got = point.transformed(transform_matrix);
+///
+/// // (Note: floating point operations are inherently inaccurate)
+/// let expected = Point::new(9.0, -11.0);
+/// assert!(got.approx_eq(&expected));
+/// ```
+///
+/// [wiki]: https://en.wikipedia.org/wiki/Affine_transformation
 pub trait AffineTransformable<Space = DrawingSpace> {
+    /// Apply a transform matrix in-place.
     fn transform(&mut self, transform: Transform2D<f64, Space, Space>);
 
+    /// A convenience method for getting a transformed copy of this object.
     fn transformed(&self, transform: Transform2D<f64, Space, Space>) -> Self
     where
         Self: Sized + Clone,

@@ -1,5 +1,6 @@
 use crate::{Point, Vector};
 
+/// A line connecting [`Line::start`] to [`Line::end`].
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Line {
     pub start: Point,

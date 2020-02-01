@@ -4,8 +4,9 @@ use std::{
     iter::{Chain, Once},
 };
 
-/// Approximate a shape with a bunch of points.
+/// Approximate a shape with a bunch of [`Point`]s.
 pub trait Approximate {
+    /// An iterator over the approximated vertices.
     type Iter: Iterator<Item = Point>;
 
     /// Approximate the shape, ensuring the resulting path is within `tolerance`
@@ -84,6 +85,7 @@ impl Approximate for Arc {
 /// This shouldn't be used directly, you are probably looking for
 /// `Arc::approximate()`.
 #[derive(Debug, Clone)]
+#[allow(missing_copy_implementations)] // iterators which are Copy are a footgun
 pub struct ApproximatedArc {
     i: usize,
     steps: usize,

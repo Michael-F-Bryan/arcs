@@ -1,9 +1,11 @@
 use crate::{algorithms::ScaleNonUniform, components::Viewport, Arc};
 
-/// Something which can be scaled in *Drawing Space*
+/// Something who's dimensions can be scaled uniformly.
 pub trait Scale {
+    /// Scale the object in-place.
     fn scale(&mut self, scale_factor: f64);
 
+    /// Convenience method for getting a scaled copy of this object.
     fn scaled(&self, scale_factor: f64) -> Self
     where
         Self: Sized + Clone,

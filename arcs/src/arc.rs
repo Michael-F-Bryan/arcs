@@ -1,6 +1,7 @@
 use crate::{Angle, Orientation, Point, Vector};
 use std::f64::consts::PI;
 
+/// A circle segment.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Arc {
     centre: Point,

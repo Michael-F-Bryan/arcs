@@ -2,11 +2,26 @@ use crate::{
     algorithms::AffineTransformable, components::BoundingBox, Transform,
 };
 
-/// Something which can be scaled **non-uniform** in x and y directions in
-/// *Drawing Space*
+/// Something who's dimensions can be scaled independently (the *non-uniform*
+/// bit) in the x and y directions.
+///
+/// # Examples
+///
+/// ```rust
+/// use arcs::{Line, Point, algorithms::ScaleNonUniform};
+///
+/// let original = Line::new(Point::zero(), Point::new(10.0, 10.0));
+///
+/// let scaled = original.scaled_non_uniform(2.0, -0.5);
+///
+/// assert_eq!(scaled.start, Point::zero());
+/// assert_eq!(scaled.end, Point::new(20.0, -5.0));
+/// ```
 pub trait ScaleNonUniform {
+    /// Scale the object in-place.
     fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64);
 
+    /// Convenience method for getting a scaled copy of this object.
     fn scaled_non_uniform(&self, factor_x: f64, factor_y: f64) -> Self
     where
         Self: Sized + Clone,

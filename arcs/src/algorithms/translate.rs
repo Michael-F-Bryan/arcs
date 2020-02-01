@@ -6,8 +6,10 @@ use crate::{
 
 /// Something which can be moved around "rigidly" in *Drawing Space*.
 pub trait Translate {
+    /// Translate this object in-place.
     fn translate(&mut self, displacement: Vector);
 
+    /// A convenience method for getting a translated copy of this object.
     fn translated(&self, displacement: Vector) -> Self
     where
         Self: Sized + Clone,

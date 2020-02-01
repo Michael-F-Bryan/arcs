@@ -48,11 +48,14 @@ impl ClosestPoint for Line {
 pub enum Closest {
     /// There are infinitely solutions.
     Infinite,
+    /// There is a single closest [`Point`].
     One(Point),
+    /// There are multiple closest [`Point`]s.
     Many(Vec<Point>),
 }
 
 impl Closest {
+    /// Are there infinitely many closest points?
     pub fn is_infinite(&self) -> bool {
         match self {
             Closest::Infinite => true,
@@ -60,6 +63,11 @@ impl Closest {
         }
     }
 
+    /// Get a slice of all the closest [`Point`]s.
+    ///
+    /// # Note
+    ///
+    /// This will be empty if there are infinitely many closest points.
     pub fn points(&self) -> &[Point] {
         match self {
             Closest::Infinite => &[],
