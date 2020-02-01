@@ -20,8 +20,8 @@ pub(crate) use vtable::ComponentVtable;
 
 use specs::World;
 
-/// Get an iterator over the [`ComponentVtable`] for all known [`Component`]
-/// types.
+/// Get an iterator over the [`ComponentVtable`] for all known
+/// [`specs::Component`] types.
 pub(crate) fn known_components(
 ) -> impl Iterator<Item = &'static ComponentVtable> + 'static {
     lazy_static::lazy_static! {

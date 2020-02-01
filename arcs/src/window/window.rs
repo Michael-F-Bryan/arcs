@@ -109,7 +109,7 @@ impl<'window, B> RenderSystem<'window, B> {
     fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox {
         let window_size = viewport
             .pixels_per_drawing_unit
-            .inverse()
+            .inv()
             .transform_size(self.window_size);
 
         BoundingBox::from_centre_and_size(viewport.centre, window_size)
@@ -158,7 +158,7 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
     ) {
         let style = resolve_point_style(styles, self.window, entity, layer);
 
-        let centre = self.to_viewport_coordinates(point, viewport);
+        let centre = self.to_canvas_coordinates(point, viewport);
         let shape = Circle {
             center: kurbo::Point::new(centre.x, centre.y),
             radius: style.radius.in_pixels(viewport.pixels_per_drawing_unit),
@@ -178,8 +178,8 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
     ) {
         let style = resolve_line_style(styles, self.window, entity, layer);
 
-        let start = self.to_viewport_coordinates(line.start, viewport);
-        let end = self.to_viewport_coordinates(line.end, viewport);
+        let start = self.to_canvas_coordinates(line.start, viewport);
+        let end = self.to_canvas_coordinates(line.end, viewport);
         let shape = kurbo::Line::new(start.to_tuple(), end.to_tuple());
         let stroke_width =
             style.width.in_pixels(viewport.pixels_per_drawing_unit);
@@ -188,9 +188,9 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
         self.backend.stroke(shape, &style.stroke, stroke_width);
     }
 
-    /// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the
-    /// canvas.
-    fn to_viewport_coordinates(
+    /// Translates a [`crate::Point`] from drawing space to a location in
+    /// [`CanvasSpace`].
+    fn to_canvas_coordinates(
         &self,
         point: Point2D<f64, DrawingSpace>,
         viewport: &Viewport,

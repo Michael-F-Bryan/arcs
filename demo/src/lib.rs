@@ -1,9 +1,9 @@
 use arcs::{
     components::{Dimension, DrawingObject, Geometry, Layer, Name, PointStyle},
     window::Window,
-    Point,
+    CanvasSpace,
 };
-use kurbo::Size;
+use euclid::{Point2D, Size2D};
 use log::Level;
 use piet::Color;
 use piet_web::WebRenderContext;
@@ -18,7 +18,7 @@ pub struct Model {
     world: World,
     window: Window,
     default_layer: Entity,
-    canvas_size: Size,
+    canvas_size: Size2D<f64, CanvasSpace>,
 }
 
 impl Default for Model {
@@ -41,7 +41,7 @@ impl Default for Model {
             world,
             window,
             default_layer,
-            canvas_size: Size::new(300.0, 150.0),
+            canvas_size: Size2D::new(300.0, 150.0),
         }
     }
 }
@@ -57,7 +57,7 @@ fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Msg {
     Rendered,
-    Clicked(kurbo::Point),
+    Clicked(Point2D<f64, CanvasSpace>),
     WindowResized,
 }
 
@@ -66,7 +66,7 @@ impl Msg {
         let x = ev.offset_x().into();
         let y = ev.offset_y().into();
 
-        Msg::Clicked(kurbo::Point::new(x, y))
+        Msg::Clicked(Point2D::new(x, y))
     }
 }
 
@@ -90,13 +90,13 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                     model.canvas_size,
                 )
             };
-            log::debug!("{:?} => {:?}", location, clicked);
+            log::debug!("Resolved {:?} => {:?}", location, clicked);
 
             model
                 .world
                 .create_entity()
                 .with(DrawingObject {
-                    geometry: Geometry::Point(Point::new(clicked)),
+                    geometry: Geometry::Point(clicked),
                     layer: model.default_layer,
                 })
                 .build();
@@ -127,13 +127,14 @@ fn draw(canvas: &HtmlCanvasElement, model: &mut Model) {
     RunNow::run_now(&mut system, &model.world);
 }
 
-fn parent_size(element: &HtmlElement) -> Option<Size> {
+fn parent_size(element: &HtmlElement) -> Option<Size2D<f64, CanvasSpace>> {
     let window = seed::window();
     let height = window.inner_height().ok()?.as_f64()?
         - f64::try_from(element.offset_top()).ok()?;
     let width = window.inner_width().ok()?.as_f64()?;
+    log::debug!("parent size is {}x{}", height, width);
 
-    Some(Size::new(
+    Some(Size2D::new(
         f64::try_from(width).ok()?,
         f64::try_from(height).ok()?,
     ))

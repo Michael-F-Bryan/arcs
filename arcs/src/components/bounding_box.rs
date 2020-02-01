@@ -53,8 +53,8 @@ impl BoundingBox {
         width: Length,
         height: Length,
     ) -> Self {
-        debug_assert!(width >= Length::zero());
-        debug_assert!(height >= Length::zero());
+        debug_assert!(width >= Length::zero(), "{} should not be negative", width);
+        debug_assert!(height >= Length::zero(), "{} should not be negative", height);
 
         let diagonal = Vector::from_lengths(width / 2.0, height / 2.0);
         let bottom_left = centre - diagonal;
