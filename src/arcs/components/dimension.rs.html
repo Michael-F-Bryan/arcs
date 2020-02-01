@@ -21,7 +21,18 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">CanvasSpace</span>, <span class="ident">DrawingSpace</span>, <span class="ident">Length</span>};
+<span class="kw">use</span> <span class="ident">euclid</span>::<span class="ident">Scale</span>;
+
 <span class="doccomment">/// A dimension on the canvas.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Dimension</span> {
@@ -30,14 +41,19 @@
     <span class="ident">Pixels</span>(<span class="ident">f64</span>),
     <span class="doccomment">/// A &quot;real&quot; dimension defined in *Drawing Space*, which should be scaled</span>
     <span class="doccomment">/// appropriately when we zoom.</span>
-    <span class="ident">DrawingUnits</span>(<span class="ident">f64</span>),
+    <span class="ident">DrawingUnits</span>(<span class="ident">Length</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">Dimension</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">in_pixels</span>(<span class="self">self</span>, <span class="ident">pixels_per_drawing_unit</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">in_pixels</span>(
+        <span class="self">self</span>,
+        <span class="ident">pixels_per_drawing_unit</span>: <span class="ident">Scale</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">DrawingSpace</span>, <span class="ident">CanvasSpace</span><span class="op">&gt;</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Dimension</span>::<span class="ident">Pixels</span>(<span class="ident">px</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">px</span>,
-            <span class="ident">Dimension</span>::<span class="ident">DrawingUnits</span>(<span class="ident">units</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">units</span> <span class="op">*</span> <span class="ident">pixels_per_drawing_unit</span>,
+            <span class="ident">Dimension</span>::<span class="ident">DrawingUnits</span>(<span class="ident">length</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">length</span>.<span class="ident">get</span>() <span class="op">*</span> <span class="ident">pixels_per_drawing_unit</span>.<span class="ident">get</span>()
+            },
         }
     }
 }

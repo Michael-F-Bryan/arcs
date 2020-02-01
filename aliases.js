@@ -16,6 +16,7 @@ ALIASES["crossbeam_utils"] = {};
 ALIASES["ctor"] = {};
 ALIASES["derivative"] = {};
 ALIASES["either"] = {};
+ALIASES["euclid"] = {};
 ALIASES["getrandom"] = {};
 ALIASES["ghost"] = {};
 ALIASES["hashbrown"] = {};

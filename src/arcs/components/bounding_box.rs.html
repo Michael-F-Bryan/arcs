@@ -130,8 +130,23 @@
 <span id="130">130</span>
 <span id="131">131</span>
 <span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">Bounded</span>, <span class="ident">Vector</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">Bounded</span>, <span class="ident">DrawingSpace</span>, <span class="ident">Length</span>, <span class="ident">Point</span>, <span class="ident">Vector</span>};
+<span class="kw">use</span> <span class="ident">euclid</span>::{<span class="ident">num</span>::<span class="ident">Zero</span>, <span class="ident">Size2D</span>};
 <span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">specs_derive</span>::<span class="ident">Component</span>;
 
@@ -139,27 +154,27 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Component</span>)]</span>
 <span class="attribute">#[<span class="ident">storage</span>(<span class="ident">DenseVecStorage</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BoundingBox</span> {
-    <span class="ident">bottom_left</span>: <span class="ident">Vector</span>,
-    <span class="ident">top_right</span>: <span class="ident">Vector</span>,
+    <span class="ident">bottom_left</span>: <span class="ident">Point</span>,
+    <span class="ident">top_right</span>: <span class="ident">Point</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">BoundingBox</span> {
     <span class="doccomment">/// Create a new [`BoundingBox`] around two points.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">first</span>: <span class="ident">Vector</span>, <span class="ident">second</span>: <span class="ident">Vector</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">first</span>: <span class="ident">Point</span>, <span class="ident">second</span>: <span class="ident">Point</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">min_x</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">min</span>(<span class="ident">first</span>.<span class="ident">x</span>, <span class="ident">second</span>.<span class="ident">x</span>);
         <span class="kw">let</span> <span class="ident">min_y</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">min</span>(<span class="ident">first</span>.<span class="ident">y</span>, <span class="ident">second</span>.<span class="ident">y</span>);
         <span class="kw">let</span> <span class="ident">max_x</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">max</span>(<span class="ident">first</span>.<span class="ident">x</span>, <span class="ident">second</span>.<span class="ident">x</span>);
         <span class="kw">let</span> <span class="ident">max_y</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">max</span>(<span class="ident">first</span>.<span class="ident">y</span>, <span class="ident">second</span>.<span class="ident">y</span>);
 
         <span class="ident">BoundingBox</span>::<span class="ident">new_unchecked</span>(
-            <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="ident">min_x</span>, <span class="ident">min_y</span>),
-            <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="ident">max_x</span>, <span class="ident">max_y</span>),
+            <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">min_x</span>, <span class="ident">min_y</span>),
+            <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">max_x</span>, <span class="ident">max_y</span>),
         )
     }
 
     <span class="doccomment">/// Create a new [`BoundingBox`] without ensuring the bottom-left and</span>
     <span class="doccomment">/// top-right corners are actually in the bottom-left and top-right.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_unchecked</span>(<span class="ident">bottom_left</span>: <span class="ident">Vector</span>, <span class="ident">top_right</span>: <span class="ident">Vector</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_unchecked</span>(<span class="ident">bottom_left</span>: <span class="ident">Point</span>, <span class="ident">top_right</span>: <span class="ident">Point</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">bottom_left</span>.<span class="ident">x</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">top_right</span>.<span class="ident">x</span>);
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">bottom_left</span>.<span class="ident">y</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">top_right</span>.<span class="ident">y</span>);
 
@@ -169,25 +184,39 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_centre_and_dimensions</span>(
-        <span class="ident">centre</span>: <span class="ident">Vector</span>,
-        <span class="ident">width</span>: <span class="ident">f64</span>,
-        <span class="ident">height</span>: <span class="ident">f64</span>,
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_centre_and_size</span>(
+        <span class="ident">centre</span>: <span class="ident">Point</span>,
+        <span class="ident">size</span>: <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">DrawingSpace</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">width</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0.0</span>);
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">height</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0.0</span>);
+        <span class="ident">BoundingBox</span>::<span class="ident">from_centre_and_dimensions</span>(
+            <span class="ident">centre</span>,
+            <span class="ident">Length</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">width</span>),
+            <span class="ident">Length</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">height</span>),
+        )
+    }
 
-        <span class="kw">let</span> <span class="ident">diagonal</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>, <span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_centre_and_dimensions</span>(
+        <span class="ident">centre</span>: <span class="ident">Point</span>,
+        <span class="ident">width</span>: <span class="ident">Length</span>,
+        <span class="ident">height</span>: <span class="ident">Length</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">width</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">Length</span>::<span class="ident">zero</span>(), <span class="string">&quot;{} should not be negative&quot;</span>, <span class="ident">width</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">height</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">Length</span>::<span class="ident">zero</span>(), <span class="string">&quot;{} should not be negative&quot;</span>, <span class="ident">height</span>);
+
+        <span class="kw">let</span> <span class="ident">diagonal</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">from_lengths</span>(<span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>, <span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>);
         <span class="kw">let</span> <span class="ident">bottom_left</span> <span class="op">=</span> <span class="ident">centre</span> <span class="op">-</span> <span class="ident">diagonal</span>;
         <span class="kw">let</span> <span class="ident">top_right</span> <span class="op">=</span> <span class="ident">centre</span> <span class="op">+</span> <span class="ident">diagonal</span>;
         <span class="ident">BoundingBox</span>::<span class="ident">new_unchecked</span>(<span class="ident">bottom_left</span>, <span class="ident">top_right</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">width</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">top_right</span>.<span class="ident">x</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">bottom_left</span>.<span class="ident">x</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">width</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Length</span> { <span class="ident">Length</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">diagonal</span>().<span class="ident">x</span>) }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">height</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">top_right</span>.<span class="ident">y</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">bottom_left</span>.<span class="ident">y</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">height</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Length</span> { <span class="ident">Length</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">diagonal</span>().<span class="ident">y</span>) }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">area</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">width</span>() <span class="op">*</span> <span class="self">self</span>.<span class="ident">height</span>() }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">area</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
+        <span class="kw">let</span> <span class="ident">Vector</span> { <span class="ident">x</span>, <span class="ident">y</span>, .. } <span class="op">=</span> <span class="self">self</span>.<span class="ident">diagonal</span>();
+        <span class="ident">x</span> <span class="op">*</span> <span class="ident">y</span>
+    }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">diagonal</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vector</span> { <span class="self">self</span>.<span class="ident">top_right</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">bottom_left</span> }
 
@@ -210,16 +239,16 @@
             })
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bottom_left</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vector</span> { <span class="self">self</span>.<span class="ident">bottom_left</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bottom_left</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point</span> { <span class="self">self</span>.<span class="ident">bottom_left</span> }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bottom_right</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vector</span> {
-        <span class="self">self</span>.<span class="ident">bottom_left</span> <span class="op">+</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">width</span>(), <span class="number">0.0</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bottom_right</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point</span> {
+        <span class="self">self</span>.<span class="ident">bottom_left</span> <span class="op">+</span> <span class="ident">Vector</span>::<span class="ident">from_lengths</span>(<span class="self">self</span>.<span class="ident">width</span>(), <span class="ident">Length</span>::<span class="ident">zero</span>())
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">top_right</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vector</span> { <span class="self">self</span>.<span class="ident">top_right</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">top_right</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point</span> { <span class="self">self</span>.<span class="ident">top_right</span> }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">top_left</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vector</span> {
-        <span class="self">self</span>.<span class="ident">bottom_left</span> <span class="op">+</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">0.0</span>, <span class="self">self</span>.<span class="ident">height</span>())
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">top_left</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point</span> {
+        <span class="self">self</span>.<span class="ident">bottom_left</span> <span class="op">+</span> <span class="ident">Vector</span>::<span class="ident">from_lengths</span>(<span class="ident">Length</span>::<span class="ident">zero</span>(), <span class="self">self</span>.<span class="ident">height</span>())
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">min_x</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">bottom_left</span>.<span class="ident">x</span> }
@@ -249,8 +278,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">bounding_box_around_corners_gives_same_bounding_box</span>() {
-        <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span>
-            <span class="ident">BoundingBox</span>::<span class="ident">new</span>(<span class="ident">Vector</span>::<span class="ident">zero</span>(), <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">10.0</span>, <span class="number">10.0</span>));
+        <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span> <span class="ident">BoundingBox</span>::<span class="ident">new</span>(<span class="ident">Point</span>::<span class="ident">zero</span>(), <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">10.0</span>, <span class="number">10.0</span>));
         <span class="kw">let</span> <span class="ident">corners</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
             <span class="ident">original</span>.<span class="ident">bottom_left</span>(),
             <span class="ident">original</span>.<span class="ident">bottom_right</span>(),

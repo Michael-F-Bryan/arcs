@@ -170,15 +170,17 @@
 <span id="170">170</span>
 <span id="171">171</span>
 <span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">algorithms</span>::<span class="ident">ScaleNonUniform</span>, <span class="ident">components</span>::<span class="ident">Viewport</span>, <span class="ident">primitives</span>::<span class="ident">Arc</span>,
-};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">ScaleNonUniform</span>, <span class="ident">components</span>::<span class="ident">Viewport</span>, <span class="ident">Arc</span>};
 
-<span class="doccomment">/// Something which can be scaled in *Drawing Space*</span>
+<span class="doccomment">/// Something who&#39;s dimensions can be scaled uniformly.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Scale</span> {
+    <span class="doccomment">/// Scale the object in-place.</span>
     <span class="kw">fn</span> <span class="ident">scale</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">scale_factor</span>: <span class="ident">f64</span>);
 
+    <span class="doccomment">/// Convenience method for getting a scaled copy of this object.</span>
     <span class="kw">fn</span> <span class="ident">scaled</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">scale_factor</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">Clone</span>,
@@ -211,7 +213,9 @@
     <span class="doccomment">/// Zoom the viewport, where a positive `scale_factor` will zoom in.</span>
     <span class="kw">fn</span> <span class="ident">scale</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">scale_factor</span>: <span class="ident">f64</span>) {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">scale_factor</span>.<span class="ident">is_finite</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">scale_factor</span> <span class="op">!</span><span class="op">=</span> <span class="number">0.0</span>);
-        <span class="self">self</span>.<span class="ident">pixels_per_drawing_unit</span> <span class="op">/</span><span class="op">=</span> <span class="ident">scale_factor</span>;
+        <span class="self">self</span>.<span class="ident">pixels_per_drawing_unit</span> <span class="op">=</span> <span class="ident">euclid</span>::<span class="ident">Scale</span>::<span class="ident">new</span>(
+            <span class="self">self</span>.<span class="ident">pixels_per_drawing_unit</span>.<span class="ident">get</span>() <span class="op">/</span> <span class="ident">scale_factor</span>,
+        );
     }
 }
 
@@ -221,10 +225,9 @@
     <span class="kw">use</span> <span class="kw">crate</span>::{
         <span class="ident">algorithms</span>::{<span class="ident">AffineTransformable</span>, <span class="ident">Translate</span>},
         <span class="ident">components</span>::<span class="ident">BoundingBox</span>,
-        <span class="ident">primitives</span>::{<span class="ident">Arc</span>, <span class="ident">Line</span>},
-        <span class="ident">Vector</span>,
+        <span class="ident">Arc</span>, <span class="ident">Line</span>, <span class="ident">Point</span>, <span class="ident">Transform</span>, <span class="ident">Vector</span>,
     };
-    <span class="kw">use</span> <span class="ident">kurbo</span>::<span class="ident">Affine</span>;
+    <span class="kw">use</span> <span class="ident">euclid</span>::<span class="ident">Angle</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">scale_vector</span>() {
@@ -239,26 +242,26 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">scale_line</span>() {
-        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">2.0</span>, <span class="number">4.0</span>);
-        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">3.0</span>, <span class="op">-</span><span class="number">5.0</span>);
+        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">2.0</span>, <span class="number">4.0</span>);
+        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">3.0</span>, <span class="op">-</span><span class="number">5.0</span>);
         <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span> <span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">start</span>, <span class="ident">end</span>);
         <span class="kw">let</span> <span class="ident">scale_factor</span> <span class="op">=</span> <span class="number">1.5</span>;
 
         <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">original</span>.<span class="ident">scaled</span>(<span class="ident">scale_factor</span>);
-        <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">3.0</span>, <span class="number">6.0</span>), <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">4.5</span>, <span class="op">-</span><span class="number">7.5</span>));
+        <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">3.0</span>, <span class="number">6.0</span>), <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">4.5</span>, <span class="op">-</span><span class="number">7.5</span>));
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">actual</span>, <span class="ident">expected</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">scale_line_around_mid_point</span>() {
-        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">2.0</span>, <span class="number">4.0</span>);
-        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">3.0</span>, <span class="op">-</span><span class="number">5.0</span>);
+        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">2.0</span>, <span class="number">4.0</span>);
+        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">3.0</span>, <span class="op">-</span><span class="number">5.0</span>);
         <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span> <span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">start</span>, <span class="ident">end</span>);
         <span class="kw">let</span> <span class="ident">scale_factor</span> <span class="op">=</span> <span class="number">1.5</span>;
-        <span class="kw">let</span> <span class="ident">mid_point</span> <span class="op">=</span> <span class="ident">start</span> <span class="op">+</span> <span class="ident">original</span>.<span class="ident">displacement</span>() <span class="op">*</span> <span class="number">0.5</span>;
+        <span class="kw">let</span> <span class="ident">mid_point</span> <span class="op">=</span> (<span class="ident">start</span> <span class="op">+</span> <span class="ident">original</span>.<span class="ident">displacement</span>() <span class="op">*</span> <span class="number">0.5</span>).<span class="ident">to_vector</span>();
         <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span>
-            <span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">1.75</span>, <span class="number">6.25</span>), <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">3.25</span>, <span class="op">-</span><span class="number">7.25</span>));
+            <span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">1.75</span>, <span class="number">6.25</span>), <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">3.25</span>, <span class="op">-</span><span class="number">7.25</span>));
 
         <span class="comment">// we can either use explicit transformation methods:</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">transformed</span> <span class="op">=</span> <span class="ident">original</span>.<span class="ident">translated</span>(<span class="ident">Vector</span>::<span class="ident">zero</span>() <span class="op">-</span> <span class="ident">mid_point</span>);
@@ -270,10 +273,10 @@
         <span class="comment">// Or compose an `Affine` and pass it directly to the `transform`</span>
         <span class="comment">// method: keep in mind that transforms get composed *in reverse</span>
         <span class="comment">// execution order*</span>
-        <span class="kw">let</span> <span class="ident">translate_to_origin</span> <span class="op">=</span> <span class="ident">Affine</span>::<span class="ident">translate</span>(<span class="ident">Vector</span>::<span class="ident">zero</span>() <span class="op">-</span> <span class="ident">mid_point</span>);
-        <span class="kw">let</span> <span class="ident">scale</span> <span class="op">=</span> <span class="ident">Affine</span>::<span class="ident">scale</span>(<span class="ident">scale_factor</span>);
-        <span class="kw">let</span> <span class="ident">translate_back</span> <span class="op">=</span> <span class="ident">Affine</span>::<span class="ident">translate</span>(<span class="ident">mid_point</span>);
-        <span class="kw">let</span> <span class="ident">combined_transform</span> <span class="op">=</span> <span class="ident">translate_back</span> <span class="op">*</span> <span class="ident">scale</span> <span class="op">*</span> <span class="ident">translate_to_origin</span>;
+        <span class="kw">let</span> <span class="ident">combined_transform</span> <span class="op">=</span>
+            <span class="ident">Transform</span>::<span class="ident">create_translation</span>(<span class="op">-</span><span class="ident">mid_point</span>.<span class="ident">x</span>, <span class="op">-</span><span class="ident">mid_point</span>.<span class="ident">y</span>)
+                .<span class="ident">post_scale</span>(<span class="ident">scale_factor</span>, <span class="ident">scale_factor</span>)
+                .<span class="ident">post_translate</span>(<span class="ident">mid_point</span>);
 
         <span class="kw">let</span> <span class="ident">transformed</span> <span class="op">=</span> <span class="ident">original</span>.<span class="ident">transformed</span>(<span class="ident">combined_transform</span>);
 
@@ -284,17 +287,17 @@
     <span class="kw">fn</span> <span class="ident">scale_arc</span>() {
         <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="op">-</span><span class="number">1.4</span>;
         <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="number">2.0</span>;
-        <span class="kw">let</span> <span class="ident">centre</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">y</span>);
+        <span class="kw">let</span> <span class="ident">centre</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">y</span>);
         <span class="kw">let</span> <span class="ident">radius</span> <span class="op">=</span> <span class="number">5.0</span>;
-        <span class="kw">let</span> <span class="ident">start_angle</span> <span class="op">=</span> <span class="number">0.5</span>;
-        <span class="kw">let</span> <span class="ident">sweep_angle</span> <span class="op">=</span> <span class="number">1.0</span>;
+        <span class="kw">let</span> <span class="ident">start_angle</span> <span class="op">=</span> <span class="ident">Angle</span>::<span class="ident">radians</span>(<span class="number">0.5</span>);
+        <span class="kw">let</span> <span class="ident">sweep_angle</span> <span class="op">=</span> <span class="ident">Angle</span>::<span class="ident">radians</span>(<span class="number">1.0</span>);
         <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span>
             <span class="ident">Arc</span>::<span class="ident">from_centre_radius</span>(<span class="ident">centre</span>, <span class="ident">radius</span>, <span class="ident">start_angle</span>, <span class="ident">sweep_angle</span>);
         <span class="kw">let</span> <span class="ident">scale_factor</span> <span class="op">=</span> <span class="number">2.0</span>;
 
         <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">original</span>.<span class="ident">scaled</span>(<span class="ident">scale_factor</span>);
         <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">from_centre_radius</span>(
-            <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="ident">x</span> <span class="op">*</span> <span class="ident">scale_factor</span>, <span class="ident">y</span> <span class="op">*</span> <span class="ident">scale_factor</span>),
+            <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">x</span> <span class="op">*</span> <span class="ident">scale_factor</span>, <span class="ident">y</span> <span class="op">*</span> <span class="ident">scale_factor</span>),
             <span class="ident">radius</span> <span class="op">*</span> <span class="ident">scale_factor</span>,
             <span class="ident">start_angle</span>,
             <span class="ident">sweep_angle</span>,
@@ -307,10 +310,10 @@
     <span class="kw">fn</span> <span class="ident">scale_arc_around_centre</span>() {
         <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="op">-</span><span class="number">1.4</span>;
         <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="number">2.0</span>;
-        <span class="kw">let</span> <span class="ident">centre</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">y</span>);
+        <span class="kw">let</span> <span class="ident">centre</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">y</span>);
         <span class="kw">let</span> <span class="ident">radius</span> <span class="op">=</span> <span class="number">5.0</span>;
-        <span class="kw">let</span> <span class="ident">start_angle</span> <span class="op">=</span> <span class="number">0.5</span>;
-        <span class="kw">let</span> <span class="ident">sweep_angle</span> <span class="op">=</span> <span class="number">1.0</span>;
+        <span class="kw">let</span> <span class="ident">start_angle</span> <span class="op">=</span> <span class="ident">Angle</span>::<span class="ident">radians</span>(<span class="number">0.5</span>);
+        <span class="kw">let</span> <span class="ident">sweep_angle</span> <span class="op">=</span> <span class="ident">Angle</span>::<span class="ident">radians</span>(<span class="number">1.0</span>);
         <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span>
             <span class="ident">Arc</span>::<span class="ident">from_centre_radius</span>(<span class="ident">centre</span>, <span class="ident">radius</span>, <span class="ident">start_angle</span>, <span class="ident">sweep_angle</span>);
         <span class="kw">let</span> <span class="ident">scale_factor</span> <span class="op">=</span> <span class="number">2.0</span>;
@@ -322,22 +325,23 @@
             <span class="ident">sweep_angle</span>,
         );
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">transformed</span> <span class="op">=</span> <span class="ident">original</span>.<span class="ident">translated</span>(<span class="ident">Vector</span>::<span class="ident">zero</span>() <span class="op">-</span> <span class="ident">centre</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">transformed</span> <span class="op">=</span>
+            <span class="ident">original</span>.<span class="ident">translated</span>(<span class="ident">Vector</span>::<span class="ident">zero</span>() <span class="op">-</span> <span class="ident">centre</span>.<span class="ident">to_vector</span>());
         <span class="ident">transformed</span>.<span class="ident">scale</span>(<span class="ident">scale_factor</span>);
-        <span class="ident">transformed</span>.<span class="ident">translate</span>(<span class="ident">centre</span>);
+        <span class="ident">transformed</span>.<span class="ident">translate</span>(<span class="ident">centre</span>.<span class="ident">to_vector</span>());
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">transformed</span>, <span class="ident">expected</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">scale_bounding_box</span>() {
-        <span class="kw">let</span> <span class="ident">first</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">2.0</span>, <span class="number">1.5</span>);
-        <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">4.0</span>, <span class="number">3.5</span>);
+        <span class="kw">let</span> <span class="ident">first</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">2.0</span>, <span class="number">1.5</span>);
+        <span class="kw">let</span> <span class="ident">second</span> <span class="op">=</span> <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">4.0</span>, <span class="number">3.5</span>);
         <span class="kw">let</span> <span class="ident">scale_factor</span> <span class="op">=</span> <span class="number">1.5</span>;
         <span class="kw">let</span> <span class="ident">original</span> <span class="op">=</span> <span class="ident">BoundingBox</span>::<span class="ident">new</span>(<span class="ident">first</span>, <span class="ident">second</span>);
 
         <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span>
-            <span class="ident">BoundingBox</span>::<span class="ident">new</span>(<span class="ident">Vector</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">3.0</span>, <span class="number">2.25</span>), <span class="ident">Vector</span>::<span class="ident">new</span>(<span class="number">6.0</span>, <span class="number">5.25</span>));
+            <span class="ident">BoundingBox</span>::<span class="ident">new</span>(<span class="ident">Point</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">3.0</span>, <span class="number">2.25</span>), <span class="ident">Point</span>::<span class="ident">new</span>(<span class="number">6.0</span>, <span class="number">5.25</span>));
         <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">original</span>.<span class="ident">scaled</span>(<span class="ident">scale_factor</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">actual</span>, <span class="ident">expected</span>);

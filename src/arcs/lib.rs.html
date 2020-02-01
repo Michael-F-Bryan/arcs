@@ -11,19 +11,67 @@
 <span id="11">11</span>
 <span id="12">12</span>
 <span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A Rust CAD System - A library for building 2D *Computer Aided Design*</span>
 <span class="doccomment">//! applications.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## A Note on Conventions</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! When using this crate you&#39;ll frequently need to work with multiple</span>
+<span class="doccomment">//! coordinate spaces. To prevent accidentally mixing up vectors or points in</span>
+<span class="doccomment">//! different coordinate spaces (see [the Mars Climate Orbiter][mco]), we use</span>
+<span class="doccomment">//! [`euclid`]&#39;s ability to &quot;tag&quot; a geometry primitive with something</span>
+<span class="doccomment">//! representing the coordinate space it belongs to.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! For convenience we expose type aliases for the main coordinate space you&#39;ll</span>
+<span class="doccomment">//! be using, [`DrawingSpace`].</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! For more details on when each coordinate space is used, consult the docs for</span>
+<span class="doccomment">//! [`DrawingSpace`] and [`CanvasSpace`].</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [mco]: https://en.wikipedia.org/wiki/Mars_Climate_Orbiter</span>
 
 <span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
+<span class="attribute">#[<span class="ident">deny</span>(<span class="ident">missing_debug_implementations</span>, <span class="ident">missing_copy_implementations</span>, <span class="ident">missing_docs</span>)]</span>
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">algorithms</span>;
+<span class="kw">mod</span> <span class="ident">arc</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">components</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">primitives</span>;
+<span class="kw">mod</span> <span class="ident">line</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">systems</span>;
-<span class="kw">mod</span> <span class="ident">vector</span>;
+<span class="kw">mod</span> <span class="ident">types</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">window</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">vector</span>::{<span class="ident">Orientation</span>, <span class="ident">Vector</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">arc</span>::<span class="ident">Arc</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">line</span>::<span class="ident">Line</span>;
+
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">types</span>::{
+    <span class="ident">centre_of_three_points</span>, <span class="ident">Angle</span>, <span class="ident">CanvasSpace</span>, <span class="ident">DrawingSpace</span>, <span class="ident">Length</span>,
+    <span class="ident">Orientation</span>, <span class="ident">Point</span>, <span class="ident">Transform</span>, <span class="ident">Vector</span>,
+};
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "arcs";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

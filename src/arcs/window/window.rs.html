@@ -318,6 +318,8 @@
 <span id="318">318</span>
 <span id="319">319</span>
 <span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">algorithms</span>::<span class="ident">Bounded</span>,
@@ -325,10 +327,10 @@
         <span class="ident">BoundingBox</span>, <span class="ident">DrawingObject</span>, <span class="ident">Geometry</span>, <span class="ident">Layer</span>, <span class="ident">LineStyle</span>, <span class="ident">PointStyle</span>,
         <span class="ident">Viewport</span>, <span class="ident">WindowStyle</span>,
     },
-    <span class="ident">primitives</span>::{<span class="ident">Line</span>, <span class="ident">Point</span>},
-    <span class="ident">Vector</span>,
+    <span class="ident">CanvasSpace</span>, <span class="ident">DrawingSpace</span>, <span class="ident">Line</span>, <span class="ident">Point</span>,
 };
-<span class="kw">use</span> <span class="ident">kurbo</span>::{<span class="ident">Circle</span>, <span class="ident">Size</span>};
+<span class="kw">use</span> <span class="ident">euclid</span>::{<span class="ident">Point2D</span>, <span class="ident">Scale</span>, <span class="ident">Size2D</span>};
+<span class="kw">use</span> <span class="ident">kurbo</span>::<span class="ident">Circle</span>;
 <span class="kw">use</span> <span class="ident">piet</span>::<span class="ident">RenderContext</span>;
 <span class="kw">use</span> <span class="ident">shred_derive</span>::<span class="ident">SystemData</span>;
 <span class="kw">use</span> <span class="ident">specs</span>::{<span class="ident">join</span>::<span class="ident">MaybeJoin</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>};
@@ -344,8 +346,8 @@
         <span class="kw">let</span> <span class="ident">ent</span> <span class="op">=</span> <span class="ident">world</span>
             .<span class="ident">create_entity</span>()
             .<span class="ident">with</span>(<span class="ident">Viewport</span> {
-                <span class="ident">centre</span>: <span class="ident">Vector</span>::<span class="ident">zero</span>(),
-                <span class="ident">pixels_per_drawing_unit</span>: <span class="number">1.0</span>,
+                <span class="ident">centre</span>: <span class="ident">Point</span>::<span class="ident">zero</span>(),
+                <span class="ident">pixels_per_drawing_unit</span>: <span class="ident">Scale</span>::<span class="ident">new</span>(<span class="number">1.0</span>),
             })
             .<span class="ident">with</span>(<span class="ident">LineStyle</span>::<span class="ident">default</span>())
             .<span class="ident">with</span>(<span class="ident">PointStyle</span>::<span class="ident">default</span>())
@@ -365,7 +367,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">render_system</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>,
         <span class="ident">backend</span>: <span class="ident">R</span>,
-        <span class="ident">window_size</span>: <span class="ident">Size</span>,
+        <span class="ident">window_size</span>: <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">CanvasSpace</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">System</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;a</span>
     <span class="kw">where</span>
         <span class="ident">R</span>: <span class="ident">RenderContext</span> <span class="op">+</span> <span class="lifetime">&#39;a</span>,
@@ -421,18 +423,19 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">struct</span> <span class="ident">RenderSystem</span><span class="op">&lt;</span><span class="lifetime">&#39;window</span>, <span class="ident">B</span><span class="op">&gt;</span> {
     <span class="ident">backend</span>: <span class="ident">B</span>,
-    <span class="ident">window_size</span>: <span class="ident">Size</span>,
+    <span class="ident">window_size</span>: <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">CanvasSpace</span><span class="op">&gt;</span>,
     <span class="ident">window</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;window</span> <span class="ident">Window</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;window</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">RenderSystem</span><span class="op">&lt;</span><span class="lifetime">&#39;window</span>, <span class="ident">B</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Calculate the area of the drawing displayed by the viewport.</span>
     <span class="kw">fn</span> <span class="ident">viewport_dimensions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">viewport</span>: <span class="kw-2">&amp;</span><span class="ident">Viewport</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BoundingBox</span> {
-        <span class="kw">let</span> <span class="ident">scale</span> <span class="op">=</span> <span class="ident">viewport</span>.<span class="ident">pixels_per_drawing_unit</span>;
-        <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="ident">scale</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">window_size</span>.<span class="ident">width</span>;
-        <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="ident">scale</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">window_size</span>.<span class="ident">height</span>;
+        <span class="kw">let</span> <span class="ident">window_size</span> <span class="op">=</span> <span class="ident">viewport</span>
+            .<span class="ident">pixels_per_drawing_unit</span>
+            .<span class="ident">inv</span>()
+            .<span class="ident">transform_size</span>(<span class="self">self</span>.<span class="ident">window_size</span>);
 
-        <span class="ident">BoundingBox</span>::<span class="ident">from_centre_and_dimensions</span>(<span class="ident">viewport</span>.<span class="ident">centre</span>, <span class="ident">width</span>, <span class="ident">height</span>)
+        <span class="ident">BoundingBox</span>::<span class="ident">from_centre_and_size</span>(<span class="ident">viewport</span>.<span class="ident">centre</span>, <span class="ident">window_size</span>)
     }
 }
 
@@ -445,7 +448,7 @@
         <span class="ident">viewport</span>: <span class="kw-2">&amp;</span><span class="ident">Viewport</span>,
     ) {
         <span class="kw">match</span> <span class="ident">drawing_object</span>.<span class="ident">geometry</span> {
-            <span class="ident">Geometry</span>::<span class="ident">Point</span>(<span class="kw-2">ref</span> <span class="ident">point</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Geometry</span>::<span class="ident">Point</span>(<span class="ident">point</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">render_point</span>(
                     <span class="ident">ent</span>,
                     <span class="ident">point</span>,
@@ -471,15 +474,16 @@
     <span class="kw">fn</span> <span class="ident">render_point</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">entity</span>: <span class="ident">Entity</span>,
-        <span class="ident">point</span>: <span class="kw-2">&amp;</span><span class="ident">Point</span>,
+        <span class="ident">point</span>: <span class="ident">Point</span>,
         <span class="ident">layer</span>: <span class="ident">Entity</span>,
         <span class="ident">styles</span>: <span class="kw-2">&amp;</span><span class="ident">Styling</span>,
         <span class="ident">viewport</span>: <span class="kw-2">&amp;</span><span class="ident">Viewport</span>,
     ) {
         <span class="kw">let</span> <span class="ident">style</span> <span class="op">=</span> <span class="ident">resolve_point_style</span>(<span class="ident">styles</span>, <span class="self">self</span>.<span class="ident">window</span>, <span class="ident">entity</span>, <span class="ident">layer</span>);
 
+        <span class="kw">let</span> <span class="ident">centre</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">to_canvas_coordinates</span>(<span class="ident">point</span>, <span class="ident">viewport</span>);
         <span class="kw">let</span> <span class="ident">shape</span> <span class="op">=</span> <span class="ident">Circle</span> {
-            <span class="ident">center</span>: <span class="self">self</span>.<span class="ident">to_viewport_coordinates</span>(<span class="ident">point</span>.<span class="ident">location</span>, <span class="ident">viewport</span>),
+            <span class="ident">center</span>: <span class="ident">kurbo</span>::<span class="ident">Point</span>::<span class="ident">new</span>(<span class="ident">centre</span>.<span class="ident">x</span>, <span class="ident">centre</span>.<span class="ident">y</span>),
             <span class="ident">radius</span>: <span class="ident">style</span>.<span class="ident">radius</span>.<span class="ident">in_pixels</span>(<span class="ident">viewport</span>.<span class="ident">pixels_per_drawing_unit</span>),
         };
         <span class="ident">log</span>::<span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;Drawing {:?} as {:?} using {:?}&quot;</span>, <span class="ident">point</span>, <span class="ident">shape</span>, <span class="ident">style</span>);
@@ -497,9 +501,9 @@
     ) {
         <span class="kw">let</span> <span class="ident">style</span> <span class="op">=</span> <span class="ident">resolve_line_style</span>(<span class="ident">styles</span>, <span class="self">self</span>.<span class="ident">window</span>, <span class="ident">entity</span>, <span class="ident">layer</span>);
 
-        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">to_viewport_coordinates</span>(<span class="ident">line</span>.<span class="ident">start</span>, <span class="ident">viewport</span>);
-        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">to_viewport_coordinates</span>(<span class="ident">line</span>.<span class="ident">end</span>, <span class="ident">viewport</span>);
-        <span class="kw">let</span> <span class="ident">shape</span> <span class="op">=</span> <span class="ident">kurbo</span>::<span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">start</span>, <span class="ident">end</span>);
+        <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">to_canvas_coordinates</span>(<span class="ident">line</span>.<span class="ident">start</span>, <span class="ident">viewport</span>);
+        <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">to_canvas_coordinates</span>(<span class="ident">line</span>.<span class="ident">end</span>, <span class="ident">viewport</span>);
+        <span class="kw">let</span> <span class="ident">shape</span> <span class="op">=</span> <span class="ident">kurbo</span>::<span class="ident">Line</span>::<span class="ident">new</span>(<span class="ident">start</span>.<span class="ident">to_tuple</span>(), <span class="ident">end</span>.<span class="ident">to_tuple</span>());
         <span class="kw">let</span> <span class="ident">stroke_width</span> <span class="op">=</span>
             <span class="ident">style</span>.<span class="ident">width</span>.<span class="ident">in_pixels</span>(<span class="ident">viewport</span>.<span class="ident">pixels_per_drawing_unit</span>);
         <span class="ident">log</span>::<span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;Drawing {:?} as {:?} using {:?}&quot;</span>, <span class="ident">line</span>, <span class="ident">shape</span>, <span class="ident">style</span>);
@@ -507,13 +511,13 @@
         <span class="self">self</span>.<span class="ident">backend</span>.<span class="ident">stroke</span>(<span class="ident">shape</span>, <span class="kw-2">&amp;</span><span class="ident">style</span>.<span class="ident">stroke</span>, <span class="ident">stroke_width</span>);
     }
 
-    <span class="doccomment">/// Translates a [`Vector`] from drawing space to a [`kurbo::Point`] on the</span>
-    <span class="doccomment">/// canvas.</span>
-    <span class="kw">fn</span> <span class="ident">to_viewport_coordinates</span>(
+    <span class="doccomment">/// Translates a [`crate::Point`] from drawing space to a location in</span>
+    <span class="doccomment">/// [`CanvasSpace`].</span>
+    <span class="kw">fn</span> <span class="ident">to_canvas_coordinates</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">point</span>: <span class="ident">Vector</span>,
+        <span class="ident">point</span>: <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">DrawingSpace</span><span class="op">&gt;</span>,
         <span class="ident">viewport</span>: <span class="kw-2">&amp;</span><span class="ident">Viewport</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">kurbo</span>::<span class="ident">Point</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">CanvasSpace</span><span class="op">&gt;</span> {
         <span class="kw">super</span>::<span class="ident">to_canvas_coordinates</span>(<span class="ident">point</span>, <span class="ident">viewport</span>, <span class="self">self</span>.<span class="ident">window_size</span>)
     }
 }

@@ -72,8 +72,8 @@
 
 <span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">World</span>;
 
-<span class="doccomment">/// Get an iterator over the [`ComponentVtable`] for all known [`Component`]</span>
-<span class="doccomment">/// types.</span>
+<span class="doccomment">/// Get an iterator over the [`ComponentVtable`] for all known</span>
+<span class="doccomment">/// [`specs::Component`] types.</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">known_components</span>(
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">ComponentVtable</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> {
     <span class="ident">lazy_static</span>::<span class="macro">lazy_static</span><span class="macro">!</span> {

@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["max",""],["min","Utilities for testing approximate ordering - especially true for  floating point types, where NaN's cannot be ordered. "]]});
