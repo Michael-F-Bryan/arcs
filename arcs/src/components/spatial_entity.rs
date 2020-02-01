@@ -45,6 +45,18 @@ pub struct Space {
 
 impl Default for Space {
     fn default() -> Self {
+        Space {
+            quadtree: Self::default_tree(),
+            ids: HashMap::new()
+        }
+    }
+}
+
+impl Space {
+    // FIXME: Hard-code is bad-bad
+    const WORLD_RADIUS: f64 = 1_000_000.0;
+
+    fn default_tree() -> QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]> {
         // Initialize quadtree
         let size = BoundingBox::new(
             Vector::new(-Self::WORLD_RADIUS, -Self::WORLD_RADIUS),
@@ -57,20 +69,19 @@ impl Default for Space {
             16,
             8,
             4
-        );  
-        Space {
-            quadtree,
-            ids: HashMap::new()
-        }
-    }
-}
+        );
 
-impl Space {
-    // FIXME: Hard-code is bad-bad
-    const WORLD_RADIUS: f64 = 1_000_000.0;
+        quadtree
+    }
 
     pub fn insert(&mut self, spatial: SpatialEntity) {
-        unimplemented!();
+        let entity_id = spatial.entity.id();
+        match self.quadtree.insert(spatial) {
+            Some(id) => {
+                self.ids.insert(entity_id, id);
+            },
+            None => ()
+        }
     }
 
     pub fn modify(&mut self, spatial: SpatialEntity) {
@@ -94,7 +105,8 @@ impl Space {
     }
 
     pub fn clear(&mut self) {
-        unimplemented!();
+        self.quadtree = Self::default_tree();
+        self.ids.clear();
     }
 }
 
