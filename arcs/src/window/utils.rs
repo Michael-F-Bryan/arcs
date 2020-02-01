@@ -24,7 +24,7 @@ pub fn transform_to_drawing_space(
 ) -> Transform2D<f64, CanvasSpace, DrawingSpace> {
     // See https://gamedev.stackexchange.com/a/51435
 
-    let drawing_units_per_pixel = viewport.pixels_per_drawing_unit.inverse();
+    let drawing_units_per_pixel = viewport.pixels_per_drawing_unit.inv();
 
     // calculate the new basis vectors
     let x_axis = Vector2D::new(1.0, 0.0);
@@ -32,7 +32,7 @@ pub fn transform_to_drawing_space(
     let y_axis = Vector2D::new(0.0, -1.0);
     let y_axis_basis = drawing_units_per_pixel.transform_vector(y_axis);
     // and where our origin will now be
-    let new_origin = viewport.centre
+    let new_origin = Vector2D::new(viewport.centre.x, viewport.centre.y)
         + Vector2D::new(-window.width / 2.0, window.height / 2.0)
             * drawing_units_per_pixel;
 
@@ -107,5 +107,23 @@ mod tests {
             let got = to_drawing_coordinates(canvas_space, &viewport, window);
             assert_eq!(got, expected);
         }
+    }
+
+    #[test]
+    fn known_transform_matrix() {
+        // We already know the transform matrix for this example from our use
+        // of kurbo::Affine,
+        //   canvas -> drawing: Affine([0.25, 0.0, 0.0, -0.25, 200.0, 200.0])
+        //   drawing -> canvas: Affine([4.0, 0.0, 0.0, -4.0, -800.0, 800.0])
+        let (_, viewport, window) = known_example();
+
+        assert_eq!(
+            transform_to_drawing_space(&viewport, window).to_row_major_array(),
+            [0.25, 0.0, 0.0, -0.25, 200.0, 200.0]
+        );
+        assert_eq!(
+            transform_to_canvas_space(&viewport, window).to_row_major_array(),
+            [4.0, 0.0, 0.0, -4.0, -800.0, 800.0]
+        );
     }
 }
