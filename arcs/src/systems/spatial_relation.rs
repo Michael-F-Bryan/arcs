@@ -10,6 +10,7 @@ pub struct SpatialRelation {
     changes: ReaderId<ComponentEvent>,
     to_insert: BitSet,
     to_update: BitSet,
+    to_remove: BitSet,
 }
 
 impl SpatialRelation {
@@ -20,6 +21,7 @@ impl SpatialRelation {
             changes: world.write_storage::<DrawingObject>().register_reader(),
             to_insert: BitSet::new(),
             to_update: BitSet::new(),
+            to_remove: BitSet::new(),
         }
     }
 }
@@ -48,7 +50,7 @@ impl<'world> System<'world> for SpatialRelation {
                     self.to_update.add(id);
                 },
                 ComponentEvent::Removed(id) => {
-                    space.remove_by_id(id);
+                    self.to_remove.add(id);
                 },
             }
         }
@@ -57,7 +59,7 @@ impl<'world> System<'world> for SpatialRelation {
             (&entities, &drawing_objects, &self.to_insert).join()
         {
             let bb = drawing_object.geometry.bounding_box();
-            space.insert(SpatialEntity::new(bb, ent));
+            space.modify(SpatialEntity::new(bb, ent));
         }
 
         for (ent, drawing_object, _) in
@@ -65,6 +67,11 @@ impl<'world> System<'world> for SpatialRelation {
         {
             let bb = drawing_object.geometry.bounding_box();
             space.modify(SpatialEntity::new(bb, ent));
+        }
+
+        // FIXME: This iterator is always empty, why?
+        for (ent, _) in (&entities, &self.to_remove).join() {
+            space.remove(ent);
         }
     }
 
@@ -81,7 +88,7 @@ impl<'world> System<'world> for SpatialRelation {
 
         for entity in world.entities().join() {
             if let Some(drawing) = drawing_storage.get(entity) {
-                space.insert(SpatialEntity::new(drawing.geometry.bounding_box(), entity));
+                space.modify(SpatialEntity::new(drawing.geometry.bounding_box(), entity));
             }
         }
     }
@@ -208,6 +215,8 @@ mod tests {
         assert!(!query.is_empty());
         assert_eq!(query.len(), 2);
         assert!((query[0].entity == first && query[1].entity == second) |
-                (query[0].entity == second && query[1].entity == first));
+                (query[0].entity == second && query[1].entity == first)
+        );
+
     }
 }

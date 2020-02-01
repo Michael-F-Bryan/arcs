@@ -45,7 +45,7 @@ impl SpatialEntity {
 #[derive(Debug)]
 pub struct Space {
     quadtree: SpatialTree,
-    ids: HashMap<Index, ItemId>
+    ids: HashMap<Entity, ItemId>
 }
 
 impl Default for Space {
@@ -84,34 +84,47 @@ impl Space {
         quadtree
     }
 
-    pub fn insert(&mut self, spatial: SpatialEntity) {
-        let entity_id = spatial.entity.id();
-        if let Some(id) = self.quadtree.insert(spatial) {
-            self.ids.insert(entity_id, id);
-        }
-    }
-
     pub fn modify(&mut self, spatial: SpatialEntity) {
-        let entity_id = spatial.entity.id();
-        if self.ids.contains_key(&entity_id) {
-            let item_id = self.ids[&entity_id];
+        let id: ItemId;
+        if self.ids.contains_key(&spatial.entity) {
+            // Modify
+            id = self.modify_entity(spatial);
+        }
+        else {
+            // Insert
+            id = self.insert_entity(spatial);
+        }
 
-            // remove old item
-            self.quadtree.remove(item_id);
-            self.ids.remove(&entity_id);
+        // Update hashmap
+        self.ids.entry(spatial.entity).or_insert(id);
+    }
 
-            // Add modified
-            self.insert(spatial);
+    fn insert_entity(&mut self, spatial: SpatialEntity) -> ItemId {
+        if let Some(id) = self.quadtree.insert(spatial) {
+            id
+        }
+        else {
+            panic!("ERROR: Failed to insert {:?} into Space!")
         }
     }
 
-    pub fn remove_by_id(&mut self, id: Index) {
-        if self.ids.contains_key(&id) {
-            let item_id = self.ids[&id];
+    fn modify_entity(&mut self, spatial: SpatialEntity) -> ItemId {
+        let item_id = self.ids[&spatial.entity];
+
+        // remove old item
+        self.quadtree.remove(item_id);
+
+        // Add modified
+        self.insert_entity(spatial)
+    }
+
+    pub fn remove(&mut self, entity: Entity) {
+        if self.ids.contains_key(&entity) {
+            let item_id = self.ids[&entity];
 
             // remove old item
             self.quadtree.remove(item_id);
-            self.ids.remove(&id);
+            self.ids.remove(&entity);
         }
     }
 
