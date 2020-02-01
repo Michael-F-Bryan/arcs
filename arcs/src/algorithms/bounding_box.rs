@@ -70,6 +70,7 @@ impl Bounded for Arc {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Length;
 
     #[test]
     fn bounding_box_around_line() {

@@ -73,6 +73,6 @@ mod tests {
 
         let centre = centre_of_three_points(a, b, c).unwrap();
 
-        assert_eq!(centre, Vector::zero());
+        assert_eq!(centre, Point::zero());
     }
 }

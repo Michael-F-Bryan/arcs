@@ -1,4 +1,4 @@
-use crate::Point;
+use crate::{CanvasSpace, DrawingSpace, Point};
 use euclid::Scale;
 use specs::prelude::*;
 use specs_derive::Component;

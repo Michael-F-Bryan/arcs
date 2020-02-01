@@ -1,3 +1,6 @@
+use euclid::Scale;
+use crate::{CanvasSpace, DrawingSpace, Length};
+
 /// A dimension on the canvas.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Dimension {
@@ -6,14 +9,14 @@ pub enum Dimension {
     Pixels(f64),
     /// A "real" dimension defined in *Drawing Space*, which should be scaled
     /// appropriately when we zoom.
-    DrawingUnits(f64),
+    DrawingUnits(Length),
 }
 
 impl Dimension {
-    pub fn in_pixels(self, pixels_per_drawing_unit: f64) -> f64 {
+    pub fn in_pixels(self, pixels_per_drawing_unit: Scale<f64, DrawingSpace, CanvasSpace>) -> f64 {
         match self {
             Dimension::Pixels(px) => px,
-            Dimension::DrawingUnits(units) => units * pixels_per_drawing_unit,
+            Dimension::DrawingUnits(length) => length.get() * pixels_per_drawing_unit.get(),
         }
     }
 }

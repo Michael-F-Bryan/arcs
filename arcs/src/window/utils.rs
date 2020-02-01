@@ -1,5 +1,5 @@
 use crate::{components::Viewport, CanvasSpace, DrawingSpace};
-use euclid::{Point2D, Size2D, Transform2D, Vector2D};
+use euclid::{Point2D, Scale, Size2D, Transform2D, Vector2D};
 
 pub fn to_canvas_coordinates(
     point: Point2D<f64, DrawingSpace>,
@@ -24,13 +24,13 @@ pub fn transform_to_drawing_space(
 ) -> Transform2D<f64, CanvasSpace, DrawingSpace> {
     // See https://gamedev.stackexchange.com/a/51435
 
-    let drawing_units_per_pixel = viewport.pixels_per_drawing_unit.recip();
+    let drawing_units_per_pixel = viewport.pixels_per_drawing_unit.inverse();
 
     // calculate the new basis vectors
     let x_axis_basis =
-        Vector2D::<f64, DrawingSpace>::new(drawing_units_per_pixel, 0.0);
+        Vector2D::<f64, DrawingSpace>::new(drawing_units_per_pixel.get(), 0.0);
     let y_axis_basis =
-        Vector2D::<f64, DrawingSpace>::new(0.0, -drawing_units_per_pixel);
+        Vector2D::<f64, DrawingSpace>::new(0.0, -drawing_units_per_pixel.get());
     // and where our origin will now be
     let new_origin = viewport.centre
         + Vector2D::new(-window.width / 2.0, window.height / 2.0)
@@ -82,7 +82,7 @@ mod tests {
         ];
         let viewport = Viewport {
             centre: Point2D::new(300.0, 150.0),
-            pixels_per_drawing_unit: 4.0,
+            pixels_per_drawing_unit: Scale::new(4.0),
         };
         let window = Size2D::new(800.0, 400.0);
 

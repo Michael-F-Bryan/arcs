@@ -1,5 +1,5 @@
-use crate::{algorithms::Bounded, Length, Point, Vector};
-use euclid::num::Zero;
+use crate::{algorithms::Bounded, DrawingSpace, Length, Point, Vector};
+use euclid::{num::Zero, Size2D};
 use specs::prelude::*;
 use specs_derive::Component;
 
@@ -35,6 +35,17 @@ impl BoundingBox {
             bottom_left,
             top_right,
         }
+    }
+
+    pub fn from_centre_and_size(
+        centre: Point,
+        size: Size2D<f64, DrawingSpace>,
+    ) -> Self {
+        BoundingBox::from_centre_and_dimensions(
+            centre,
+            Length::new(size.width),
+            Length::new(size.height),
+        )
     }
 
     pub fn from_centre_and_dimensions(

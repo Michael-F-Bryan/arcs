@@ -107,11 +107,12 @@ struct RenderSystem<'window, B> {
 impl<'window, B> RenderSystem<'window, B> {
     /// Calculate the area of the drawing displayed by the viewport.
     fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox {
-        let scale = viewport.pixels_per_drawing_unit;
-        let width = scale * self.window_size.width;
-        let height = scale * self.window_size.height;
+        let window_size = viewport
+            .pixels_per_drawing_unit
+            .inverse()
+            .transform_size(self.window_size);
 
-        BoundingBox::from_centre_and_dimensions(viewport.centre, width, height)
+        BoundingBox::from_centre_and_size(viewport.centre, window_size)
     }
 }
 
