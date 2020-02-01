@@ -2,7 +2,7 @@ use crate::{algorithms::Bounded, Vector};
 use specs::prelude::*;
 use specs_derive::Component;
 use aabb_quadtree::{Spatial};
-use euclid::{TypedRect, TypedPoint2D, TypedSize2D};
+use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 
 /// An axis-aligned bounding box.
 #[derive(Debug, Copy, Clone, PartialEq, Component)]

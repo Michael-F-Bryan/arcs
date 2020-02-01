@@ -6,7 +6,7 @@ use crate::{
 };
 use specs::{Entity, world::Index};
 use aabb_quadtree::{QuadTree, Spatial, ItemId};
-use euclid::{TypedRect, TypedPoint2D, TypedSize2D};
+use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 use std::collections::HashMap;
 
 pub(crate) type SpatialTree = QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>;
