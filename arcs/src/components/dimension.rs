@@ -1,5 +1,5 @@
-use euclid::Scale;
 use crate::{CanvasSpace, DrawingSpace, Length};
+use euclid::Scale;
 
 /// A dimension on the canvas.
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -13,10 +13,15 @@ pub enum Dimension {
 }
 
 impl Dimension {
-    pub fn in_pixels(self, pixels_per_drawing_unit: Scale<f64, DrawingSpace, CanvasSpace>) -> f64 {
+    pub fn in_pixels(
+        self,
+        pixels_per_drawing_unit: Scale<f64, DrawingSpace, CanvasSpace>,
+    ) -> f64 {
         match self {
             Dimension::Pixels(px) => px,
-            Dimension::DrawingUnits(length) => length.get() * pixels_per_drawing_unit.get(),
+            Dimension::DrawingUnits(length) => {
+                length.get() * pixels_per_drawing_unit.get()
+            },
         }
     }
 }

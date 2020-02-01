@@ -26,10 +26,11 @@ impl<A: AffineTransformable> ScaleNonUniform for A {
 
 impl ScaleNonUniform for BoundingBox {
     fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64) {
-        *self = BoundingBox::new(
-            self.bottom_left().scaled_non_uniform(factor_x, factor_y),
-            self.top_right().scaled_non_uniform(factor_x, factor_y),
-        );
+        let bottom_left =
+            self.bottom_left().scaled_non_uniform(factor_x, factor_y);
+        let top_right = self.top_right().scaled_non_uniform(factor_x, factor_y);
+
+        *self = BoundingBox::new(bottom_left, top_right);
     }
 }
 
@@ -39,31 +40,30 @@ mod tests {
     use crate::{algorithms::Translate, Line, Point, Vector};
 
     #[test]
-    fn scale_vector() {
+    fn scale_point() {
         let x = -1.0;
         let y = 5.0;
-        let original = Vector::new(x, y);
+        let original = Point::new(x, y);
         let factor_x = 2.0;
         let factor_y = 2.5;
+        let should_be = Point::new(x * factor_x, y * factor_y);
 
         let actual = original.scaled_non_uniform(factor_x, factor_y);
-        // known value
-        let expected = Vector::new(x * factor_x, y * factor_y);
 
-        assert_eq!(actual, expected);
+        assert_eq!(actual, should_be);
     }
 
     #[test]
-    fn scale_vector_around_base() {
-        let original = Vector::new(-1.0, 5.0);
+    fn scale_point_around_base() {
+        let original = Point::new(-1.0, 5.0);
         let factor_x = 2.0;
         let factor_y = 2.5;
         let base = Vector::new(2.0, 0.0);
 
-        let expected = Vector::new(-4.0, 12.5);
+        let expected = Point::new(-4.0, 12.5);
 
         // We can either use explicit transformation methods:
-        let mut transformed = original.translated(Vector::zero() - base);
+        let mut transformed = original.translated(-base);
         transformed.scale_non_uniform(factor_x, factor_y);
         transformed.translate(base);
 
@@ -111,7 +111,7 @@ mod tests {
 
         // scale by line mid-point as reference
         let mid_point = (start + original.displacement() * 0.5).to_vector();
-        let mut transformed = original.translated(- mid_point);
+        let mut transformed = original.translated(-mid_point);
         transformed.scale_non_uniform(factor_x, factor_y);
         transformed.translate(mid_point);
 

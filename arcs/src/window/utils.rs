@@ -15,7 +15,7 @@ pub fn transform_to_canvas_space(
 ) -> Transform2D<f64, DrawingSpace, CanvasSpace> {
     transform_to_drawing_space(viewport, window)
         .inverse()
-        .expect("The transform should always be invertible")
+        .expect("The transform matrix should always be invertible")
 }
 
 pub fn transform_to_drawing_space(
@@ -27,28 +27,25 @@ pub fn transform_to_drawing_space(
     let drawing_units_per_pixel = viewport.pixels_per_drawing_unit.inverse();
 
     // calculate the new basis vectors
-    let x_axis_basis =
-        Vector2D::<f64, DrawingSpace>::new(drawing_units_per_pixel.get(), 0.0);
-    let y_axis_basis =
-        Vector2D::<f64, DrawingSpace>::new(0.0, -drawing_units_per_pixel.get());
+    let x_axis = Vector2D::new(1.0, 0.0);
+    let x_axis_basis = drawing_units_per_pixel.transform_vector(x_axis);
+    let y_axis = Vector2D::new(0.0, -1.0);
+    let y_axis_basis = drawing_units_per_pixel.transform_vector(y_axis);
     // and where our origin will now be
     let new_origin = viewport.centre
         + Vector2D::new(-window.width / 2.0, window.height / 2.0)
             * drawing_units_per_pixel;
 
-    // The transform matrix is then:
-    //   | x_basis.x  y_basis.x  origin.x |
-    //   | x_basis.y  y_basis.y  origin.y |
-    //   |         0          0         1 |
+    // This gives us a column-order matrix (x * T => x'):
+    //   | x_basis.x  x_basis.y  0 |
+    //   | y_basis.x  y_basis.y  0 |
+    //   | origin.x   origin.y   1 |
 
-    Transform2D::row_major(
-        x_axis_basis.x,
-        x_axis_basis.y,
-        y_axis_basis.x,
-        y_axis_basis.y,
-        new_origin.x,
-        new_origin.y,
-    )
+    Transform2D::from_row_arrays([
+        x_axis_basis.to_array(),
+        y_axis_basis.to_array(),
+        new_origin.to_array(),
+    ])
 }
 
 pub fn to_drawing_coordinates(
@@ -64,6 +61,8 @@ mod tests {
     use super::*;
     use euclid::Scale;
 
+    /// These are the numbers from an example I drew out on paper and calculated
+    /// by hand.
     fn known_example() -> (
         Vec<(Point2D<f64, DrawingSpace>, Point2D<f64, CanvasSpace>)>,
         Viewport,
