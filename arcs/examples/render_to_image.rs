@@ -3,12 +3,11 @@ use arcs::{
         Dimension, DrawingObject, Geometry, Layer, LineStyle, Name, PointStyle,
         Viewport,
     },
-    primitives::{Line, Point},
     window::Window,
-    Vector,
+    Length, Line, Point,
 };
+use euclid::{Scale, Size2D};
 use image::RgbaImage;
-use kurbo::Size;
 use piet::{Color, ImageFormat};
 use specs::prelude::*;
 use std::f64::consts::PI;
@@ -35,7 +34,7 @@ fn main() {
     world
         .create_entity()
         .with(DrawingObject {
-            geometry: Geometry::Point(Point::new(Vector::new(20.0, 0.0))),
+            geometry: Geometry::Point(Point::new(20.0, 0.0)),
             layer,
         })
         .with(PointStyle {
@@ -48,9 +47,9 @@ fn main() {
     let radius = 50.0;
     for (start_angle, end_angle) in angles.clone().zip(angles.clone().skip(1)) {
         let start =
-            Vector::new(radius * start_angle.cos(), radius * start_angle.sin());
+            Point::new(radius * start_angle.cos(), radius * start_angle.sin());
         let end =
-            Vector::new(radius * end_angle.cos(), radius * end_angle.sin());
+            Point::new(radius * end_angle.cos(), radius * end_angle.sin());
 
         world
             .create_entity()
@@ -59,7 +58,7 @@ fn main() {
                 layer,
             })
             .with(LineStyle {
-                width: Dimension::DrawingUnits(5.0),
+                width: Dimension::DrawingUnits(Length::new(5.0)),
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .build();
@@ -70,8 +69,8 @@ fn main() {
 
     // set the viewport and background colour
     *window.viewport_mut(&mut world.write_storage()) = Viewport {
-        centre: Vector::zero(),
-        pixels_per_drawing_unit: 5.0,
+        centre: Point::zero(),
+        pixels_per_drawing_unit: Scale::new(5.0),
     };
     window
         .style_mut(&mut world.write_storage())
@@ -88,7 +87,7 @@ fn main() {
         // system
         let mut system = window.render_system(
             bitmap_canvas.render_context(),
-            Size::new(width as f64, height as f64),
+            Size2D::new(width as f64, height as f64),
         );
         // and run the system
         RunNow::run_now(&mut system, &world);

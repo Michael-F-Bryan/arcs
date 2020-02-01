@@ -26,6 +26,7 @@ kurbo = "0.5"
 shred = "0.9"
 cgmath = "0.17.0"
 lazy_static = "1"
+euclid = "0.20.7"
 
 [dev-dependencies]
 piet-common = "0.0.7"
