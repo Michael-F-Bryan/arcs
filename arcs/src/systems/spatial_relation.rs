@@ -91,13 +91,13 @@ impl<'world> System<'world> for SpatialRelation {
 #[cfg(test)]
 mod tests {
     use crate::{
-        primitives::{Line},
         components::{register, Layer, Name, DrawingObject, Geometry, LineStyle, Dimension, Space},
-        Vector,
+        {Point, Line},
         systems::SpatialRelation,
     };
     use specs::prelude::*;
     use piet::Color;
+    use euclid::Length;
 
     #[test]
     fn setup_creates_all_outstanding_spatial_entities() {
@@ -116,7 +116,7 @@ mod tests {
         );
     
         // Add a line to our world
-        let line = Line::new(Vector::new(2.0, 1.0), Vector::new(5.0, -1.0));
+        let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
         let _first = world
             .create_entity()
             .with(DrawingObject {
@@ -124,7 +124,7 @@ mod tests {
                 layer,
             })
             .with(LineStyle {
-                width: Dimension::DrawingUnits(5.0),
+                width: Dimension::DrawingUnits(Length::new(5.0)),
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .build()
@@ -156,7 +156,7 @@ mod tests {
         );
     
         // Add a line to our world
-        let line = Line::new(Vector::new(2.0, 1.0), Vector::new(5.0, -1.0));
+        let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
         let _first = world
             .create_entity()
             .with(DrawingObject {
@@ -164,7 +164,7 @@ mod tests {
                 layer,
             })
             .with(LineStyle {
-                width: Dimension::DrawingUnits(5.0),
+                width: Dimension::DrawingUnits(Length::new(5.0)),
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .build()
@@ -175,7 +175,7 @@ mod tests {
         System::setup(&mut system, &mut world);
         
         // make some changes after the initial setup
-        let line = Line::new(Vector::new(3.0, 0.0), Vector::new(-1.0, 2.0));
+        let line = Line::new(Point::new(3.0, 0.0), Point::new(-1.0, 2.0));
         let _second = world
             .create_entity()
             .with(DrawingObject {
@@ -183,7 +183,7 @@ mod tests {
                 layer,
             })
             .with(LineStyle {
-                width: Dimension::DrawingUnits(5.0),
+                width: Dimension::DrawingUnits(Length::new(5.0)),
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .build()
@@ -193,11 +193,11 @@ mod tests {
         system.run_now(&world);
         let space = world.read_resource::<Space>();
 
-        let query = space.query_point(Vector::new(3.0, -0.5));
+        let query = space.query_point(Point::new(3.0, -0.5));
         assert!(query != None);
         assert_eq!(query.unwrap().len(), 1);
 
-        let query = space.query_point(Vector::new(2.5, 0.5));
+        let query = space.query_point(Point::new(2.5, 0.5));
         assert!(query != None);
         assert_eq!(query.unwrap().len(), 2);
     }

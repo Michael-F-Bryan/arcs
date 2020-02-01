@@ -1,4 +1,4 @@
-use crate::primitives::{Arc, Line, Point};
+use crate::{Arc, Line, Point};
 use specs::prelude::*;
 
 // for rustdoc links

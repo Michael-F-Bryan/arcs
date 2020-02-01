@@ -1,13 +1,13 @@
 use crate::{
     components::BoundingBox,
-    Vector,
-    primitives::{Arc},
+    {Point, Arc},
     algorithms::{Bounded},
 };
 use specs::{Entity, world::Index};
 use aabb_quadtree::{QuadTree, Spatial, ItemId};
 use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 use std::collections::HashMap;
+use euclid::Angle;
 
 pub(crate) type SpatialTree = QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>;
 
@@ -26,7 +26,7 @@ impl Spatial<f64> for SpatialEntity {
         TypedRect::<f32, f64>::new(
             // TypedRects have their origin at the bottom left corner (this is undocumented!)
             TypedPoint2D::new(bb.bottom_left().x as f32, bb.bottom_left().y as f32),
-            TypedSize2D::new(bb.width() as f32, bb.height() as f32))
+            TypedSize2D::new(bb.width().0 as f32, bb.height().0 as f32))
     }
 }
 
@@ -67,8 +67,8 @@ impl Space {
     fn default_tree() -> SpatialTree{
         // Initialize quadtree
         let size = BoundingBox::new(
-            Vector::new(-Self::WORLD_RADIUS, -Self::WORLD_RADIUS),
-            Vector::new(Self::WORLD_RADIUS, Self::WORLD_RADIUS)
+            Point::new(-Self::WORLD_RADIUS, -Self::WORLD_RADIUS),
+            Point::new(Self::WORLD_RADIUS, Self::WORLD_RADIUS)
             ).aabb();
         let quadtree: SpatialTree = QuadTree::new(
             size,
@@ -121,8 +121,13 @@ impl Space {
         self.ids.is_empty()
     }
 
-    pub fn query_point(&self, point: Vector) -> Option<Vec<Entity>> {
-        let cursor_circle = Arc::from_centre_radius(point, Self::QUERY_POINT_RADIUS, 0.0, 2.0 * std::f64::consts::PI);
+    pub fn query_point(&self, point: Point) -> Option<Vec<Entity>> {
+        let cursor_circle = Arc::from_centre_radius(
+            point,
+            Self::QUERY_POINT_RADIUS,
+            Angle::radians(0.0),
+            Angle::radians(2.0 * std::f64::consts::PI)
+        );
         self.query_region(cursor_circle.bounding_box())
     }
 

@@ -20,11 +20,10 @@ pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
 pub use spatial_entity::{SpatialEntity, Space};
 
-use specs::{Entity, World};
-use std::any::Any;
+use specs::World;
 
-/// Get an iterator over the [`ComponentVtable`] for all known [`Component`]
-/// types.
+/// Get an iterator over the [`ComponentVtable`] for all known
+/// [`specs::Component`] types.
 pub(crate) fn known_components(
 ) -> impl Iterator<Item = &'static ComponentVtable> + 'static {
     lazy_static::lazy_static! {
@@ -51,23 +50,4 @@ pub fn register(world: &mut World) {
         log::debug!("Registering {}", component.name());
         component.register(world);
     }
-}
-
-/// Looks up all [`specs::Component`]s associated with this [`Entity`], yielding
-/// copies of their current value.
-///
-/// # Note
-///
-/// This only works on [`specs::Component`]s from the [`known_components()`]
-/// list.
-pub(crate) fn attached_to_entity(
-    world: &World,
-    entity: Entity,
-) -> impl Iterator<Item = (&'static ComponentVtable, Box<dyn Any>)> + '_ {
-    known_components().into_iter().filter_map(move |vtable| {
-        match vtable.get_cloned(world, entity) {
-            Some(got) => Some((vtable, got)),
-            None => None,
-        }
-    })
 }
