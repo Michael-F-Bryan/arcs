@@ -14,8 +14,8 @@ impl Length for Line {
     /// Calculates the length of the line.
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, Line, Vector};
-    /// let line = Line::new(Vector::zero(), Vector::new(5.0, 0.0));
+    /// # use arcs::{algorithms::Length, Line, Point};
+    /// let line = Line::new(Point::zero(), Point::new(5.0, 0.0));
     ///
     /// assert_eq!(line.length(), 5.0);
     /// ```
@@ -38,10 +38,15 @@ impl Length for Arc {
     /// Calculates the length of an [`Arc`].
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, Arc, Vector};
+    /// # use arcs::{algorithms::Length, Arc, Point, Angle};
     /// # use std::f64::consts::PI;
     /// let radius = 50.0;
-    /// let arc = Arc::from_centre_radius(Vector::zero(), radius, 0.0, 2.0 * PI);
+    /// let arc = Arc::from_centre_radius(
+    ///     Point::zero(),
+    ///     radius,
+    ///     Angle::zero(),
+    ///     Angle::two_pi(),
+    /// );
     ///
     /// assert_eq!(arc.length(), 2.0 * radius * PI);
     /// ```
