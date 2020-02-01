@@ -158,7 +158,7 @@ mod tests {
     
         // Add a line to our world
         let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
-        let _first = world
+        let first = world
             .create_entity()
             .with(DrawingObject {
                 geometry: Geometry::Line(line),
@@ -177,7 +177,7 @@ mod tests {
         
         // make some changes after the initial setup
         let line = Line::new(Point::new(3.0, 0.0), Point::new(-1.0, 2.0));
-        let _second = world
+        let second = world
             .create_entity()
             .with(DrawingObject {
                 geometry: Geometry::Line(line),
@@ -194,17 +194,20 @@ mod tests {
         system.run_now(&world);
         let space = world.read_resource::<Space>();
 
+        // operate on the iterator returned
         let mut query = space.query_point(Point::new(3.0, -0.5), 1.0);
         match query.next() {
             None => assert!(false),
             Some(spatial_entity) => {
-                let draw = world.read_storage::<DrawingObject>();
-                assert_eq!(spatial_entity.bounds, draw.get(spatial_entity.entity).unwrap().geometry.bounding_box())
+                assert_eq!(spatial_entity.entity, first)
             }
         }
 
-        // let query = space.query_point(Point::new(2.5, 0.5), 1.0);
-        // assert!(query != None);
-        // assert_eq!(query.unwrap().len(), 2);
+        // or collect into an vec
+        let query: Vec<_> = space.query_point(Point::new(2.5, 0.5), 1.0).collect();
+        assert!(!query.is_empty());
+        assert_eq!(query.len(), 2);
+        assert!((query[0].entity == first && query[1].entity == second) |
+                (query[0].entity == second && query[1].entity == first));
     }
 }
