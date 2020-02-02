@@ -1,8 +1,9 @@
-use arcs::Point;
 use crate::modes::{
-    AddArcMode, AddLineMode, AddPointMode, Drawing, KeyboardEventArgs,
-    MouseEventArgs, State, Transition, VirtualKeyCode,
+    AddArcMode, AddLineMode, AddPointMode, ApplicationContext,
+    ApplicationContextExt, KeyboardEventArgs, MouseEventArgs, State,
+    Transition, VirtualKeyCode,
 };
+use arcs::Point;
 
 #[derive(Debug)]
 pub struct Idle {
@@ -12,7 +13,7 @@ pub struct Idle {
 impl State for Idle {
     fn on_key_pressed(
         &mut self,
-        _drawing: &mut dyn Drawing,
+        _ctx: &mut dyn ApplicationContext,
         event_args: &KeyboardEventArgs,
     ) -> Transition {
         match event_args.key {
@@ -48,19 +49,21 @@ struct WaitingToSelect;
 impl State for WaitingToSelect {
     fn on_mouse_down(
         &mut self,
-        drawing: &mut dyn Drawing,
+        mut ctx: &mut dyn ApplicationContext,
         args: &MouseEventArgs,
     ) -> Transition {
         let first_item_under_cursor =
-            drawing.entities_under_point(args.location).next();
+            ctx.entities_under_point(args.location).next();
 
         match first_item_under_cursor {
             Some((entity, _)) => {
-                drawing.select(entity);
-                Transition::ChangeState(Box::new(DraggingSelection::from_args(args)))
+                ctx.select(entity);
+                Transition::ChangeState(Box::new(DraggingSelection::from_args(
+                    args,
+                )))
             },
             _ => {
-                drawing.unselect_all();
+                ctx.unselect_all();
                 Transition::DoNothing
             },
         }
@@ -76,7 +79,7 @@ struct DraggingSelection {
 
 impl DraggingSelection {
     fn from_args(args: &MouseEventArgs) -> Self {
-        DraggingSelection{
+        DraggingSelection {
             previous_location: args.location,
         }
     }
@@ -85,10 +88,10 @@ impl DraggingSelection {
 impl State for DraggingSelection {
     fn on_mouse_move(
         &mut self,
-        drawing: &mut dyn Drawing,
+        mut ctx: &mut dyn ApplicationContext,
         args: &MouseEventArgs,
     ) -> Transition {
-        drawing.translate_selection(args.location - self.previous_location);
+        ctx.translate_selection(args.location - self.previous_location);
         self.previous_location = args.location;
 
         Transition::DoNothing
@@ -96,7 +99,7 @@ impl State for DraggingSelection {
 
     fn on_mouse_up(
         &mut self,
-        _drawing: &mut dyn Drawing,
+        _ctx: &mut dyn ApplicationContext,
         _args: &MouseEventArgs,
     ) -> Transition {
         Transition::ChangeState(Box::new(WaitingToSelect::default()))
@@ -106,30 +109,43 @@ impl State for DraggingSelection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use arcs::{components::DrawingObject, Point, Vector};
-    use specs::Entity;
+    use arcs::{components::Viewport, Point};
+    use euclid::Scale;
+    use specs::{Builder, Entity, World, WorldExt};
 
-    struct DummyDrawing;
+    struct DummyContext {
+        world: World,
+        viewport: Entity,
+    }
 
-    impl Drawing for DummyDrawing {
-        fn entities_under_point(
-            &self,
-            _location: Point,
-        ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>> {
-            unimplemented!()
+    impl Default for DummyContext {
+        fn default() -> Self {
+            let mut world = World::new();
+            arcs::components::register(&mut world);
+            let viewport = world
+                .create_entity()
+                .with(Viewport {
+                    centre: Point::zero(),
+                    pixels_per_drawing_unit: Scale::new(1.0),
+                })
+                .build();
+
+            DummyContext { world, viewport }
         }
+    }
 
-        fn select(&mut self, _target: Entity) { unimplemented!() }
+    impl ApplicationContext for DummyContext {
+        fn world(&self) -> &World { &self.world }
 
-        fn unselect_all(&mut self) { unimplemented!() }
+        fn world_mut(&mut self) -> &mut World { &mut self.world }
 
-        fn translate_selection(&mut self, _: Vector) { unimplemented!() }
+        fn viewport(&self) -> Entity { self.viewport }
     }
 
     #[test]
     fn change_to_arc_mode() {
         let mut idle = Idle::default();
-        let mut drawing = DummyDrawing;
+        let mut drawing = DummyContext::default();
         let args = KeyboardEventArgs::pressing(VirtualKeyCode::A);
 
         let got = idle.on_key_pressed(&mut drawing, &args);
@@ -140,7 +156,7 @@ mod tests {
     #[test]
     fn change_to_line_mode() {
         let mut idle = Idle::default();
-        let mut drawing = DummyDrawing;
+        let mut drawing = DummyContext::default();
         let args = KeyboardEventArgs::pressing(VirtualKeyCode::L);
 
         let got = idle.on_key_pressed(&mut drawing, &args);
@@ -151,7 +167,7 @@ mod tests {
     #[test]
     fn change_to_point_mode() {
         let mut idle = Idle::default();
-        let mut drawing = DummyDrawing;
+        let mut drawing = DummyContext::default();
         let args = KeyboardEventArgs::pressing(VirtualKeyCode::P);
 
         let got = idle.on_key_pressed(&mut drawing, &args);
@@ -162,7 +178,7 @@ mod tests {
     #[test]
     fn pressing_any_other_key_does_nothing() {
         let mut idle = Idle::default();
-        let mut drawing = DummyDrawing;
+        let mut drawing = DummyContext::default();
         let args = KeyboardEventArgs::pressing(VirtualKeyCode::Q);
 
         let got = idle.on_key_pressed(&mut drawing, &args);
