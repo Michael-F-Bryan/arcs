@@ -36,7 +36,7 @@ sourcesIndex["num_traits"] = {"name":"","dirs":[{"name":"ops","files":["checked.
 sourcesIndex["piet"] = {"name":"","files":["color.rs","conv.rs","error.rs","gradient.rs","lib.rs","null_renderer.rs","render_context.rs","shapes.rs","text.rs"]};
 sourcesIndex["proc_macro2"] = {"name":"","files":["fallback.rs","lib.rs","strnom.rs","wrapper.rs"]};
 sourcesIndex["proc_macro_hack"] = {"name":"","files":["lib.rs"]};
-sourcesIndex["quote"] = {"name":"","files":["ext.rs","format.rs","ident_fragment.rs","lib.rs","runtime.rs","spanned.rs","to_tokens.rs"]};
+sourcesIndex["quote"] = {"name":"","files":["ext.rs","lib.rs","runtime.rs","to_tokens.rs"]};
 sourcesIndex["rand"] = {"name":"","dirs":[{"name":"distributions","files":["bernoulli.rs","binomial.rs","cauchy.rs","dirichlet.rs","exponential.rs","float.rs","gamma.rs","integer.rs","mod.rs","normal.rs","other.rs","pareto.rs","poisson.rs","triangular.rs","uniform.rs","unit_circle.rs","unit_sphere.rs","utils.rs","weibull.rs","weighted.rs","ziggurat_tables.rs"]},{"name":"prng","files":["mod.rs"]},{"name":"rngs","dirs":[{"name":"adapter","files":["mod.rs","read.rs","reseeding.rs"]}],"files":["entropy.rs","mock.rs","mod.rs","small.rs","std.rs","thread.rs"]},{"name":"seq","files":["index.rs","mod.rs"]}],"files":["deprecated.rs","lib.rs","prelude.rs"]};
 sourcesIndex["rand_chacha"] = {"name":"","files":["chacha.rs","lib.rs"]};
 sourcesIndex["rand_core"] = {"name":"","files":["lib.rs"]};
@@ -55,7 +55,7 @@ sourcesIndex["shrev"] = {"name":"","files":["lib.rs","storage.rs","util.rs"]};
 sourcesIndex["smallvec"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["specs"] = {"name":"","dirs":[{"name":"join","files":["mod.rs","par_join.rs"]},{"name":"storage","files":["data.rs","drain.rs","entry.rs","flagged.rs","generic.rs","mod.rs","restrict.rs","storages.rs","track.rs"]},{"name":"world","files":["comp.rs","entity.rs","lazy.rs","mod.rs","world_ext.rs"]}],"files":["bitset.rs","changeset.rs","error.rs","lib.rs","prelude.rs"]};
 sourcesIndex["specs_derive"] = {"name":"","files":["impl_saveload.rs","lib.rs"]};
-sourcesIndex["syn"] = {"name":"","dirs":[{"name":"gen","files":["gen_helper.rs","visit.rs"]}],"files":["attr.rs","bigint.rs","buffer.rs","custom_keyword.rs","custom_punctuation.rs","data.rs","derive.rs","discouraged.rs","error.rs","export.rs","expr.rs","ext.rs","file.rs","generics.rs","group.rs","ident.rs","item.rs","lib.rs","lifetime.rs","lit.rs","lookahead.rs","mac.rs","macros.rs","op.rs","parse.rs","parse_macro_input.rs","parse_quote.rs","pat.rs","path.rs","print.rs","punctuated.rs","sealed.rs","span.rs","spanned.rs","stmt.rs","thread.rs","token.rs","ty.rs"]};
+sourcesIndex["syn"] = {"name":"","dirs":[{"name":"gen","files":["gen_helper.rs","visit.rs"]}],"files":["attr.rs","buffer.rs","custom_keyword.rs","custom_punctuation.rs","data.rs","derive.rs","discouraged.rs","error.rs","export.rs","expr.rs","ext.rs","generics.rs","group.rs","ident.rs","lib.rs","lifetime.rs","lit.rs","lookahead.rs","mac.rs","macros.rs","op.rs","parse.rs","parse_macro_input.rs","parse_quote.rs","path.rs","print.rs","punctuated.rs","sealed.rs","span.rs","spanned.rs","thread.rs","token.rs","tt.rs","ty.rs"]};
 sourcesIndex["tuple_utils"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["unicode_xid"] = {"name":"","files":["lib.rs","tables.rs"]};
 createSourceSidebar();
