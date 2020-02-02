@@ -96,6 +96,8 @@ impl Space {
         quadtree
     }
 
+    /// Modifies the spatial position of the given [`SpatialEntity`] inside of [`Space`]
+    /// If the [`SpatialEntity`] is not already inside of [`Space`] it will be inserted.
     pub fn modify(&mut self, spatial: SpatialEntity) {
         let id = if self.ids.contains_key(&spatial.entity) {
             self.modify_entity(spatial)
@@ -126,6 +128,7 @@ impl Space {
         self.insert_entity(spatial)
     }
 
+    /// Removes the given [`Entity`] from this [`Space`]
     pub fn remove(&mut self, entity: Entity) {
         if self.ids.contains_key(&entity) {
             let item_id = self.ids[&entity];
@@ -136,6 +139,7 @@ impl Space {
         }
     }
 
+    /// Returns an iterator over all [`SpatialEntity`] in this [`Space`]
     pub fn iter<'this>(
         &'this self,
     ) -> impl Iterator<Item = SpatialEntity> + 'this {
@@ -143,14 +147,18 @@ impl Space {
     }
 
     pub fn len(&self) -> usize {
-        self.ids.len()
+        self.quadtree.len()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.ids.is_empty()
+        self.quadtree.is_empty()
     }
 
     // FIXME: radius in CanvasSpace in method signature
+    /// Performs a spatial query in an radius around a given [`Point`]
+    /// Returns an iterator with all [`SpatialEntity`] inhabiting the [`Space`]
+    /// close to the given point
+    /// The returned iterator can be empty
     pub fn query_point<'this>(
         &'this self, point: Point, radius: f64
     ) -> impl Iterator<Item = SpatialEntity> + 'this {
@@ -163,12 +171,17 @@ impl Space {
         self.query_region(cursor_circle.bounding_box())
     }
 
+    /// Performs a spatial query for a given [`BoundingBox`]
+    /// Returns an iterator with all [`SpatialEntity`] inhabiting the [`Space`]
+    /// of the given BoundingBox
+    /// The returned iterator can be empty
     pub fn query_region<'this>(
         &'this self, region: BoundingBox
     ) -> impl Iterator<Item = SpatialEntity> + 'this {
         self.quadtree.query(region.aabb()).into_iter().map(|q| *q.0)
     }
 
+    /// Clears the [`Space`] of all [`SpatialEntity`]
     pub fn clear(&mut self) {
         // Re-use old size
         let size = self.quadtree.bounding_box();
