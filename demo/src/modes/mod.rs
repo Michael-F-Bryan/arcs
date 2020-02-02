@@ -1,3 +1,7 @@
+mod idle;
+
+pub use idle::Idle;
+
 use arcs::{components::DrawingObject, CanvasSpace, DrawingSpace, Point};
 use euclid::Point2D;
 use specs::Entity;
@@ -22,6 +26,10 @@ pub trait Drawing {
 }
 
 pub trait State: Debug {
+    /// The [`State`] has been cancelled and needs to clean up any temporary
+    /// objects it created.
+    fn on_cancelled(&mut self, _drawing: &mut dyn Drawing) {}
+
     /// The left mouse button was pressed.
     fn on_mouse_down(
         &mut self,
