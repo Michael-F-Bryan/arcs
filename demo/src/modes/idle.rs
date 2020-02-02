@@ -1,6 +1,7 @@
+use arcs::Point;
 use crate::modes::{
-    AddArcMode, AddLineMode, AddPointMode, Drawing, KeyboardEventArgs, State,
-    Transition, VirtualKeyCode,
+    AddArcMode, AddLineMode, AddPointMode, Drawing, KeyboardEventArgs,
+    MouseEventArgs, State, Transition, VirtualKeyCode,
 };
 
 #[derive(Debug)]
@@ -44,12 +45,68 @@ impl Default for Idle {
 #[derive(Debug, Default)]
 struct WaitingToSelect;
 
-impl State for WaitingToSelect {}
+impl State for WaitingToSelect {
+    fn on_mouse_down(
+        &mut self,
+        drawing: &mut dyn Drawing,
+        args: &MouseEventArgs,
+    ) -> Transition {
+        let first_item_under_cursor =
+            drawing.entities_under_point(args.location).next();
+
+        match first_item_under_cursor {
+            Some((entity, _)) => {
+                drawing.select(entity);
+                Transition::ChangeState(Box::new(DraggingSelection::from_args(args)))
+            },
+            _ => {
+                drawing.unselect_all();
+                Transition::DoNothing
+            },
+        }
+    }
+}
+
+/// The left mouse button is currently pressed and the user is dragging items
+/// around.
+#[derive(Debug)]
+struct DraggingSelection {
+    previous_location: Point,
+}
+
+impl DraggingSelection {
+    fn from_args(args: &MouseEventArgs) -> Self {
+        DraggingSelection{
+            previous_location: args.location,
+        }
+    }
+}
+
+impl State for DraggingSelection {
+    fn on_mouse_move(
+        &mut self,
+        drawing: &mut dyn Drawing,
+        args: &MouseEventArgs,
+    ) -> Transition {
+        drawing.translate_selection(args.location - self.previous_location);
+        self.previous_location = args.location;
+
+        Transition::DoNothing
+    }
+
+    fn on_mouse_up(
+        &mut self,
+        _drawing: &mut dyn Drawing,
+        _args: &MouseEventArgs,
+    ) -> Transition {
+        Transition::ChangeState(Box::new(WaitingToSelect::default()))
+    }
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use arcs::{components::DrawingObject, Point};
+    use arcs::{components::DrawingObject, Point, Vector};
     use specs::Entity;
 
     struct DummyDrawing;
@@ -61,6 +118,12 @@ mod tests {
         ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>> {
             unimplemented!()
         }
+
+        fn select(&mut self, _target: Entity) { unimplemented!() }
+
+        fn unselect_all(&mut self) { unimplemented!() }
+
+        fn translate_selection(&mut self, _: Vector) { unimplemented!() }
     }
 
     #[test]

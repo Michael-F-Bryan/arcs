@@ -8,7 +8,7 @@ pub use add_line_mode::AddLineMode;
 pub use add_point_mode::AddPointMode;
 pub use idle::Idle;
 
-use arcs::{components::DrawingObject, CanvasSpace, DrawingSpace, Point};
+use arcs::{components::DrawingObject, CanvasSpace, DrawingSpace, Point, Vector};
 use euclid::Point2D;
 use specs::Entity;
 use std::{any::Any, fmt::Debug};
@@ -25,6 +25,15 @@ pub trait Drawing {
         &self,
         location: Point,
     ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>>;
+
+    /// Mark an object as being selected.
+    fn select(&mut self, target: Entity);
+
+    /// Clear the selection.
+    fn unselect_all(&mut self);
+
+    /// Translate all selected objects by a specific amount.
+    fn translate_selection(&mut self, displacement: Vector);
 
     /// An optimisation hint that the canvas doesn't need to be redrawn after
     /// this event handler returns.
@@ -94,10 +103,13 @@ pub enum Transition {
 impl Transition {
     /// Checks whether the transition will change to a particular [`State`].
     pub fn changes_to<S>(&self) -> bool
-    where S: State + 'static
+    where
+        S: State + 'static,
     {
         match self {
-            Transition::ChangeState(new_state) => (**new_state).as_any().is::<S>(),
+            Transition::ChangeState(new_state) => {
+                (**new_state).as_any().is::<S>()
+            },
             _ => false,
         }
     }
