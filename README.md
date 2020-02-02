@@ -5,7 +5,7 @@
 [![Crates.io](https://img.shields.io/crates/v/arcs)](https://crates.io/crates/arcs)
 ![Crates.io](https://img.shields.io/crates/l/arcs)
 
-([API Docs for `master`][docs])
+(**[API Docs for `master`][docs]/[WebAssembly Demo][demo]**)
 
 An extensible framework for creating 2D CAD applications, written in Rust and
 based on an *Entity-Component-System* architecture.
@@ -31,7 +31,7 @@ containing a list of related features or concepts.
         ([`render_to_image.rs`](arcs/examples/render_to_image.rs))
 
 - [ ] Milestone: Online demo
-  - [ ] Render correctly to a HTML5 `<canvas>`
+  - [x] Render correctly to a HTML5 `<canvas>`
   - Interactive tools for creating drawing objects:
     - [ ] Point
     - [ ] Line
@@ -51,13 +51,13 @@ containing a list of related features or concepts.
   - [X] Approximation algorithm
   - [X] Translation algorithm
   - [X] Uniform scale algorithm
-  - [ ] Scaling algorithm without maintaining aspect ratio
-  - [ ] Calculate the length of a geometric primitive
+  - [x] Scaling algorithm without maintaining aspect ratio
+  - [x] Calculate the length of a geometric primitive
   - [ ] B-Splines
   - [ ] Interpolated splines
   - [ ] Bézier curves
   - [ ] Elliptical sections
-  - [ ] Closest point algorithm for all geometric primitives
+  - [x] Closest point algorithm for all geometric primitives
 
 ## Building the WebAssembly Demo
 
@@ -141,7 +141,8 @@ submitted for inclusion in the work by you, as defined in the Apache-2.0
 license, shall be dual licensed as above, without any additional terms or
 conditions.
 
-[docs]: https://michael-f-bryan.github.io/arcs
+[docs]: https://michael-f-bryan.github.io/arcs/crate_docs
+[demo]: https://michael-f-bryan.github.io/arcs
 [rustmatic-38]: https://github.com/Michael-F-Bryan/rustmatic/issues/38
 [wp]: https://crates.io/crates/wasm-pack
 [crev]: https://github.com/crev-dev/cargo-crev
