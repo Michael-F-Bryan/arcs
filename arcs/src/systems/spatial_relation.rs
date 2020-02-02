@@ -1,6 +1,5 @@
 use crate::{
-    components::{SpatialEntity, DrawingObject, Space, BoundingBox},
-    algorithms::{Bounded},
+    components::{SpatialEntity, Space, BoundingBox},
 };
 use specs::prelude::*;
 
@@ -94,7 +93,7 @@ impl<'world> System<'world> for SpatialRelation {
 #[cfg(test)]
 mod tests {
     use crate::{
-        components::{register, Layer, Name, DrawingObject, Geometry, LineStyle, Dimension, Space, BoundingBox},
+        components::{register, Layer, Name, DrawingObject, Geometry, LineStyle, Dimension, Space},
         {Point, Line},
         systems::{SpatialRelation},
         algorithms::Bounded,
@@ -218,6 +217,9 @@ mod tests {
         assert!((query[0].entity == first && query[1].entity == second) |
                 (query[0].entity == second && query[1].entity == first)
         );
+
+        // move one of the lines far away
+        
 
     }
 }

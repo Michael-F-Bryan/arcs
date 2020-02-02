@@ -83,17 +83,26 @@ impl Space {
         quadtree
     }
 
+    fn tree_with_world_size(size: TypedRect<f32, f64>) -> SpatialTree {
+        let quadtree: SpatialTree = QuadTree::new(
+            size,
+            Self::TREE_ALLOW_DUPLICATES,
+            Self::TREE_MIN_CHILDREN,
+            Self::TREE_MAX_CHILDREN,
+            Self::TREE_MAX_DEPTH,
+            Self::TREE_SIZE_HINT,
+        );
+
+        quadtree
+    }
+
     pub fn modify(&mut self, spatial: SpatialEntity) {
-        let id: ItemId;
-        if self.ids.contains_key(&spatial.entity) {
-            // Modify
-            id = self.modify_entity(spatial);
+        let id = if self.ids.contains_key(&spatial.entity) {
+            self.modify_entity(spatial)
         }
         else {
-            // Insert
-            id = self.insert_entity(spatial);
-        }
-
+            self.insert_entity(spatial)
+        };
         // Update hashmap
         self.ids.entry(spatial.entity).or_insert(id);
     }
@@ -103,7 +112,7 @@ impl Space {
             id
         }
         else {
-            panic!("ERROR: Failed to insert {:?} into Space!")
+            panic!("ERROR: Failed to insert {:?} into Space!", self)
         }
     }
 
@@ -161,7 +170,9 @@ impl Space {
     }
 
     pub fn clear(&mut self) {
-        self.quadtree = Self::default_tree();
+        // Re-use old size
+        let size = self.quadtree.bounding_box();
+        self.quadtree = Self::tree_with_world_size(size);
         self.ids.clear();
     }
 }
