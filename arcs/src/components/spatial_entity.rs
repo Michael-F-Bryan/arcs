@@ -58,7 +58,7 @@ impl Default for Space {
 
 impl Space {
     // FIXME: Hard-code is bad-bad
-    const WORLD_RADIUS: f64 = 1_000_000.0;
+    pub const WORLD_RADIUS: f64 = 1_000_000.0;
     const TREE_ALLOW_DUPLICATES: bool = true;
     const TREE_MIN_CHILDREN: usize = 4;
     const TREE_MAX_CHILDREN: usize = 16;
@@ -83,9 +83,9 @@ impl Space {
         quadtree
     }
 
-    fn tree_with_world_size(size: TypedRect<f32, f64>) -> SpatialTree {
+    fn tree_with_world_size(size: impl Spatial<f64>) -> SpatialTree {
         let quadtree: SpatialTree = QuadTree::new(
-            size,
+            size.aabb(),
             Self::TREE_ALLOW_DUPLICATES,
             Self::TREE_MIN_CHILDREN,
             Self::TREE_MAX_CHILDREN,
@@ -99,6 +99,9 @@ impl Space {
     /// Modifies the spatial position of the given [`SpatialEntity`] inside of [`Space`]
     /// If the [`SpatialEntity`] is not already inside of [`Space`] it will be inserted.
     pub fn modify(&mut self, spatial: SpatialEntity) {
+        if !self.quadtree.bounding_box().contains_rect(&spatial.bounds.aabb()) {
+            self.resize(spatial.bounds);
+        }
         let id = if self.ids.contains_key(&spatial.entity) {
             self.modify_entity(spatial)
         }
@@ -138,6 +141,7 @@ impl Space {
         }
     }
 
+    /// Removes an [`Entity`] from this [`Space`] given its [`Index`]
     pub fn remove_by_id(&mut self, id: Index) {
         let filter = move |(ent, _item_id): (&Entity, &ItemId)| {
             if ent.id() == id {
@@ -200,5 +204,44 @@ impl Space {
         let size = self.quadtree.bounding_box();
         self.quadtree = Self::tree_with_world_size(size);
         self.ids.clear();
+    }
+
+    /// Resizes the inner quadtree to the given **bigger** size
+    /// 
+    /// # Panics
+    /// Panics if the size given is not bigger then the initial bounding_box of the [`Space`]
+    pub fn resize(&mut self, size: impl Spatial<f64>) {
+        if self.quadtree.bounding_box().contains_rect(&size.aabb()) {
+            panic!("Space.resize() ERROR: Size to resize to is smaller then the tree!")
+        }
+        let spatial_entities: Vec<_> = self.iter().collect();
+
+        self.clear();
+
+        self.quadtree = Self::tree_with_world_size(size);
+        for spatial_entity in spatial_entities {
+            let item_id = self.insert_entity(spatial_entity);
+            self.ids.insert(spatial_entity.entity, item_id);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        components::{BoundingBox, Space},
+        Point,
+    };
+
+    #[test]
+    fn space_should_resize() {
+        let mut space = Space::default();
+        assert_eq!(space.quadtree.bounding_box().max_x() as f64, Space::WORLD_RADIUS);
+        let new_radius = 2_000_000.0;
+        let new_size = BoundingBox::new(
+            Point::new(-new_radius, -new_radius),
+            Point::new(new_radius, new_radius));
+        space.resize(new_size);
+        assert_eq!(space.quadtree.bounding_box().max_x() as f64, new_radius);
     }
 }
