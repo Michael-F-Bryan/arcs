@@ -30,13 +30,14 @@ before_deploy:
   - cargo doc --verbose
   - echo '<meta http-equiv="refresh" content="0; url=arcs/index.html" /> ' > target/doc/index.html
   # then copy the docs to the public/crate_docs/ directory
-  - mkdir $TRAVIS_BUILD_DIR/public
-  - cp -r target/doc $TRAVIS_BUILD_DIR/public/crate_docs/
-  # do the same for the WebAssembly demo
   - cd $TRAVIS_BUILD_DIR
+  - mkdir public
+  - cp -r arcs/target/doc public/crate_docs/
+  # do the same for the WebAssembly demo
+  - tree demo -I target
   - mkdir public/demo/
-  - cp demo/index.html $TRAVIS_BUILD_DIR/public/demo/
-  - cp -r demo/pkg/ $TRAVIS_BUILD_DIR/public/demo/
+  - cp demo/index.html public/demo/
+  - cp -r demo/pkg/ public/demo/pkg/
   # going to the root GitHub Pages page should show the demo
   - echo '<meta http-equiv="refresh" content="0; url=demo/index.html" /> ' > public/index.html
 
