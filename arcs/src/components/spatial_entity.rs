@@ -3,7 +3,7 @@ use crate::{
     {Point, Arc},
     algorithms::{Bounded},
 };
-use specs::{Entity};
+use specs::{Entity, world::Index};
 use aabb_quadtree::{QuadTree, Spatial, ItemId};
 use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 use std::collections::HashMap;
@@ -120,7 +120,6 @@ impl Space {
 
     fn modify_entity(&mut self, spatial: SpatialEntity) -> ItemId {
         let item_id = self.ids[&spatial.entity];
-
         // remove old item
         self.quadtree.remove(item_id);
 
@@ -136,6 +135,20 @@ impl Space {
             // remove old item
             self.quadtree.remove(item_id);
             self.ids.remove(&entity);
+        }
+    }
+
+    pub fn remove_by_id(&mut self, id: Index) {
+        let filter = move |(ent, _item_id): (&Entity, &ItemId)| {
+            if ent.id() == id {
+                Some(ent.clone())
+            } else {
+                None
+            }
+        };
+
+        if let Some(ent) = self.ids.iter().filter_map(filter).next() {
+            self.remove(ent);
         }
     }
 
