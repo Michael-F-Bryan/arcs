@@ -145,7 +145,7 @@ impl Space {
     pub fn remove_by_id(&mut self, id: Index) {
         let filter = move |(ent, _item_id): (&Entity, &ItemId)| {
             if ent.id() == id {
-                Some(ent.clone())
+                Some(*ent)
             } else {
                 None
             }
