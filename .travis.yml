@@ -32,7 +32,7 @@ before_deploy:
   # then copy the docs to the public/crate_docs/ directory
   - cd $TRAVIS_BUILD_DIR
   - mkdir public
-  - cp -r target/doc public/crate_docs/
+  - cp -r arcs/target/doc public/crate_docs/
   # do the same for the WebAssembly demo
   - tree demo -I target
   - mkdir public/demo/
