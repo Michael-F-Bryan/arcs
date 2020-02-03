@@ -1,7 +1,6 @@
 use crate::modes::{
     AddArcMode, AddLineMode, AddPointMode, ApplicationContext,
-    ApplicationContextExt, KeyboardEventArgs, MouseEventArgs, State,
-    Transition, VirtualKeyCode,
+    KeyboardEventArgs, MouseEventArgs, State, Transition, VirtualKeyCode,
 };
 use arcs::Point;
 
@@ -49,7 +48,7 @@ struct WaitingToSelect;
 impl State for WaitingToSelect {
     fn on_mouse_down(
         &mut self,
-        mut ctx: &mut dyn ApplicationContext,
+        ctx: &mut dyn ApplicationContext,
         args: &MouseEventArgs,
     ) -> Transition {
         let first_item_under_cursor =
@@ -88,7 +87,7 @@ impl DraggingSelection {
 impl State for DraggingSelection {
     fn on_mouse_move(
         &mut self,
-        mut ctx: &mut dyn ApplicationContext,
+        ctx: &mut dyn ApplicationContext,
         args: &MouseEventArgs,
     ) -> Transition {
         ctx.translate_selection(args.location - self.previous_location);

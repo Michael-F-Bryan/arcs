@@ -9,10 +9,12 @@ pub use add_point_mode::AddPointMode;
 pub use idle::Idle;
 
 use arcs::{
-    components::DrawingObject, CanvasSpace, DrawingSpace, Point, Vector,
+    algorithms::Translate,
+    components::{DrawingObject, Selected},
+    CanvasSpace, DrawingSpace, Point, Vector,
 };
 use euclid::Point2D;
-use specs::{Entity, World};
+use specs::prelude::*;
 use std::{any::Any, fmt::Debug};
 
 /// Contextual information passed to each [`State`] when it handles events.
@@ -24,6 +26,48 @@ pub trait ApplicationContext {
     /// An optimisation hint that the canvas doesn't need to be redrawn after
     /// this event handler returns.
     fn suppress_redraw(&mut self) {}
+
+    /// Get a list of all the entities which lie "under" a point, for some
+    /// definition of "under".
+    ///
+    /// Typically this will be implemented by the drawing canvas having some
+    /// sort of "pick box" where anything within, say, 3 pixels of something is
+    /// considered to be "under" it.
+    fn entities_under_point(
+        &self,
+        _location: Point,
+    ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>> {
+        unimplemented!()
+    }
+
+    /// Mark an object as being selected.
+    fn select(&mut self, target: Entity) {
+        self.world()
+            .write_storage()
+            .insert(target, Selected)
+            .unwrap();
+    }
+
+    /// Clear the selection.
+    fn unselect_all(&mut self) {
+        self.world().write_storage::<Selected>().clear();
+    }
+
+    /// Translate all selected objects by a specific amount.
+    fn translate_selection(&mut self, displacement: Vector) {
+        let world = self.world();
+        let (entities, selected, mut drawing_objects): (
+            Entities,
+            ReadStorage<Selected>,
+            WriteStorage<DrawingObject>,
+        ) = world.system_data();
+
+        for (_, _, drawing_object) in
+            (&entities, &selected, &mut drawing_objects).join()
+        {
+            drawing_object.geometry.translate(displacement);
+        }
+    }
 }
 
 impl<'a, A: ApplicationContext + ?Sized> ApplicationContext for &'a mut A {
@@ -203,45 +247,4 @@ pub enum VirtualKeyCode {
     Key8,
     Key9,
     Key0,
-}
-
-/// Utility methods for actions commonly performed on the
-/// [`ApplicationContext`].
-pub trait ApplicationContextExt {
-    /// Get a list of all the entities which lie "under" a point, for some
-    /// definition of "under".
-    ///
-    /// Typically this will be implemented by the drawing canvas having some
-    /// sort of "pick box" where anything within, say, 3 pixels of something is
-    /// considered to be "under" it.
-    fn entities_under_point(
-        &self,
-        location: Point,
-    ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>>;
-
-    /// Mark an object as being selected.
-    fn select(&mut self, target: Entity);
-
-    /// Clear the selection.
-    fn unselect_all(&mut self);
-
-    /// Translate all selected objects by a specific amount.
-    fn translate_selection(&mut self, displacement: Vector);
-}
-
-impl<A: ApplicationContext> ApplicationContextExt for A {
-    fn entities_under_point(
-        &self,
-        _location: Point,
-    ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>> {
-        unimplemented!()
-    }
-
-    fn select(&mut self, _target: Entity) { unimplemented!() }
-
-    fn unselect_all(&mut self) { unimplemented!() }
-
-    fn translate_selection(&mut self, _displacement: Vector) {
-        unimplemented!()
-    }
 }

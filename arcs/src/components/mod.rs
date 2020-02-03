@@ -5,6 +5,7 @@ mod dimension;
 mod drawing_object;
 mod layer;
 mod name;
+mod selected;
 mod styles;
 mod viewport;
 mod vtable;
@@ -15,6 +16,7 @@ pub use dimension::Dimension;
 pub use drawing_object::{DrawingObject, Geometry};
 pub use layer::Layer;
 pub use name::{Name, NameTable};
+pub use selected::Selected;
 pub use styles::{LineStyle, PointStyle, WindowStyle};
 pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
@@ -34,6 +36,7 @@ pub(crate) fn known_components(
             ComponentVtable::for_type::<Name>(),
             ComponentVtable::for_type::<LineStyle>(),
             ComponentVtable::for_type::<PointStyle>(),
+            ComponentVtable::for_type::<Selected>(),
             ComponentVtable::for_type::<WindowStyle>(),
             ComponentVtable::for_type::<Viewport>(),
         ];
