@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Builder",""],["ChangeRecorder","A wrapper around a [`World`] which records any changes that are made."],["ChangeSet",""],["UndoRedoBuffer",""],["UndoRedoError",""]],"trait":[["Command",""]]});
