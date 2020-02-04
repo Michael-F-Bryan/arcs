@@ -22,6 +22,7 @@ use std::{any::Any, fmt::Debug};
 pub trait ApplicationContext {
     fn world(&self) -> &World;
     fn world_mut(&mut self) -> &mut World;
+    /// Something with the [`Viewport`] component.
     fn viewport(&self) -> Entity;
 
     /// An optimisation hint that the canvas doesn't need to be redrawn after

@@ -1,12 +1,13 @@
 pub mod modes;
 
 use arcs::{
-    components::{Dimension, DrawingObject, Geometry, Layer, Name, PointStyle},
+    components::{Dimension, Layer, Name, PointStyle},
     window::Window,
-    CanvasSpace,
+    CanvasSpace, DrawingSpace,
 };
 use euclid::{Point2D, Size2D};
 use log::Level;
+use modes::{ApplicationContext, Idle, State, Transition};
 use piet::Color;
 use piet_web::WebRenderContext;
 use seed::{prelude::*, *};
@@ -21,6 +22,7 @@ pub struct Model {
     window: Window,
     default_layer: Entity,
     canvas_size: Size2D<f64, CanvasSpace>,
+    current_state: Box<dyn State>,
 }
 
 impl Default for Model {
@@ -44,8 +46,59 @@ impl Default for Model {
             window,
             default_layer,
             canvas_size: Size2D::new(300.0, 150.0),
+            current_state: Box::new(Idle::default()),
         }
     }
+}
+
+impl Model {
+    fn on_mouse_down(
+        &mut self,
+        location: Point2D<f64, DrawingSpace>,
+        cursor: Point2D<f64, CanvasSpace>,
+    ) {
+        let args = modes::MouseEventArgs {
+            location,
+            cursor,
+            button_state: modes::MouseButtons::LEFT_BUTTON,
+        };
+
+        let mut ctx = Context {
+            world: &mut self.world,
+            window: &mut self.window,
+        };
+        let trans = self.current_state.on_mouse_down(&mut ctx, &args);
+        self.handle_transition(trans);
+    }
+
+    fn handle_transition(&mut self, transition: Transition) {
+        match transition {
+            Transition::ChangeState(new_state) => {
+                log::trace!(
+                    "Changing state {:?} => {:?}",
+                    self.current_state,
+                    new_state
+                );
+                self.current_state = new_state
+            },
+            Transition::DoNothing => {},
+        }
+    }
+}
+
+/// A temporary struct which presents a "view" of [`Model`] which can be used
+/// as a [`ApplicationContext`].
+struct Context<'model> {
+    world: &'model mut World,
+    window: &'model mut Window,
+}
+
+impl<'model> ApplicationContext for Context<'model> {
+    fn world(&self) -> &World { &self.world }
+
+    fn world_mut(&mut self) -> &mut World { &mut self.world }
+
+    fn viewport(&self) -> Entity { self.window.0 }
 }
 
 fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
@@ -54,22 +107,6 @@ fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
         .after_next_render(|_| Msg::WindowResized);
 
     AfterMount::new(Model::default())
-}
-
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub enum Msg {
-    Rendered,
-    Clicked(Point2D<f64, CanvasSpace>),
-    WindowResized,
-}
-
-impl Msg {
-    pub fn from_click_event(ev: MouseEvent) -> Self {
-        let x = ev.offset_x().into();
-        let y = ev.offset_y().into();
-
-        Msg::Clicked(Point2D::new(x, y))
-    }
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
@@ -82,26 +119,17 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
                 orders.skip();
             }
         },
-        Msg::Clicked(location) => {
-            let clicked = {
+        Msg::Clicked(cursor) => {
+            let location = {
                 let viewports = model.world.read_storage();
                 let viewport = model.window.viewport(&viewports);
                 arcs::window::to_drawing_coordinates(
-                    location,
+                    cursor,
                     viewport,
                     model.canvas_size,
                 )
             };
-            log::debug!("Resolved {:?} => {:?}", location, clicked);
-
-            model
-                .world
-                .create_entity()
-                .with(DrawingObject {
-                    geometry: Geometry::Point(clicked),
-                    layer: model.default_layer,
-                })
-                .build();
+            model.on_mouse_down(location, cursor);
         },
         Msg::WindowResized => {
             if let Some(parent_size) =
@@ -164,6 +192,22 @@ fn view(model: &Model) -> impl View<Msg> {
 
 pub fn window_events(_model: &Model) -> Vec<Listener<Msg>> {
     vec![simple_ev(Ev::Resize, Msg::WindowResized)]
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum Msg {
+    Rendered,
+    Clicked(Point2D<f64, CanvasSpace>),
+    WindowResized,
+}
+
+impl Msg {
+    pub fn from_click_event(ev: MouseEvent) -> Self {
+        let x = ev.offset_x().into();
+        let y = ev.offset_y().into();
+
+        Msg::Clicked(Point2D::new(x, y))
+    }
 }
 
 #[wasm_bindgen(start)]
