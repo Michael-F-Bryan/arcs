@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/euclid-0.20.7/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../euclid/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/euclid-0.19.9/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../euclid/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -122,6 +122,23 @@
 <span id="122">122</span>
 <span id="123">123</span>
 <span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2013 The Servo Project Developers. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution.</span>
@@ -132,6 +149,7 @@
 <span class="comment">// option. This file may not be copied, modified, or distributed</span>
 <span class="comment">// except according to those terms.</span>
 
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">feature</span>(<span class="ident">fn_must_use</span>))]</span>
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">test</span>), <span class="ident">no_std</span>)]</span>
 
 <span class="doccomment">//! A collection of strongly typed math tools for computer graphics with an inclination</span>
@@ -143,26 +161,42 @@
 <span class="doccomment">//! a screen-space position by a world-space vector and this can be expressed using</span>
 <span class="doccomment">//! the generic Unit parameter.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! This unit system is not mandatory and all structures have an alias</span>
+<span class="doccomment">//! This unit system is not mandatory and all Typed* structures have an alias</span>
 <span class="doccomment">//! with the default unit: `UnknownUnit`.</span>
-<span class="doccomment">//! for example ```default::Point2D&lt;T&gt;``` is equivalent to ```Point2D&lt;T, UnknownUnit&gt;```.</span>
+<span class="doccomment">//! for example ```Point2D&lt;T&gt;``` is equivalent to ```TypedPoint2D&lt;T, UnknownUnit&gt;```.</span>
 <span class="doccomment">//! Client code typically creates a set of aliases for each type and doesn&#39;t need</span>
 <span class="doccomment">//! to deal with the specifics of typed units further. For example:</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```rust</span>
 <span class="doccomment">//! use euclid::*;</span>
 <span class="doccomment">//! pub struct ScreenSpace;</span>
-<span class="doccomment">//! pub type ScreenPoint = Point2D&lt;f32, ScreenSpace&gt;;</span>
-<span class="doccomment">//! pub type ScreenSize = Size2D&lt;f32, ScreenSpace&gt;;</span>
+<span class="doccomment">//! pub type ScreenPoint = TypedPoint2D&lt;f32, ScreenSpace&gt;;</span>
+<span class="doccomment">//! pub type ScreenSize = TypedSize2D&lt;f32, ScreenSpace&gt;;</span>
 <span class="doccomment">//! pub struct WorldSpace;</span>
-<span class="doccomment">//! pub type WorldPoint = Point3D&lt;f32, WorldSpace&gt;;</span>
-<span class="doccomment">//! pub type ProjectionMatrix = Transform3D&lt;f32, WorldSpace, ScreenSpace&gt;;</span>
+<span class="doccomment">//! pub type WorldPoint = TypedPoint3D&lt;f32, WorldSpace&gt;;</span>
+<span class="doccomment">//! pub type ProjectionMatrix = TypedTransform3D&lt;f32, WorldSpace, ScreenSpace&gt;;</span>
 <span class="doccomment">//! // etc...</span>
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! All euclid types are marked `#[repr(C)]` in order to facilitate exposing them to</span>
 <span class="doccomment">//! foreign function interfaces (provided the underlying scalar type is also `repr(C)`).</span>
 <span class="doccomment">//!</span>
+<span class="doccomment">//! Components are accessed in their scalar form by default for convenience, and most</span>
+<span class="doccomment">//! types additionally implement strongly typed accessors which return typed ```Length``` wrappers.</span>
+<span class="doccomment">//! For example:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```rust</span>
+<span class="doccomment">//! # use euclid::*;</span>
+<span class="doccomment">//! # pub struct WorldSpace;</span>
+<span class="doccomment">//! # pub type WorldPoint = TypedPoint3D&lt;f32, WorldSpace&gt;;</span>
+<span class="doccomment">//! let p = WorldPoint::new(0.0, 1.0, 1.0);</span>
+<span class="doccomment">//! // p.x is an f32.</span>
+<span class="doccomment">//! println!(&quot;p.x = {:?} &quot;, p.x);</span>
+<span class="doccomment">//! // p.x is a Length&lt;f32, WorldSpace&gt;.</span>
+<span class="doccomment">//! println!(&quot;p.x_typed() = {:?} &quot;, p.x_typed());</span>
+<span class="doccomment">//! // Length::get returns the scalar value (f32).</span>
+<span class="doccomment">//! assert_eq!(p.x, p.x_typed().get());</span>
+<span class="doccomment">//! ```</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
@@ -170,35 +204,36 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;mint&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">mint</span>;
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">euclid_macros</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">num_traits</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">rand</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">use</span> <span class="ident">std</span> <span class="kw">as</span> <span class="ident">core</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">angle</span>::<span class="ident">Angle</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">box2d</span>::<span class="ident">Box2D</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">box2d</span>::{<span class="ident">TypedBox2D</span>, <span class="ident">Box2D</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">length</span>::<span class="ident">Length</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">scale</span>::<span class="ident">Scale</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">transform2d</span>::<span class="ident">Transform2D</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">transform3d</span>::<span class="ident">Transform3D</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">point</span>::{<span class="ident">Point2D</span>, <span class="ident">Point3D</span>, <span class="ident">point2</span>, <span class="ident">point3</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">vector</span>::{<span class="ident">Vector2D</span>, <span class="ident">Vector3D</span>, <span class="ident">vec2</span>, <span class="ident">vec3</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">scale</span>::<span class="ident">TypedScale</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">transform2d</span>::{<span class="ident">Transform2D</span>, <span class="ident">TypedTransform2D</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">transform3d</span>::{<span class="ident">Transform3D</span>, <span class="ident">TypedTransform3D</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">point</span>::{<span class="ident">Point2D</span>, <span class="ident">Point3D</span>, <span class="ident">TypedPoint2D</span>, <span class="ident">TypedPoint3D</span>, <span class="ident">point2</span>, <span class="ident">point3</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">vector</span>::{<span class="ident">TypedVector2D</span>, <span class="ident">TypedVector3D</span>, <span class="ident">Vector2D</span>, <span class="ident">Vector3D</span>, <span class="ident">vec2</span>, <span class="ident">vec3</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">vector</span>::{<span class="ident">BoolVector2D</span>, <span class="ident">BoolVector3D</span>, <span class="ident">bvec2</span>, <span class="ident">bvec3</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">homogen</span>::<span class="ident">HomogeneousVector</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">nonempty</span>::<span class="ident">NonEmpty</span>;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rect</span>::{<span class="ident">rect</span>, <span class="ident">Rect</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rigid</span>::{<span class="ident">RigidTransform3D</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">box3d</span>::{<span class="ident">box3d</span>, <span class="ident">Box3D</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">translation</span>::{<span class="ident">Translation2D</span>, <span class="ident">Translation3D</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rotation</span>::{<span class="ident">Rotation2D</span>, <span class="ident">Rotation3D</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">side_offsets</span>::<span class="ident">SideOffsets2D</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">size</span>::{<span class="ident">Size2D</span>, <span class="ident">Size3D</span>, <span class="ident">size2</span>, <span class="ident">size3</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rect</span>::{<span class="ident">rect</span>, <span class="ident">Rect</span>, <span class="ident">TypedRect</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rigid</span>::{<span class="ident">RigidTransform3D</span>, <span class="ident">TypedRigidTransform3D</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">box3d</span>::{<span class="ident">box3d</span>, <span class="ident">Box3D</span>, <span class="ident">TypedBox3D</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">translation</span>::{<span class="ident">TypedTranslation2D</span>, <span class="ident">TypedTranslation3D</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">rotation</span>::{<span class="ident">Angle</span>, <span class="ident">Rotation2D</span>, <span class="ident">Rotation3D</span>, <span class="ident">TypedRotation2D</span>, <span class="ident">TypedRotation3D</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">side_offsets</span>::{<span class="ident">SideOffsets2D</span>, <span class="ident">TypedSideOffsets2D</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">size</span>::{<span class="ident">Size2D</span>, <span class="ident">TypedSize2D</span>, <span class="ident">size2</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">trig</span>::<span class="ident">Trig</span>;
 
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">mod</span> <span class="ident">macros</span>;
 
-<span class="kw">mod</span> <span class="ident">angle</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">approxeq</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">approxord</span>;
 <span class="kw">mod</span> <span class="ident">box2d</span>;
@@ -218,34 +253,33 @@
 <span class="kw">mod</span> <span class="ident">trig</span>;
 <span class="kw">mod</span> <span class="ident">vector</span>;
 <span class="kw">mod</span> <span class="ident">box3d</span>;
-<span class="kw">mod</span> <span class="ident">nonempty</span>;
 
 <span class="doccomment">/// The default unit.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnknownUnit</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">default</span> {
-    <span class="doccomment">//! A set of aliases for all types, tagged with the default unknown unit.</span>
+<span class="doccomment">/// Temporary alias to facilitate the transition to the new naming scheme</span>
+<span class="attribute">#[<span class="ident">deprecated</span>]</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Matrix2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Transform2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">UnknownUnit</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Point3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Point3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Vector2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Vector2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">HomogeneousVector</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">HomogeneousVector</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Size3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Size3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Box2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Box2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Box3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Box3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">SideOffsets2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">SideOffsets2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Transform2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Transform2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Transform3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Transform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Rotation2D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Rotation2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Translation3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Translation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Scale</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Scale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
-}
+<span class="doccomment">/// Temporary alias to facilitate the transition to the new naming scheme</span>
+<span class="attribute">#[<span class="ident">deprecated</span>]</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TypedMatrix2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TypedTransform2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>;
+
+<span class="doccomment">/// Temporary alias to facilitate the transition to the new naming scheme</span>
+<span class="attribute">#[<span class="ident">deprecated</span>]</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Matrix4D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Transform3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
+
+<span class="doccomment">/// Temporary alias to facilitate the transition to the new naming scheme</span>
+<span class="attribute">#[<span class="ident">deprecated</span>]</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">TypedMatrix4D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TypedTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>;
+
+<span class="doccomment">/// Temporary alias to facilitate the transition to the new naming scheme</span>
+<span class="attribute">#[<span class="ident">deprecated</span>]</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ScaleFactor</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TypedScale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>;
+
+<span class="doccomment">/// Temporary alias to facilitate the transition to the new naming scheme</span>
+<span class="attribute">#[<span class="ident">deprecated</span>]</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">Angle</span> <span class="kw">as</span> <span class="ident">Radians</span>;
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "euclid";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

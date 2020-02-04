@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/euclid-0.20.7/src/rigid.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>rigid.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../euclid/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/euclid-0.19.9/src/rigid.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>rigid.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../euclid/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -259,29 +259,11 @@
 <span id="259">259</span>
 <span id="260">260</span>
 <span id="261">261</span>
-<span id="262">262</span>
-<span id="263">263</span>
-<span id="264">264</span>
-<span id="265">265</span>
-<span id="266">266</span>
-<span id="267">267</span>
-<span id="268">268</span>
-<span id="269">269</span>
-<span id="270">270</span>
-<span id="271">271</span>
-<span id="272">272</span>
-<span id="273">273</span>
-<span id="274">274</span>
-<span id="275">275</span>
-<span id="276">276</span>
-<span id="277">277</span>
-<span id="278">278</span>
-<span id="279">279</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">approxeq</span>::<span class="ident">ApproxEq</span>;
 <span class="kw">use</span> <span class="ident">num_traits</span>::<span class="ident">Float</span>;
 <span class="kw">use</span> <span class="ident">trig</span>::<span class="ident">Trig</span>;
-<span class="kw">use</span> {<span class="ident">Rotation3D</span>, <span class="ident">Transform3D</span>, <span class="ident">Vector3D</span>, <span class="ident">UnknownUnit</span>};
+<span class="kw">use</span> {<span class="ident">TypedRotation3D</span>, <span class="ident">TypedTransform3D</span>, <span class="ident">TypedVector3D</span>, <span class="ident">UnknownUnit</span>};
 
 <span class="doccomment">/// A rigid transformation. All lengths are preserved under such a transformation.</span>
 <span class="doccomment">///</span>
@@ -294,41 +276,41 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">rotation</span>: <span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">translation</span>: <span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="ident">rotation</span>: <span class="ident">TypedRotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">translation</span>: <span class="ident">TypedVector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>,
 }
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
 
 <span class="comment">// All matrix multiplication in this file is in row-vector notation,</span>
 <span class="comment">// i.e. a vector `v` is transformed with `v * T`, and if you want to apply `T1`</span>
 <span class="comment">// before `T2` you use `T1 * T2`</span>
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Float</span> <span class="op">+</span> <span class="ident">ApproxEq</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Construct a new rigid transformation, where the `rotation` applies first</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rotation</span>: <span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>, <span class="ident">translation</span>: <span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rotation</span>: <span class="ident">TypedRotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>, <span class="ident">translation</span>: <span class="ident">TypedVector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">rotation</span>,
             <span class="ident">translation</span>,
         }
     }
-}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Float</span> <span class="op">+</span> <span class="ident">ApproxEq</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Construct an identity transform</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">identity</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
-            <span class="ident">rotation</span>: <span class="ident">Rotation3D</span>::<span class="ident">identity</span>(),
-            <span class="ident">translation</span>: <span class="ident">Vector3D</span>::<span class="ident">zero</span>(),
+            <span class="ident">rotation</span>: <span class="ident">TypedRotation3D</span>::<span class="ident">identity</span>(),
+            <span class="ident">translation</span>: <span class="ident">TypedVector3D</span>::<span class="ident">zero</span>(),
         }
     }
 
     <span class="doccomment">/// Construct a new rigid transformation, where the `translation` applies first</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_from_reversed</span>(
-        <span class="ident">translation</span>: <span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span><span class="op">&gt;</span>,
-        <span class="ident">rotation</span>: <span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>,
+        <span class="ident">translation</span>: <span class="ident">TypedVector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span><span class="op">&gt;</span>,
+        <span class="ident">rotation</span>: <span class="ident">TypedRotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="comment">// T * R</span>
         <span class="comment">//   = (R * R^-1) * T * R</span>
@@ -339,7 +321,7 @@
         <span class="comment">// It is equivalent to the translation matrix obtained by rotating the</span>
         <span class="comment">// translation by R</span>
 
-        <span class="kw">let</span> <span class="ident">translation</span> <span class="op">=</span> <span class="ident">rotation</span>.<span class="ident">transform_vector3d</span>(<span class="ident">translation</span>);
+        <span class="kw">let</span> <span class="ident">translation</span> <span class="op">=</span> <span class="ident">rotation</span>.<span class="ident">rotate_vector3d</span>(<span class="kw-2">&amp;</span><span class="ident">translation</span>);
         <span class="self">Self</span> {
             <span class="ident">rotation</span>,
             <span class="ident">translation</span>,
@@ -347,18 +329,18 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_rotation</span>(<span class="ident">rotation</span>: <span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_rotation</span>(<span class="ident">rotation</span>: <span class="ident">TypedRotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">rotation</span>,
-            <span class="ident">translation</span>: <span class="ident">Vector3D</span>::<span class="ident">zero</span>(),
+            <span class="ident">translation</span>: <span class="ident">TypedVector3D</span>::<span class="ident">zero</span>(),
         }
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_translation</span>(<span class="ident">translation</span>: <span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_translation</span>(<span class="ident">translation</span>: <span class="ident">TypedVector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">translation</span>,
-            <span class="ident">rotation</span>: <span class="ident">Rotation3D</span>::<span class="ident">identity</span>(),
+            <span class="ident">rotation</span>: <span class="ident">TypedRotation3D</span>::<span class="ident">identity</span>(),
         }
     }
 
@@ -366,7 +348,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// i.e., the translation is applied _first_</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decompose_reversed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span><span class="op">&gt;</span>, <span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decompose_reversed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">TypedVector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span><span class="op">&gt;</span>, <span class="ident">TypedRotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) {
         <span class="comment">// self = R * T</span>
         <span class="comment">//      = R * T * (R^-1 * R)</span>
         <span class="comment">//      = (R * T * R^-1) * R)</span>
@@ -374,7 +356,7 @@
         <span class="comment">//</span>
         <span class="comment">// T&#39; = (R^ * T * R^-1) is T rotated by R^-1</span>
 
-        <span class="kw">let</span> <span class="ident">translation</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rotation</span>.<span class="ident">inverse</span>().<span class="ident">transform_vector3d</span>(<span class="self">self</span>.<span class="ident">translation</span>);
+        <span class="kw">let</span> <span class="ident">translation</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rotation</span>.<span class="ident">inverse</span>().<span class="ident">rotate_vector3d</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">translation</span>);
         (<span class="ident">translation</span>, <span class="self">self</span>.<span class="ident">rotation</span>)
     }
 
@@ -383,10 +365,10 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// i.e., this produces `self * other` in row-vector notation</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">post_transform</span><span class="op">&lt;</span><span class="ident">Dst2</span><span class="op">&gt;</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">post_mul</span><span class="op">&lt;</span><span class="ident">Dst2</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span>, <span class="ident">Dst2</span><span class="op">&gt;</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst2</span><span class="op">&gt;</span> {
+        <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span>, <span class="ident">Dst2</span><span class="op">&gt;</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst2</span><span class="op">&gt;</span> {
         <span class="comment">// self = R1 * T1</span>
         <span class="comment">// other = R2 * T2</span>
         <span class="comment">// result = R1 * T1 * R2 * T2</span>
@@ -401,10 +383,10 @@
 
         <span class="kw">let</span> <span class="ident">t_prime</span> <span class="op">=</span> <span class="ident">other</span>
             .<span class="ident">rotation</span>
-            .<span class="ident">transform_vector3d</span>(<span class="self">self</span>.<span class="ident">translation</span>);
+            .<span class="ident">rotate_vector3d</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">translation</span>);
         <span class="kw">let</span> <span class="ident">r_prime</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rotation</span>.<span class="ident">post_rotate</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">rotation</span>);
         <span class="kw">let</span> <span class="ident">t_prime2</span> <span class="op">=</span> <span class="ident">t_prime</span> <span class="op">+</span> <span class="ident">other</span>.<span class="ident">translation</span>;
-        <span class="ident">RigidTransform3D</span> {
+        <span class="ident">TypedRigidTransform3D</span> {
             <span class="ident">rotation</span>: <span class="ident">r_prime</span>,
             <span class="ident">translation</span>: <span class="ident">t_prime2</span>,
         }
@@ -415,16 +397,16 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// i.e., this produces `other * self` in row-vector notation</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pre_transform</span><span class="op">&lt;</span><span class="ident">Src2</span><span class="op">&gt;</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pre_mul</span><span class="op">&lt;</span><span class="ident">Src2</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src2</span>, <span class="ident">Src</span><span class="op">&gt;</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src2</span>, <span class="ident">Dst</span><span class="op">&gt;</span> {
-        <span class="ident">other</span>.<span class="ident">post_transform</span>(<span class="kw-2">&amp;</span><span class="self">self</span>)
+        <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src2</span>, <span class="ident">Src</span><span class="op">&gt;</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src2</span>, <span class="ident">Dst</span><span class="op">&gt;</span> {
+        <span class="ident">other</span>.<span class="ident">post_mul</span>(<span class="kw-2">&amp;</span><span class="self">self</span>)
     }
 
     <span class="doccomment">/// Inverts the transformation</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inverse</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span>, <span class="ident">Src</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inverse</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span>, <span class="ident">Src</span><span class="op">&gt;</span> {
         <span class="comment">// result = (self)^-1</span>
         <span class="comment">//        = (R * T)^-1</span>
         <span class="comment">//        = T^-1 * R^-1</span>
@@ -437,52 +419,34 @@
         <span class="comment">//</span>
         <span class="comment">// An easier way of writing this is to use new_from_reversed() with R^-1 and T^-1</span>
 
-        <span class="ident">RigidTransform3D</span>::<span class="ident">new_from_reversed</span>(
+        <span class="ident">TypedRigidTransform3D</span>::<span class="ident">new_from_reversed</span>(
             <span class="op">-</span><span class="self">self</span>.<span class="ident">translation</span>,
             <span class="self">self</span>.<span class="ident">rotation</span>.<span class="ident">inverse</span>(),
         )
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_transform</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Transform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_transform</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">Trig</span>,
     {
         <span class="self">self</span>.<span class="ident">translation</span>
             .<span class="ident">to_transform</span>()
-            .<span class="ident">pre_transform</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">rotation</span>.<span class="ident">to_transform</span>())
-    }
-
-    <span class="doccomment">/// Drop the units, preserving only the numeric value.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_untyped</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span> {
-        <span class="ident">RigidTransform3D</span> {
-            <span class="ident">rotation</span>: <span class="self">self</span>.<span class="ident">rotation</span>.<span class="ident">to_untyped</span>(),
-            <span class="ident">translation</span>: <span class="self">self</span>.<span class="ident">translation</span>.<span class="ident">to_untyped</span>(),
-        }
-    }
-
-    <span class="doccomment">/// Tag a unitless value with units.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_untyped</span>(<span class="ident">transform</span>: <span class="kw-2">&amp;</span><span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">RigidTransform3D</span> {
-            <span class="ident">rotation</span>: <span class="ident">Rotation3D</span>::<span class="ident">from_untyped</span>(<span class="kw-2">&amp;</span><span class="ident">transform</span>.<span class="ident">rotation</span>),
-            <span class="ident">translation</span>: <span class="ident">Vector3D</span>::<span class="ident">from_untyped</span>(<span class="ident">transform</span>.<span class="ident">translation</span>),
-        }
+            .<span class="ident">pre_mul</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">rotation</span>.<span class="ident">to_transform</span>())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Float</span> <span class="op">+</span> <span class="ident">ApproxEq</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">for</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Float</span> <span class="op">+</span> <span class="ident">ApproxEq</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">TypedRotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span><span class="op">&gt;</span>
+    <span class="kw">for</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>
 {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">rot</span>: <span class="ident">Rotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">rot</span>: <span class="ident">TypedRotation3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">from_rotation</span>(<span class="ident">rot</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Float</span> <span class="op">+</span> <span class="ident">ApproxEq</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">for</span> <span class="ident">RigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Float</span> <span class="op">+</span> <span class="ident">ApproxEq</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">TypedVector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span><span class="op">&gt;</span>
+    <span class="kw">for</span> <span class="ident">TypedRigidTransform3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Src</span>, <span class="ident">Dst</span><span class="op">&gt;</span>
 {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">t</span>: <span class="ident">Vector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">t</span>: <span class="ident">TypedVector3D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Dst</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">from_translation</span>(<span class="ident">t</span>)
     }
 }
@@ -490,7 +454,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">test</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">RigidTransform3D</span>;
-    <span class="kw">use</span> <span class="ident">default</span>::{<span class="ident">Rotation3D</span>, <span class="ident">Transform3D</span>, <span class="ident">Vector3D</span>};
+    <span class="kw">use</span> {<span class="ident">Rotation3D</span>, <span class="ident">TypedTransform3D</span>, <span class="ident">Vector3D</span>};
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_rigid_construction</span>() {
@@ -500,13 +464,13 @@
         <span class="kw">let</span> <span class="ident">rigid</span> <span class="op">=</span> <span class="ident">RigidTransform3D</span>::<span class="ident">new</span>(<span class="ident">rotation</span>, <span class="ident">translation</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rigid</span>
             .<span class="ident">to_transform</span>()
-            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">translation</span>.<span class="ident">to_transform</span>().<span class="ident">pre_transform</span>(<span class="kw-2">&amp;</span><span class="ident">rotation</span>.<span class="ident">to_transform</span>())));
+            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">translation</span>.<span class="ident">to_transform</span>().<span class="ident">pre_mul</span>(<span class="kw-2">&amp;</span><span class="ident">rotation</span>.<span class="ident">to_transform</span>())));
 
         <span class="kw">let</span> <span class="ident">rigid</span> <span class="op">=</span> <span class="ident">RigidTransform3D</span>::<span class="ident">new_from_reversed</span>(<span class="ident">translation</span>, <span class="ident">rotation</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rigid</span>.<span class="ident">to_transform</span>().<span class="ident">approx_eq</span>(
             <span class="kw-2">&amp;</span><span class="ident">translation</span>
                 .<span class="ident">to_transform</span>()
-                .<span class="ident">post_transform</span>(<span class="kw-2">&amp;</span><span class="ident">rotation</span>.<span class="ident">to_transform</span>())
+                .<span class="ident">post_mul</span>(<span class="kw-2">&amp;</span><span class="ident">rotation</span>.<span class="ident">to_transform</span>())
         ));
     }
 
@@ -519,7 +483,7 @@
         <span class="kw">let</span> (<span class="ident">t2</span>, <span class="ident">r2</span>) <span class="op">=</span> <span class="ident">rigid</span>.<span class="ident">decompose_reversed</span>();
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rigid</span>
             .<span class="ident">to_transform</span>()
-            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">t2</span>.<span class="ident">to_transform</span>().<span class="ident">post_transform</span>(<span class="kw-2">&amp;</span><span class="ident">r2</span>.<span class="ident">to_transform</span>())));
+            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">t2</span>.<span class="ident">to_transform</span>().<span class="ident">post_mul</span>(<span class="kw-2">&amp;</span><span class="ident">r2</span>.<span class="ident">to_transform</span>())));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -530,9 +494,9 @@
         <span class="kw">let</span> <span class="ident">rigid</span> <span class="op">=</span> <span class="ident">RigidTransform3D</span>::<span class="ident">new</span>(<span class="ident">rotation</span>, <span class="ident">translation</span>);
         <span class="kw">let</span> <span class="ident">inverse</span> <span class="op">=</span> <span class="ident">rigid</span>.<span class="ident">inverse</span>();
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rigid</span>
-            .<span class="ident">post_transform</span>(<span class="kw-2">&amp;</span><span class="ident">inverse</span>)
+            .<span class="ident">post_mul</span>(<span class="kw-2">&amp;</span><span class="ident">inverse</span>)
             .<span class="ident">to_transform</span>()
-            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">Transform3D</span>::<span class="ident">identity</span>()));
+            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">TypedTransform3D</span>::<span class="ident">identity</span>()));
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">inverse</span>
             .<span class="ident">to_transform</span>()
             .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">rigid</span>.<span class="ident">to_transform</span>().<span class="ident">inverse</span>().<span class="ident">unwrap</span>()));
@@ -548,13 +512,13 @@
         <span class="kw">let</span> <span class="ident">rigid2</span> <span class="op">=</span> <span class="ident">RigidTransform3D</span>::<span class="ident">new</span>(<span class="ident">rotation2</span>, <span class="ident">translation2</span>);
 
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rigid</span>
-            .<span class="ident">post_transform</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>)
+            .<span class="ident">post_mul</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>)
             .<span class="ident">to_transform</span>()
-            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">rigid</span>.<span class="ident">to_transform</span>().<span class="ident">post_transform</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>.<span class="ident">to_transform</span>())));
+            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">rigid</span>.<span class="ident">to_transform</span>().<span class="ident">post_mul</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>.<span class="ident">to_transform</span>())));
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rigid</span>
-            .<span class="ident">pre_transform</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>)
+            .<span class="ident">pre_mul</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>)
             .<span class="ident">to_transform</span>()
-            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">rigid</span>.<span class="ident">to_transform</span>().<span class="ident">pre_transform</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>.<span class="ident">to_transform</span>())));
+            .<span class="ident">approx_eq</span>(<span class="kw-2">&amp;</span><span class="ident">rigid</span>.<span class="ident">to_transform</span>().<span class="ident">pre_mul</span>(<span class="kw-2">&amp;</span><span class="ident">rigid2</span>.<span class="ident">to_transform</span>())));
     }
 }
 </pre></div>

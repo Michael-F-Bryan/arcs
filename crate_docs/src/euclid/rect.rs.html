@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/euclid-0.20.7/src/rect.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>rect.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../euclid/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/euclid-0.19.9/src/rect.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>rect.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../euclid/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -835,6 +835,34 @@
 <span id="835">835</span>
 <span id="836">836</span>
 <span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2013 The Servo Project Developers. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution.</span>
@@ -846,19 +874,19 @@
 <span class="comment">// except according to those terms.</span>
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">UnknownUnit</span>;
-<span class="kw">use</span> <span class="ident">scale</span>::<span class="ident">Scale</span>;
+<span class="kw">use</span> <span class="ident">length</span>::<span class="ident">Length</span>;
+<span class="kw">use</span> <span class="ident">scale</span>::<span class="ident">TypedScale</span>;
 <span class="kw">use</span> <span class="ident">num</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">box2d</span>::<span class="ident">Box2D</span>;
-<span class="kw">use</span> <span class="ident">point</span>::<span class="ident">Point2D</span>;
-<span class="kw">use</span> <span class="ident">vector</span>::<span class="ident">Vector2D</span>;
-<span class="kw">use</span> <span class="ident">side_offsets</span>::<span class="ident">SideOffsets2D</span>;
-<span class="kw">use</span> <span class="ident">size</span>::<span class="ident">Size2D</span>;
+<span class="kw">use</span> <span class="ident">box2d</span>::<span class="ident">TypedBox2D</span>;
+<span class="kw">use</span> <span class="ident">point</span>::<span class="ident">TypedPoint2D</span>;
+<span class="kw">use</span> <span class="ident">vector</span>::<span class="ident">TypedVector2D</span>;
+<span class="kw">use</span> <span class="ident">side_offsets</span>::<span class="ident">TypedSideOffsets2D</span>;
+<span class="kw">use</span> <span class="ident">size</span>::<span class="ident">TypedSize2D</span>;
 <span class="kw">use</span> <span class="ident">approxord</span>::{<span class="ident">min</span>, <span class="ident">max</span>};
-<span class="kw">use</span> <span class="ident">nonempty</span>::<span class="ident">NonEmpty</span>;
 
 <span class="kw">use</span> <span class="ident">num_traits</span>::<span class="ident">NumCast</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Deserializer</span>, <span class="ident">Serialize</span>, <span class="ident">Serializer</span>};
 
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">borrow</span>::<span class="ident">Borrow</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">cmp</span>::<span class="ident">PartialOrd</span>;
@@ -869,78 +897,100 @@
 
 <span class="doccomment">/// A 2d Rectangle optionally tagged with a unit.</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">serde</span>(<span class="ident">bound</span>(<span class="ident">serialize</span> <span class="op">=</span> <span class="string">&quot;T: Serialize&quot;</span>, <span class="ident">deserialize</span> <span class="op">=</span> <span class="string">&quot;T: Deserialize&lt;&#39;de&gt;&quot;</span>)))]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="ident">origin</span>: <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">size</span>: <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span> <span class="op">=</span> <span class="ident">UnknownUnit</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="ident">origin</span>: <span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">size</span>: <span class="ident">TypedSize2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Hash</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Hash</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="doccomment">/// The default rectangle type with no unit.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>;
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>)]</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>(<span class="ident">deserializer</span>: <span class="ident">D</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">D</span>::<span class="ident">Error</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+    {
+        <span class="kw">let</span> (<span class="ident">origin</span>, <span class="ident">size</span>) <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">Deserialize</span>::<span class="ident">deserialize</span>(<span class="ident">deserializer</span>));
+        <span class="prelude-val">Ok</span>(<span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">size</span>))
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>)]</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Serialize</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Serialize</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S</span>::<span class="prelude-val">Ok</span>, <span class="ident">S</span>::<span class="ident">Error</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">Serializer</span>,
+    {
+        (<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">origin</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">size</span>).<span class="ident">serialize</span>(<span class="ident">serializer</span>)
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Hash</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Hash</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">hash</span><span class="op">&lt;</span><span class="ident">H</span>: <span class="ident">Hasher</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">h</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">H</span>) {
         <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">hash</span>(<span class="ident">h</span>);
         <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">hash</span>(<span class="ident">h</span>);
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Copy</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Copy</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw-2">*</span><span class="self">self</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">PartialEq</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">PartialEq</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">origin</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">size</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Eq</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Eq</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Eq</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Eq</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {}
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Rect({:?} at {:?})&quot;</span>, <span class="self">self</span>.<span class="ident">size</span>, <span class="self">self</span>.<span class="ident">origin</span>)
+        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;TypedRect({:?} at {:?})&quot;</span>, <span class="self">self</span>.<span class="ident">size</span>, <span class="self">self</span>.<span class="ident">origin</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt</span>::<span class="ident">Display</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt</span>::<span class="ident">Display</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">formatter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">write</span><span class="macro">!</span>(<span class="ident">formatter</span>, <span class="string">&quot;Rect({} at {})&quot;</span>, <span class="self">self</span>.<span class="ident">size</span>, <span class="self">self</span>.<span class="ident">origin</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Default</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Default</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Default</span>::<span class="ident">default</span>(), <span class="ident">Default</span>::<span class="ident">default</span>())
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">Default</span>::<span class="ident">default</span>(), <span class="ident">Default</span>::<span class="ident">default</span>())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Constructor.</span>
-    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">origin</span>: <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>, <span class="ident">size</span>: <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">origin</span>: <span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>, <span class="ident">size</span>: <span class="ident">TypedSize2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">TypedRect</span> {
             <span class="ident">origin</span>,
             <span class="ident">size</span>,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Zero</span>
 {
     <span class="doccomment">/// Creates a rect of the given size, at offset zero.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_size</span>(<span class="ident">size</span>: <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span> {
-            <span class="ident">origin</span>: <span class="ident">Point2D</span>::<span class="ident">zero</span>(),
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_size</span>(<span class="ident">size</span>: <span class="ident">TypedSize2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">TypedRect</span> {
+            <span class="ident">origin</span>: <span class="ident">TypedPoint2D</span>::<span class="ident">zero</span>(),
             <span class="ident">size</span>,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Zero</span> <span class="op">+</span> <span class="ident">PartialOrd</span> <span class="op">+</span> <span class="ident">PartialEq</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
 {
@@ -950,16 +1000,6 @@
             <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">other</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span>
             <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">&lt;</span> <span class="ident">other</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">+</span> <span class="ident">other</span>.<span class="ident">size</span>.<span class="ident">height</span>
             <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">other</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span>
-    }
-
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">min</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">origin</span>
-    }
-
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">origin</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">size</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -983,13 +1023,23 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">width</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
-        <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_x_typed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Length</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">Length</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">max_x</span>())
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">height</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
-        <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">min_x_typed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Length</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">Length</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">min_x</span>())
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_y_typed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Length</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">Length</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">max_y</span>())
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">min_y_typed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Length</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">Length</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">min_y</span>())
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -1008,31 +1058,31 @@
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">upper_left</span> <span class="op">=</span> <span class="ident">Point2D</span>::<span class="ident">new</span>(
+        <span class="kw">let</span> <span class="ident">upper_left</span> <span class="op">=</span> <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(
             <span class="ident">max</span>(<span class="self">self</span>.<span class="ident">min_x</span>(), <span class="ident">other</span>.<span class="ident">min_x</span>()),
             <span class="ident">max</span>(<span class="self">self</span>.<span class="ident">min_y</span>(), <span class="ident">other</span>.<span class="ident">min_y</span>()),
         );
         <span class="kw">let</span> <span class="ident">lower_right_x</span> <span class="op">=</span> <span class="ident">min</span>(<span class="self">self</span>.<span class="ident">max_x</span>(), <span class="ident">other</span>.<span class="ident">max_x</span>());
         <span class="kw">let</span> <span class="ident">lower_right_y</span> <span class="op">=</span> <span class="ident">min</span>(<span class="self">self</span>.<span class="ident">max_y</span>(), <span class="ident">other</span>.<span class="ident">max_y</span>());
 
-        <span class="prelude-val">Some</span>(<span class="ident">Rect</span>::<span class="ident">new</span>(
+        <span class="prelude-val">Some</span>(<span class="ident">TypedRect</span>::<span class="ident">new</span>(
             <span class="ident">upper_left</span>,
-            <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="ident">lower_right_x</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">x</span>, <span class="ident">lower_right_y</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">y</span>),
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">lower_right_x</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">x</span>, <span class="ident">lower_right_y</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">y</span>),
         ))
     }
 
     <span class="doccomment">/// Returns the same rectangle, translated by a vector.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">by</span>: <span class="ident">Vector2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="self">Self</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">+</span> <span class="ident">by</span>, <span class="self">self</span>.<span class="ident">size</span>)
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">must_use</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">by</span>: <span class="kw-2">&amp;</span><span class="ident">TypedVector2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="self">Self</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">+</span> <span class="kw-2">*</span><span class="ident">by</span>, <span class="self">self</span>.<span class="ident">size</span>)
     }
 
     <span class="doccomment">/// Returns true if this rectangle contains the point. Points are considered</span>
     <span class="doccomment">/// in the rectangle if they are on the left or top edge, but outside if they</span>
     <span class="doccomment">/// are on the right or bottom edge.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">other</span>.<span class="ident">x</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">other</span>.<span class="ident">x</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span>
             <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">other</span>.<span class="ident">y</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">other</span>.<span class="ident">y</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span>
     }
@@ -1042,17 +1092,17 @@
     <span class="doccomment">/// nonempty but this rectangle is empty.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rect</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="ident">rect</span>.<span class="ident">is_empty_or_negative</span>()
+        <span class="ident">rect</span>.<span class="ident">is_empty</span>()
             <span class="op">|</span><span class="op">|</span> (<span class="self">self</span>.<span class="ident">min_x</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">rect</span>.<span class="ident">min_x</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">rect</span>.<span class="ident">max_x</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">max_x</span>()
                 <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">min_y</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">rect</span>.<span class="ident">min_y</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">rect</span>.<span class="ident">max_y</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">max_y</span>())
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">must_use</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inflate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">width</span>: <span class="ident">T</span>, <span class="ident">height</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(
-            <span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">-</span> <span class="ident">width</span>, <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">-</span> <span class="ident">height</span>),
-            <span class="ident">Size2D</span>::<span class="ident">new</span>(
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(
+            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">-</span> <span class="ident">width</span>, <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">-</span> <span class="ident">height</span>),
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(
                 <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">+</span> <span class="ident">width</span> <span class="op">+</span> <span class="ident">width</span>,
                 <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">+</span> <span class="ident">height</span> <span class="op">+</span> <span class="ident">height</span>,
             ),
@@ -1060,25 +1110,51 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_box2d</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
-        <span class="ident">Box2D</span> {
-            <span class="ident">min</span>: <span class="self">self</span>.<span class="ident">min</span>(),
-            <span class="ident">max</span>: <span class="self">self</span>.<span class="ident">max</span>(),
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">must_use</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inflate_typed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">width</span>: <span class="ident">Length</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>, <span class="ident">height</span>: <span class="ident">Length</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="self">self</span>.<span class="ident">inflate</span>(<span class="ident">width</span>.<span class="ident">get</span>(), <span class="ident">height</span>.<span class="ident">get</span>())
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">top_right</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">max_x</span>(), <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span>)
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bottom_left</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span>, <span class="self">self</span>.<span class="ident">max_y</span>())
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bottom_right</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">max_x</span>(), <span class="self">self</span>.<span class="ident">max_y</span>())
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_box2d</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedBox2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+        <span class="ident">TypedBox2D</span> {
+            <span class="ident">min</span>: <span class="self">self</span>.<span class="ident">origin</span>,
+            <span class="ident">max</span>: <span class="self">self</span>.<span class="ident">bottom_right</span>(),
         }
+    }
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">must_use</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">translate_by_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">size</span>: <span class="kw-2">&amp;</span><span class="ident">TypedSize2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="self">self</span>.<span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="ident">size</span>.<span class="ident">to_vector</span>())
     }
 
     <span class="doccomment">/// Calculate the size and position of an inner rectangle.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Subtracts the side offsets from all sides. The horizontal and vertical</span>
     <span class="doccomment">/// offsets must not be larger than the original side length.</span>
-    <span class="doccomment">/// This method assumes y oriented downward.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inner_rect</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offsets</span>: <span class="ident">SideOffsets2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">rect</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(
-            <span class="ident">Point2D</span>::<span class="ident">new</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inner_rect</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offsets</span>: <span class="ident">TypedSideOffsets2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">rect</span> <span class="op">=</span> <span class="ident">TypedRect</span>::<span class="ident">new</span>(
+            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(
                 <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">+</span> <span class="ident">offsets</span>.<span class="ident">left</span>,
                 <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">+</span> <span class="ident">offsets</span>.<span class="ident">top</span>
             ),
-            <span class="ident">Size2D</span>::<span class="ident">new</span>(
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(
                 <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">-</span> <span class="ident">offsets</span>.<span class="ident">horizontal</span>(),
                 <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">-</span> <span class="ident">offsets</span>.<span class="ident">vertical</span>()
             )
@@ -1091,14 +1167,13 @@
     <span class="doccomment">/// Calculate the size and position of an outer rectangle.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Add the offsets to all sides. The expanded rectangle is returned.</span>
-    <span class="doccomment">/// This method assumes y oriented downward.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">outer_rect</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offsets</span>: <span class="ident">SideOffsets2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(
-            <span class="ident">Point2D</span>::<span class="ident">new</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">outer_rect</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offsets</span>: <span class="ident">TypedSideOffsets2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(
+            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(
                 <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">-</span> <span class="ident">offsets</span>.<span class="ident">left</span>,
                 <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">-</span> <span class="ident">offsets</span>.<span class="ident">top</span>
             ),
-            <span class="ident">Size2D</span>::<span class="ident">new</span>(
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(
                 <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">+</span> <span class="ident">offsets</span>.<span class="ident">horizontal</span>(),
                 <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">+</span> <span class="ident">offsets</span>.<span class="ident">vertical</span>()
             )
@@ -1117,13 +1192,13 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_points</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>(<span class="ident">points</span>: <span class="ident">I</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
         <span class="ident">I</span>: <span class="ident">IntoIterator</span>,
-        <span class="ident">I</span>::<span class="ident">Item</span>: <span class="ident">Borrow</span><span class="op">&lt;</span><span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">I</span>::<span class="ident">Item</span>: <span class="ident">Borrow</span><span class="op">&lt;</span><span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">points</span> <span class="op">=</span> <span class="ident">points</span>.<span class="ident">into_iter</span>();
 
         <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">min_x</span>, <span class="kw-2">mut</span> <span class="ident">min_y</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">points</span>.<span class="ident">next</span>() {
             <span class="prelude-val">Some</span>(<span class="ident">first</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">first</span>.<span class="ident">borrow</span>().<span class="ident">x</span>, <span class="ident">first</span>.<span class="ident">borrow</span>().<span class="ident">y</span>),
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="ident">Rect</span>::<span class="ident">zero</span>(),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="ident">TypedRect</span>::<span class="ident">zero</span>(),
         };
 
         <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">max_x</span>, <span class="kw-2">mut</span> <span class="ident">max_y</span>) <span class="op">=</span> (<span class="ident">min_x</span>, <span class="ident">min_y</span>);
@@ -1142,14 +1217,14 @@
                 <span class="ident">max_y</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">y</span>
             }
         }
-        <span class="ident">Rect</span>::<span class="ident">new</span>(
-            <span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="ident">min_x</span>, <span class="ident">min_y</span>),
-            <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="ident">max_x</span> <span class="op">-</span> <span class="ident">min_x</span>, <span class="ident">max_y</span> <span class="op">-</span> <span class="ident">min_y</span>),
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(
+            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="ident">min_x</span>, <span class="ident">min_y</span>),
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">max_x</span> <span class="op">-</span> <span class="ident">min_x</span>, <span class="ident">max_y</span> <span class="op">-</span> <span class="ident">min_y</span>),
         )
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">One</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
 {
@@ -1165,17 +1240,17 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">One</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
 {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">center</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">center</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedPoint2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">two</span> <span class="op">=</span> <span class="ident">T</span>::<span class="ident">one</span>() <span class="op">+</span> <span class="ident">T</span>::<span class="ident">one</span>();
         <span class="self">self</span>.<span class="ident">origin</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">to_vector</span>() <span class="op">/</span> <span class="ident">two</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">PartialOrd</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Zero</span>,
 {
@@ -1188,7 +1263,7 @@
             <span class="kw">return</span> <span class="kw-2">*</span><span class="self">self</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">upper_left</span> <span class="op">=</span> <span class="ident">Point2D</span>::<span class="ident">new</span>(
+        <span class="kw">let</span> <span class="ident">upper_left</span> <span class="op">=</span> <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(
             <span class="ident">min</span>(<span class="self">self</span>.<span class="ident">min_x</span>(), <span class="ident">other</span>.<span class="ident">min_x</span>()),
             <span class="ident">min</span>(<span class="self">self</span>.<span class="ident">min_y</span>(), <span class="ident">other</span>.<span class="ident">min_y</span>()),
         );
@@ -1196,37 +1271,37 @@
         <span class="kw">let</span> <span class="ident">lower_right_x</span> <span class="op">=</span> <span class="ident">max</span>(<span class="self">self</span>.<span class="ident">max_x</span>(), <span class="ident">other</span>.<span class="ident">max_x</span>());
         <span class="kw">let</span> <span class="ident">lower_right_y</span> <span class="op">=</span> <span class="ident">max</span>(<span class="self">self</span>.<span class="ident">max_y</span>(), <span class="ident">other</span>.<span class="ident">max_y</span>());
 
-        <span class="ident">Rect</span>::<span class="ident">new</span>(
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(
             <span class="ident">upper_left</span>,
-            <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="ident">lower_right_x</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">x</span>, <span class="ident">lower_right_y</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">y</span>),
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">lower_right_x</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">x</span>, <span class="ident">lower_right_y</span> <span class="op">-</span> <span class="ident">upper_left</span>.<span class="ident">y</span>),
         )
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">scale</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">x</span>: <span class="ident">S</span>, <span class="ident">y</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">S</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
     {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(
-            <span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">*</span> <span class="ident">x</span>, <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">*</span> <span class="ident">y</span>),
-            <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">*</span> <span class="ident">x</span>, <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">*</span> <span class="ident">y</span>),
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(
+            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">*</span> <span class="ident">x</span>, <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">*</span> <span class="ident">y</span>),
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">*</span> <span class="ident">x</span>, <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">*</span> <span class="ident">y</span>),
         )
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">area</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
         <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">area</span>()
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">PartialEq</span> <span class="op">+</span> <span class="ident">Zero</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">PartialEq</span> <span class="op">+</span> <span class="ident">Zero</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Constructor, setting all sides to zero.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">zero</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">origin</span>(), <span class="ident">Size2D</span>::<span class="ident">zero</span>())
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">TypedPoint2D</span>::<span class="ident">origin</span>(), <span class="ident">TypedSize2D</span>::<span class="ident">zero</span>())
     }
 
     <span class="doccomment">/// Returns true if the size is zero, regardless of the origin&#39;s value.</span>
@@ -1235,85 +1310,61 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Zero</span> <span class="op">+</span> <span class="ident">PartialOrd</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
-
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty_or_negative</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">is_empty_or_negative</span>()
-    }
-
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_non_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NonEmpty</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_empty_or_negative</span>() {
-            <span class="kw">return</span> <span class="prelude-val">None</span>;
-        }
-
-        <span class="prelude-val">Some</span>(<span class="ident">NonEmpty</span>(<span class="kw-2">*</span><span class="self">self</span>))
-    }
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">scale</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">*</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">*</span> <span class="ident">scale</span>)
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">*</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">*</span> <span class="ident">scale</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span>;
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">div</span>(<span class="self">self</span>, <span class="ident">scale</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">/</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">/</span> <span class="ident">scale</span>)
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">/</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">/</span> <span class="ident">scale</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">Scale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U2</span><span class="op">&gt;</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">TypedScale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U2</span><span class="op">&gt;</span>;
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">scale</span>: <span class="ident">Scale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U2</span><span class="op">&gt;</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">*</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">*</span> <span class="ident">scale</span>)
+    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">scale</span>: <span class="ident">TypedScale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U2</span><span class="op">&gt;</span> {
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">*</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">*</span> <span class="ident">scale</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">Scale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U2</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span><span class="op">&gt;</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">TypedScale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U2</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span><span class="op">&gt;</span>;
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">div</span>(<span class="self">self</span>, <span class="ident">scale</span>: <span class="ident">Scale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span><span class="op">&gt;</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">/</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">/</span> <span class="ident">scale</span>)
+    <span class="kw">fn</span> <span class="ident">div</span>(<span class="self">self</span>, <span class="ident">scale</span>: <span class="ident">TypedScale</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span>, <span class="ident">U2</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U1</span><span class="op">&gt;</span> {
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span> <span class="op">/</span> <span class="ident">scale</span>, <span class="self">self</span>.<span class="ident">size</span> <span class="op">/</span> <span class="ident">scale</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span>, <span class="ident">Unit</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span>, <span class="ident">Unit</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Drop the units, preserving only the numeric value.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_untyped</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">to_untyped</span>(), <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">to_untyped</span>())
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_untyped</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">to_untyped</span>(), <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">to_untyped</span>())
     }
 
     <span class="doccomment">/// Tag a unitless value with units.</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_untyped</span>(<span class="ident">r</span>: <span class="kw-2">&amp;</span><span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">UnknownUnit</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(
-            <span class="ident">Point2D</span>::<span class="ident">from_untyped</span>(<span class="ident">r</span>.<span class="ident">origin</span>),
-            <span class="ident">Size2D</span>::<span class="ident">from_untyped</span>(<span class="ident">r</span>.<span class="ident">size</span>),
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_untyped</span>(<span class="ident">r</span>: <span class="kw-2">&amp;</span><span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(
+            <span class="ident">TypedPoint2D</span>::<span class="ident">from_untyped</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">origin</span>),
+            <span class="ident">TypedSize2D</span>::<span class="ident">from_untyped</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">size</span>),
         )
-    }
-
-    <span class="doccomment">/// Cast the unit</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cast_unit</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">V</span><span class="op">&gt;</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">cast_unit</span>(), <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">cast_unit</span>())
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T0</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span>, <span class="ident">Unit</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T0</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T0</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span>, <span class="ident">Unit</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T0</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Cast from one numeric representation to another, preserving the units.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// When casting from floating point to integer coordinates, the decimals are truncated</span>
     <span class="doccomment">/// as one would expect from a simple cast, but this behavior does not always make sense</span>
     <span class="doccomment">/// geometrically. Consider using round(), round_in or round_out() before casting.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cast</span><span class="op">&lt;</span><span class="ident">T1</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T1</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
-        <span class="ident">Rect</span>::<span class="ident">new</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cast</span><span class="op">&lt;</span><span class="ident">T1</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T1</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(
             <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">cast</span>(),
             <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">cast</span>(),
         )
@@ -1324,15 +1375,15 @@
     <span class="doccomment">/// When casting from floating point to integer coordinates, the decimals are truncated</span>
     <span class="doccomment">/// as one would expect from a simple cast, but this behavior does not always make sense</span>
     <span class="doccomment">/// geometrically. Consider using round(), round_in or round_out() before casting.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_cast</span><span class="op">&lt;</span><span class="ident">T1</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T1</span>, <span class="ident">Unit</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_cast</span><span class="op">&lt;</span><span class="ident">T1</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T1</span>, <span class="ident">Unit</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> (<span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">try_cast</span>(), <span class="self">self</span>.<span class="ident">size</span>.<span class="ident">try_cast</span>()) {
-            (<span class="prelude-val">Some</span>(<span class="ident">origin</span>), <span class="prelude-val">Some</span>(<span class="ident">size</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">size</span>)),
+            (<span class="prelude-val">Some</span>(<span class="ident">origin</span>), <span class="prelude-val">Some</span>(<span class="ident">size</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">size</span>)),
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Floor</span> <span class="op">+</span> <span class="ident">Ceil</span> <span class="op">+</span> <span class="ident">Round</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Floor</span> <span class="op">+</span> <span class="ident">Ceil</span> <span class="op">+</span> <span class="ident">Round</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Return a rectangle with edges rounded to integer coordinates, such that</span>
     <span class="doccomment">/// the returned rectangle has the same set of pixel centers as the original</span>
     <span class="doccomment">/// one.</span>
@@ -1342,41 +1393,41 @@
     <span class="doccomment">/// avoid pixel rounding errors.</span>
     <span class="doccomment">/// Note that this is *not* rounding to nearest integer if the values are negative.</span>
     <span class="doccomment">/// They are always rounding as floor(n + 0.5).</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">must_use</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">round</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">origin</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">round</span>();
         <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">add_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">size</span>).<span class="ident">round</span>() <span class="op">-</span> <span class="ident">origin</span>;
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">x</span>, <span class="ident">size</span>.<span class="ident">y</span>))
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">x</span>, <span class="ident">size</span>.<span class="ident">y</span>))
     }
 
     <span class="doccomment">/// Return a rectangle with edges rounded to integer coordinates, such that</span>
     <span class="doccomment">/// the original rectangle contains the resulting rectangle.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">must_use</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">round_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">origin</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">ceil</span>();
         <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">add_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">size</span>).<span class="ident">floor</span>() <span class="op">-</span> <span class="ident">origin</span>;
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">x</span>, <span class="ident">size</span>.<span class="ident">y</span>))
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">x</span>, <span class="ident">size</span>.<span class="ident">y</span>))
     }
 
     <span class="doccomment">/// Return a rectangle with edges rounded to integer coordinates, such that</span>
     <span class="doccomment">/// the original rectangle is contained in the resulting rectangle.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable&quot;</span>, <span class="ident">must_use</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">round_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">origin</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">floor</span>();
         <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">origin</span>.<span class="ident">add_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">size</span>).<span class="ident">ceil</span>() <span class="op">-</span> <span class="ident">origin</span>;
-        <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">x</span>, <span class="ident">size</span>.<span class="ident">y</span>))
+        <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">origin</span>, <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">size</span>.<span class="ident">x</span>, <span class="ident">size</span>.<span class="ident">y</span>))
     }
 }
 
 <span class="comment">// Convenience functions for common casts</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span>, <span class="ident">Unit</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">NumCast</span> <span class="op">+</span> <span class="ident">Copy</span>, <span class="ident">Unit</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Cast into an `f32` rectangle.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_f32</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_f32</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">cast</span>()
     }
 
     <span class="doccomment">/// Cast into an `f64` rectangle.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">cast</span>()
     }
 
@@ -1385,7 +1436,7 @@
     <span class="doccomment">/// When casting from floating point rectangles, it is worth considering whether</span>
     <span class="doccomment">/// to `round()`, `round_in()` or `round_out()` before the cast in order to</span>
     <span class="doccomment">/// obtain the desired conversion behavior.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_usize</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_usize</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">cast</span>()
     }
 
@@ -1394,16 +1445,7 @@
     <span class="doccomment">/// When casting from floating point rectangles, it is worth considering whether</span>
     <span class="doccomment">/// to `round()`, `round_in()` or `round_out()` before the cast in order to</span>
     <span class="doccomment">/// obtain the desired conversion behavior.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_u32</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">cast</span>()
-    }
-
-    <span class="doccomment">/// Cast into an `u64` rectangle, truncating decimals if any.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// When casting from floating point rectangles, it is worth considering whether</span>
-    <span class="doccomment">/// to `round()`, `round_in()` or `round_out()` before the cast in order to</span>
-    <span class="doccomment">/// obtain the desired conversion behavior.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_u64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_u32</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">cast</span>()
     }
 
@@ -1412,7 +1454,7 @@
     <span class="doccomment">/// When casting from floating point rectangles, it is worth considering whether</span>
     <span class="doccomment">/// to `round()`, `round_in()` or `round_out()` before the cast in order to</span>
     <span class="doccomment">/// obtain the desired conversion behavior.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_i32</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">i32</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_i32</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">i32</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">cast</span>()
     }
 
@@ -1421,34 +1463,36 @@
     <span class="doccomment">/// When casting from floating point rectangles, it is worth considering whether</span>
     <span class="doccomment">/// to `round()`, `round_in()` or `round_out()` before the cast in order to</span>
     <span class="doccomment">/// obtain the desired conversion behavior.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_i64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">i64</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_i64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">i64</span>, <span class="ident">Unit</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">cast</span>()
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">TypedSize2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>
 <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Zero</span>
 {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">size</span>: <span class="ident">Size2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">size</span>: <span class="ident">TypedSize2D</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">from_size</span>(<span class="ident">size</span>)
     }
 }
 
-<span class="doccomment">/// Shorthand for `Rect::new(Point2D::new(x, y), Size2D::new(w, h))`.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="ident">x</span>: <span class="ident">T</span>, <span class="ident">y</span>: <span class="ident">T</span>, <span class="ident">w</span>: <span class="ident">T</span>, <span class="ident">h</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
-    <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">y</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="ident">w</span>, <span class="ident">h</span>))
+<span class="doccomment">/// Shorthand for `TypedRect::new(TypedPoint2D::new(x, y), TypedSize2D::new(w, h))`.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rect</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="ident">x</span>: <span class="ident">T</span>, <span class="ident">y</span>: <span class="ident">T</span>, <span class="ident">w</span>: <span class="ident">T</span>, <span class="ident">h</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> {
+    <span class="ident">TypedRect</span>::<span class="ident">new</span>(<span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">y</span>), <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">w</span>, <span class="ident">h</span>))
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">default</span>::{<span class="ident">Point2D</span>, <span class="ident">Rect</span>, <span class="ident">Size2D</span>};
-    <span class="kw">use</span> {<span class="ident">point2</span>, <span class="ident">vec2</span>, <span class="ident">rect</span>, <span class="ident">size2</span>};
+    <span class="kw">use</span> <span class="ident">point</span>::{<span class="ident">Point2D</span>, <span class="ident">point2</span>};
+    <span class="kw">use</span> <span class="ident">vector</span>::<span class="ident">vec2</span>;
     <span class="kw">use</span> <span class="ident">side_offsets</span>::<span class="ident">SideOffsets2D</span>;
+    <span class="kw">use</span> <span class="ident">size</span>::<span class="ident">Size2D</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_translate</span>() {
         <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">0u32</span>, <span class="number">0u32</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">50u32</span>, <span class="number">40u32</span>));
-        <span class="kw">let</span> <span class="ident">pp</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">translate</span>(<span class="ident">vec2</span>(<span class="number">10</span>, <span class="number">15</span>));
+        <span class="kw">let</span> <span class="ident">pp</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="ident">vec2</span>(<span class="number">10</span>, <span class="number">15</span>));
 
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pp</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">=</span><span class="op">=</span> <span class="number">50</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pp</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">=</span><span class="op">=</span> <span class="number">40</span>);
@@ -1456,7 +1500,26 @@
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pp</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">=</span><span class="op">=</span> <span class="number">15</span>);
 
         <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">10</span>, <span class="op">-</span><span class="number">5</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">50</span>, <span class="number">40</span>));
-        <span class="kw">let</span> <span class="ident">rr</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">translate</span>(<span class="ident">vec2</span>(<span class="number">0</span>, <span class="op">-</span><span class="number">10</span>));
+        <span class="kw">let</span> <span class="ident">rr</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="ident">vec2</span>(<span class="number">0</span>, <span class="op">-</span><span class="number">10</span>));
+
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rr</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">=</span><span class="op">=</span> <span class="number">50</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rr</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">=</span><span class="op">=</span> <span class="number">40</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rr</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">10</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rr</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">15</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_translate_by_size</span>() {
+        <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">0u32</span>, <span class="number">0u32</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">50u32</span>, <span class="number">40u32</span>));
+        <span class="kw">let</span> <span class="ident">pp</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">translate_by_size</span>(<span class="kw-2">&amp;</span><span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">10</span>, <span class="number">15</span>));
+
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pp</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">=</span><span class="op">=</span> <span class="number">50</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pp</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">=</span><span class="op">=</span> <span class="number">40</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pp</span>.<span class="ident">origin</span>.<span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="number">10</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pp</span>.<span class="ident">origin</span>.<span class="ident">y</span> <span class="op">=</span><span class="op">=</span> <span class="number">15</span>);
+
+        <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">10</span>, <span class="op">-</span><span class="number">5</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">50</span>, <span class="number">40</span>));
+        <span class="kw">let</span> <span class="ident">rr</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">translate_by_size</span>(<span class="kw-2">&amp;</span><span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="op">-</span><span class="number">10</span>));
 
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rr</span>.<span class="ident">size</span>.<span class="ident">width</span> <span class="op">=</span><span class="op">=</span> <span class="number">50</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">rr</span>.<span class="ident">size</span>.<span class="ident">height</span> <span class="op">=</span><span class="op">=</span> <span class="number">40</span>);
@@ -1510,42 +1573,42 @@
     <span class="kw">fn</span> <span class="ident">test_contains</span>() {
         <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">20</span>, <span class="number">15</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">100</span>, <span class="number">200</span>));
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">50</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">10</span>, <span class="number">200</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">50</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">10</span>, <span class="number">200</span>)));
 
         <span class="comment">// The `contains` method is inclusive of the top/left edges, but not the</span>
         <span class="comment">// bottom/right edges.</span>
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">20</span>, <span class="number">15</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">80</span>, <span class="number">15</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">80</span>, <span class="number">215</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">20</span>, <span class="number">215</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">20</span>, <span class="number">15</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">80</span>, <span class="number">15</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">80</span>, <span class="number">215</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">20</span>, <span class="number">215</span>)));
 
         <span class="comment">// Points beyond the top-left corner.</span>
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">25</span>, <span class="number">15</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">15</span>, <span class="number">10</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">25</span>, <span class="number">15</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">15</span>, <span class="number">10</span>)));
 
         <span class="comment">// Points beyond the top-right corner.</span>
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">85</span>, <span class="number">20</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">75</span>, <span class="number">10</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">85</span>, <span class="number">20</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">75</span>, <span class="number">10</span>)));
 
         <span class="comment">// Points beyond the bottom-right corner.</span>
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">85</span>, <span class="number">210</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">75</span>, <span class="number">220</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">85</span>, <span class="number">210</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">75</span>, <span class="number">220</span>)));
 
         <span class="comment">// Points beyond the bottom-left corner.</span>
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">25</span>, <span class="number">210</span>)));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">15</span>, <span class="number">220</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">25</span>, <span class="number">210</span>)));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">15</span>, <span class="number">220</span>)));
 
         <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">20.0</span>, <span class="number">15.0</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">100.0</span>, <span class="number">200.0</span>));
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="ident">vec2</span>(<span class="number">0.1</span>, <span class="number">0.0</span>))));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="ident">vec2</span>(<span class="op">-</span><span class="number">0.1</span>, <span class="number">0.0</span>))));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="ident">vec2</span>(<span class="number">0.0</span>, <span class="number">0.1</span>))));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="ident">vec2</span>(<span class="number">0.0</span>, <span class="op">-</span><span class="number">0.1</span>))));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="ident">vec2</span>(<span class="number">0.1</span>, <span class="number">0.0</span>))));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="ident">vec2</span>(<span class="op">-</span><span class="number">0.1</span>, <span class="number">0.0</span>))));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="ident">vec2</span>(<span class="number">0.0</span>, <span class="number">0.1</span>))));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">translate</span>(<span class="kw-2">&amp;</span><span class="ident">vec2</span>(<span class="number">0.0</span>, <span class="op">-</span><span class="number">0.1</span>))));
         <span class="comment">// Empty rectangles are always considered as contained in other rectangles,</span>
         <span class="comment">// even if their origin is not.</span>
         <span class="kw">let</span> <span class="ident">p</span> <span class="op">=</span> <span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">1.0</span>, <span class="number">1.0</span>);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="ident">p</span>));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">r</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">p</span>));
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">contains_rect</span>(<span class="kw-2">&amp;</span><span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">p</span>, <span class="ident">Size2D</span>::<span class="ident">zero</span>())));
     }
 
@@ -1589,7 +1652,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_inner_outer_rect</span>() {
-        <span class="kw">let</span> <span class="ident">inner_rect</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">point2</span>(<span class="number">20</span>, <span class="number">40</span>), <span class="ident">size2</span>(<span class="number">80</span>, <span class="number">100</span>));
+        <span class="kw">let</span> <span class="ident">inner_rect</span>: <span class="ident">Rect</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="number">20</span>, <span class="number">40</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">80</span>, <span class="number">100</span>));
         <span class="kw">let</span> <span class="ident">offsets</span> <span class="op">=</span> <span class="ident">SideOffsets2D</span>::<span class="ident">new</span>(<span class="number">20</span>, <span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>);
         <span class="kw">let</span> <span class="ident">outer_rect</span> <span class="op">=</span> <span class="ident">inner_rect</span>.<span class="ident">outer_rect</span>(<span class="ident">offsets</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">outer_rect</span>.<span class="ident">origin</span>.<span class="ident">x</span>, <span class="number">10</span>);
@@ -1612,13 +1675,6 @@
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">min_y</span>() <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">5</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">max_x</span>() <span class="op">=</span><span class="op">=</span> <span class="number">40</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">min_x</span>() <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">10</span>);
-    }
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_width_height</span>() {
-        <span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">Rect</span>::<span class="ident">new</span>(<span class="ident">Point2D</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">10</span>, <span class="op">-</span><span class="number">5</span>), <span class="ident">Size2D</span>::<span class="ident">new</span>(<span class="number">50</span>, <span class="number">40</span>));
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">width</span>() <span class="op">=</span><span class="op">=</span> <span class="number">50</span>);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">r</span>.<span class="ident">height</span>() <span class="op">=</span><span class="op">=</span> <span class="number">40</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

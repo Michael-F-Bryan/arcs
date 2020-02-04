@@ -1,4 +1,5 @@
 var ALIASES = {};
+ALIASES["aabb_quadtree"] = {};
 ALIASES["ahash"] = {};
 ALIASES["anyhow"] = {};
 ALIASES["approx"] = {};
@@ -16,6 +17,8 @@ ALIASES["crossbeam_utils"] = {};
 ALIASES["derivative"] = {};
 ALIASES["either"] = {};
 ALIASES["euclid"] = {};
+ALIASES["euclid_macros"] = {};
+ALIASES["fnv"] = {};
 ALIASES["getrandom"] = {};
 ALIASES["hashbrown"] = {};
 ALIASES["hibitset"] = {};

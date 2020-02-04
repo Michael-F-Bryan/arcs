@@ -144,18 +144,46 @@
 <span id="144">144</span>
 <span id="145">145</span>
 <span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">Bounded</span>, <span class="ident">DrawingSpace</span>, <span class="ident">Length</span>, <span class="ident">Point</span>, <span class="ident">Vector</span>};
 <span class="kw">use</span> <span class="ident">euclid</span>::{<span class="ident">num</span>::<span class="ident">Zero</span>, <span class="ident">Size2D</span>};
 <span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">specs_derive</span>::<span class="ident">Component</span>;
+<span class="kw">use</span> <span class="ident">aabb_quadtree</span>::{<span class="ident">Spatial</span>};
+<span class="kw">use</span> <span class="ident">quadtree_euclid</span>::{<span class="ident">TypedRect</span>, <span class="ident">TypedPoint2D</span>, <span class="ident">TypedSize2D</span>};
 
 <span class="doccomment">/// An axis-aligned bounding box.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Component</span>)]</span>
-<span class="attribute">#[<span class="ident">storage</span>(<span class="ident">DenseVecStorage</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BoundingBox</span> {
     <span class="ident">bottom_left</span>: <span class="ident">Point</span>,
     <span class="ident">top_right</span>: <span class="ident">Point</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Component</span> <span class="kw">for</span> <span class="ident">BoundingBox</span> {
+    <span class="kw">type</span> <span class="ident">Storage</span> <span class="op">=</span> <span class="ident">FlaggedStorage</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">DenseVecStorage</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+}
+
+<span class="kw">impl</span> <span class="ident">Spatial</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BoundingBox</span> {
+    <span class="kw">fn</span> <span class="ident">aabb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">f64</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">bb</span> <span class="op">=</span> <span class="self">self</span>;
+        <span class="ident">TypedRect</span>::<span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">f64</span><span class="op">&gt;</span>::<span class="ident">new</span>(
+            <span class="comment">// TypedRects have their origin at the bottom left corner (this is undocumented!)</span>
+            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="ident">bb</span>.<span class="ident">bottom_left</span>().<span class="ident">x</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">bb</span>.<span class="ident">bottom_left</span>().<span class="ident">y</span> <span class="kw">as</span> <span class="ident">f32</span>),
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">bb</span>.<span class="ident">width</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">bb</span>.<span class="ident">height</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">f32</span>))
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">BoundingBox</span> {
