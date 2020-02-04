@@ -21,7 +21,6 @@ script:
   - cargo test --verbose
   - cargo doc --verbose
   - cd $TRAVIS_BUILD_DIR/demo
-  - cargo build --verbose
   - wasm-pack build --dev --target web
 
 before_deploy:
@@ -34,10 +33,10 @@ before_deploy:
   - mkdir public
   - cp -r arcs/target/doc public/crate_docs/
   # do the same for the WebAssembly demo
-  - tree demo -I target
   - mkdir public/demo/
   - cp demo/index.html public/demo/
   - cp -r demo/pkg/ public/demo/pkg/
+  - ls --recursive demo -I target
   # going to the root GitHub Pages page should show the demo
   - echo '<meta http-equiv="refresh" content="0; url=demo/index.html" /> ' > public/index.html
 
