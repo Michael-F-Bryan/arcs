@@ -10,10 +10,11 @@ pub use idle::Idle;
 
 use arcs::{
     algorithms::Translate,
-    components::{DrawingObject, Selected},
+    components::{DrawingObject, Selected, Space, Viewport},
     CanvasSpace, DrawingSpace, Point, Vector,
 };
 use euclid::Point2D;
+use genawaiter::sync::{Co, Gen};
 use specs::prelude::*;
 use std::{any::Any, fmt::Debug};
 
@@ -33,11 +34,46 @@ pub trait ApplicationContext {
     /// Typically this will be implemented by the drawing canvas having some
     /// sort of "pick box" where anything within, say, 3 pixels of something is
     /// considered to be "under" it.
-    fn entities_under_point(
-        &self,
-        _location: Point,
-    ) -> Box<dyn Iterator<Item = Entity>> {
-        unimplemented!()
+    fn entities_under_point<'this>(
+        &'this self,
+        location: Point,
+    ) -> Box<dyn Iterator<Item = Entity> + 'this> {
+        const PIXEL_RADIUS: f64 = 3.0;
+
+        let viewports = self.world().read_storage::<Viewport>();
+
+        let Viewport {
+            pixels_per_drawing_unit,
+            ..
+        } = viewports.get(self.viewport()).unwrap();
+
+        /// Generators aren't stable so we use the `genawaiter` hack to
+        /// "close over" our `Space`.
+        async fn iter(
+            world: &World,
+            pixels_per_drawing_unit: euclid::Scale<
+                f64,
+                DrawingSpace,
+                CanvasSpace,
+            >,
+            location: Point,
+            co: Co<Entity>,
+        ) {
+            let search_radius = pixels_per_drawing_unit.get() / PIXEL_RADIUS;
+
+            let space = world.read_resource::<Space>();
+
+            for spatial in space.query_point(location, search_radius) {
+                co.yield_(spatial.entity).await;
+            }
+        }
+
+        Box::new(
+            Gen::new(|co| {
+                iter(self.world(), *pixels_per_drawing_unit, location, co)
+            })
+            .into_iter(),
+        )
     }
 
     /// Mark an object as being selected.
