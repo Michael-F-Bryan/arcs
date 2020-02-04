@@ -7,13 +7,13 @@ use arcs::{
 };
 use euclid::{Point2D, Size2D};
 use log::Level;
-use modes::{ApplicationContext, Idle, State, Transition};
+use modes::{ApplicationContext, Idle, KeyboardEventArgs, State, Transition};
 use piet::Color;
 use piet_web::WebRenderContext;
 use seed::{prelude::*, *};
 use specs::prelude::*;
 use std::convert::TryFrom;
-use web_sys::{HtmlCanvasElement, HtmlElement, MouseEvent};
+use web_sys::{HtmlCanvasElement, HtmlElement, KeyboardEvent, MouseEvent};
 
 const CANVAS_ID: &str = "canvas";
 
@@ -67,7 +67,19 @@ impl Model {
             world: &mut self.world,
             window: &mut self.window,
         };
+        log::debug!("[ON_MOUSE_DOWN] {:?}, {:?}", args, self.current_state);
         let trans = self.current_state.on_mouse_down(&mut ctx, &args);
+        self.handle_transition(trans);
+    }
+
+    fn on_key_pressed(&mut self, args: KeyboardEventArgs) {
+        let mut ctx = Context {
+            world: &mut self.world,
+            window: &mut self.window,
+        };
+
+        log::debug!("[ON_KEY_PRESSED] {:?}, {:?}", args, self.current_state);
+        let trans = self.current_state.on_key_pressed(&mut ctx, &args);
         self.handle_transition(trans);
     }
 
@@ -131,6 +143,7 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             };
             model.on_mouse_down(location, cursor);
         },
+        Msg::KeyPressed(args) => model.on_key_pressed(args),
         Msg::WindowResized => {
             if let Some(parent_size) =
                 seed::canvas(CANVAS_ID).and_then(|canvas| parent_size(&canvas))
@@ -184,8 +197,10 @@ fn view(model: &Model) -> impl View<Msg> {
                 At::Id => CANVAS_ID,
                 At::Width => model.canvas_size.width,
                 At::Height => model.canvas_size.height,
+                At::TabIndex => "1",
             ],
-            mouse_ev(Ev::MouseDown, Msg::from_click_event)
+            mouse_ev(Ev::MouseDown, Msg::from_click_event),
+            keyboard_ev(Ev::KeyDown, Msg::from_key_press)
         ],
     ]]
 }
@@ -199,6 +214,7 @@ pub enum Msg {
     Rendered,
     Clicked(Point2D<f64, CanvasSpace>),
     WindowResized,
+    KeyPressed(KeyboardEventArgs),
 }
 
 impl Msg {
@@ -207,6 +223,14 @@ impl Msg {
         let y = ev.offset_y().into();
 
         Msg::Clicked(Point2D::new(x, y))
+    }
+
+    pub fn from_key_press(ev: KeyboardEvent) -> Self {
+        Msg::KeyPressed(KeyboardEventArgs {
+            shift_pressed: ev.shift_key(),
+            control_pressed: ev.ctrl_key(),
+            key: ev.key().parse().ok(),
+        })
     }
 }
 

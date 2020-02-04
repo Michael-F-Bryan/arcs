@@ -16,7 +16,7 @@ use arcs::{
 use euclid::Point2D;
 use genawaiter::sync::{Co, Gen};
 use specs::prelude::*;
-use std::{any::Any, fmt::Debug};
+use std::{any::Any, fmt::Debug, str::FromStr};
 
 /// Contextual information passed to each [`State`] when it handles events.
 pub trait ApplicationContext {
@@ -219,7 +219,7 @@ bitflags::bitflags! {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq, Default)]
 pub struct KeyboardEventArgs {
     pub shift_pressed: bool,
     pub control_pressed: bool,
@@ -239,6 +239,7 @@ impl KeyboardEventArgs {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[allow(non_camel_case_types)]
 pub enum VirtualKeyCode {
     Escape,
     Left,
@@ -274,6 +275,32 @@ pub enum VirtualKeyCode {
     X,
     Y,
     Z,
+    a,
+    b,
+    c,
+    d,
+    e,
+    f,
+    g,
+    h,
+    i,
+    j,
+    k,
+    l,
+    m,
+    n,
+    o,
+    p,
+    q,
+    r,
+    s,
+    t,
+    u,
+    v,
+    w,
+    x,
+    y,
+    z,
     Key1,
     Key2,
     Key3,
@@ -284,4 +311,70 @@ pub enum VirtualKeyCode {
     Key8,
     Key9,
     Key0,
+}
+
+impl FromStr for VirtualKeyCode {
+    type Err = &'static str;
+
+    /// Parses a `KeyboardEvent.key` based on the equivalent name provided in
+    /// [the W3C spec][spec].
+    ///
+    /// [spec]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "A" => Ok(VirtualKeyCode::A),
+            "B" => Ok(VirtualKeyCode::B),
+            "C" => Ok(VirtualKeyCode::C),
+            "D" => Ok(VirtualKeyCode::D),
+            "E" => Ok(VirtualKeyCode::E),
+            "F" => Ok(VirtualKeyCode::F),
+            "G" => Ok(VirtualKeyCode::G),
+            "H" => Ok(VirtualKeyCode::H),
+            "I" => Ok(VirtualKeyCode::I),
+            "J" => Ok(VirtualKeyCode::J),
+            "K" => Ok(VirtualKeyCode::K),
+            "L" => Ok(VirtualKeyCode::L),
+            "M" => Ok(VirtualKeyCode::M),
+            "N" => Ok(VirtualKeyCode::N),
+            "O" => Ok(VirtualKeyCode::O),
+            "P" => Ok(VirtualKeyCode::P),
+            "Q" => Ok(VirtualKeyCode::Q),
+            "R" => Ok(VirtualKeyCode::R),
+            "S" => Ok(VirtualKeyCode::S),
+            "T" => Ok(VirtualKeyCode::T),
+            "U" => Ok(VirtualKeyCode::U),
+            "V" => Ok(VirtualKeyCode::V),
+            "W" => Ok(VirtualKeyCode::W),
+            "X" => Ok(VirtualKeyCode::X),
+            "Y" => Ok(VirtualKeyCode::Y),
+            "Z" => Ok(VirtualKeyCode::Z),
+            "a" => Ok(VirtualKeyCode::a),
+            "b" => Ok(VirtualKeyCode::b),
+            "c" => Ok(VirtualKeyCode::c),
+            "d" => Ok(VirtualKeyCode::d),
+            "e" => Ok(VirtualKeyCode::e),
+            "f" => Ok(VirtualKeyCode::f),
+            "g" => Ok(VirtualKeyCode::g),
+            "h" => Ok(VirtualKeyCode::h),
+            "i" => Ok(VirtualKeyCode::i),
+            "j" => Ok(VirtualKeyCode::j),
+            "k" => Ok(VirtualKeyCode::k),
+            "l" => Ok(VirtualKeyCode::l),
+            "m" => Ok(VirtualKeyCode::m),
+            "n" => Ok(VirtualKeyCode::n),
+            "o" => Ok(VirtualKeyCode::o),
+            "p" => Ok(VirtualKeyCode::p),
+            "q" => Ok(VirtualKeyCode::q),
+            "r" => Ok(VirtualKeyCode::r),
+            "s" => Ok(VirtualKeyCode::s),
+            "t" => Ok(VirtualKeyCode::t),
+            "u" => Ok(VirtualKeyCode::u),
+            "v" => Ok(VirtualKeyCode::v),
+            "w" => Ok(VirtualKeyCode::w),
+            "x" => Ok(VirtualKeyCode::x),
+            "y" => Ok(VirtualKeyCode::y),
+            "z" => Ok(VirtualKeyCode::z),
+            _ => Err("Unknown KeyboardEvent key"),
+        }
+    }
 }
