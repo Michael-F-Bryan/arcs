@@ -26,6 +26,8 @@ kurbo = "0.5"
 shred = "0.9"
 cgmath = "0.17.0"
 lazy_static = "1"
+aabb-quadtree = "0.2.0"
+quadtree_euclid = { package = "euclid", version = "0.19.8" }
 euclid = "0.20.7"
 
 [dev-dependencies]

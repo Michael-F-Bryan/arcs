@@ -57,7 +57,7 @@ impl<'world> System<'world> for SyncBounds {
             bounds
                 .insert(ent, drawing_object.geometry.bounding_box())
                 .unwrap();
-        }
+            }
 
         for (ent, _) in (&entities, &self.removed).join() {
             bounds.remove(ent);

@@ -8,6 +8,7 @@ mod name;
 mod styles;
 mod viewport;
 mod vtable;
+mod spatial_entity;
 
 pub use bounding_box::BoundingBox;
 pub use dimension::Dimension;
@@ -17,6 +18,7 @@ pub use name::{Name, NameTable};
 pub use styles::{LineStyle, PointStyle, WindowStyle};
 pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
+pub use spatial_entity::{SpatialEntity, Space};
 
 use specs::World;
 
