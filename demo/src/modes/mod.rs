@@ -36,7 +36,7 @@ pub trait ApplicationContext {
     fn entities_under_point(
         &self,
         _location: Point,
-    ) -> Box<dyn Iterator<Item = (Entity, &DrawingObject)>> {
+    ) -> Box<dyn Iterator<Item = Entity>> {
         unimplemented!()
     }
 

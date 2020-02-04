@@ -55,7 +55,7 @@ impl State for WaitingToSelect {
             ctx.entities_under_point(args.location).next();
 
         match first_item_under_cursor {
-            Some((entity, _)) => {
+            Some(entity) => {
                 ctx.select(entity);
                 Transition::ChangeState(Box::new(DraggingSelection::from_args(
                     args,

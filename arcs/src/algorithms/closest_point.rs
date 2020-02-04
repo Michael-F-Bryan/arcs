@@ -1,4 +1,4 @@
-use crate::{Line, Point, Vector};
+use crate::{Line, Arc, Point, Vector, components::{Geometry, DrawingObject}};
 use euclid::Scale;
 use std::iter::FromIterator;
 
@@ -39,6 +39,28 @@ impl ClosestPoint for Line {
         } else {
             start + Scale::new(t).transform_vector(displacement)
         })
+    }
+}
+
+impl ClosestPoint for Arc {
+    fn closest_point(&self, _target: Point) -> Closest {
+        unimplemented!()
+    }
+}
+
+impl ClosestPoint for Geometry {
+    fn closest_point(&self, target: Point) -> Closest {
+        match self {
+            Geometry::Point(p) => p.closest_point(target),
+            Geometry::Line(l) => l.closest_point(target),
+            Geometry::Arc(a) => a.closest_point(target),
+        }
+    }
+}
+
+impl ClosestPoint for DrawingObject {
+    fn closest_point(&self, target: Point) -> Closest {
+        self.geometry.closest_point(target)
     }
 }
 
