@@ -5,20 +5,22 @@ mod dimension;
 mod drawing_object;
 mod layer;
 mod name;
+mod selected;
+mod spatial_entity;
 mod styles;
 mod viewport;
 mod vtable;
-mod spatial_entity;
 
 pub use bounding_box::BoundingBox;
 pub use dimension::Dimension;
 pub use drawing_object::{DrawingObject, Geometry};
 pub use layer::Layer;
 pub use name::{Name, NameTable};
+pub use selected::Selected;
+pub use spatial_entity::{Space, SpatialEntity};
 pub use styles::{LineStyle, PointStyle, WindowStyle};
 pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
-pub use spatial_entity::{SpatialEntity, Space};
 
 use specs::World;
 
@@ -34,6 +36,7 @@ pub(crate) fn known_components(
             ComponentVtable::for_type::<Name>(),
             ComponentVtable::for_type::<LineStyle>(),
             ComponentVtable::for_type::<PointStyle>(),
+            ComponentVtable::for_type::<Selected>(),
             ComponentVtable::for_type::<WindowStyle>(),
             ComponentVtable::for_type::<Viewport>(),
         ];
@@ -50,4 +53,6 @@ pub fn register(world: &mut World) {
         log::debug!("Registering {}", component.name());
         component.register(world);
     }
+
+    world.insert(Space::default());
 }

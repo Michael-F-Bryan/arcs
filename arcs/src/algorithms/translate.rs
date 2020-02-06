@@ -1,6 +1,6 @@
 use crate::{
     algorithms::AffineTransformable,
-    components::{BoundingBox, Viewport},
+    components::{BoundingBox, Viewport, Geometry, DrawingObject},
     Arc, Transform, Vector,
 };
 
@@ -53,6 +53,22 @@ impl Translate for BoundingBox {
 impl Translate for Viewport {
     fn translate(&mut self, displacement: Vector) {
         self.centre.translate(displacement);
+    }
+}
+
+impl Translate for Geometry {
+    fn translate(&mut self, displacement: Vector) {
+        match self {
+            Geometry::Point(ref mut point) => point.translate(displacement),
+            Geometry::Line(ref mut line) => line.translate(displacement),
+            Geometry::Arc(ref mut arc) => arc.translate(displacement),
+        }
+    }
+}
+
+impl Translate for DrawingObject {
+    fn translate(&mut self, displacement: Vector) {
+        self.geometry.translate(displacement);
     }
 }
 

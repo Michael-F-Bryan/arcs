@@ -2,8 +2,7 @@ language: rust
 cache:
   directories:
     - $HOME/.cargo
-    - $TRAVIS_BUILD_DIR/arcs/target
-    - $TRAVIS_BUILD_DIR/demo/target
+    - $TRAVIS_BUILD_DIR/target
 
 rust:
   # Required for #[non_exhaustive]
