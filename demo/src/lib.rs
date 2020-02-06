@@ -7,7 +7,10 @@ use arcs::{
 };
 use euclid::{Point2D, Size2D};
 use log::Level;
-use modes::{ApplicationContext, Idle, KeyboardEventArgs, State, Transition};
+use modes::{
+    ApplicationContext, Idle, KeyboardEventArgs, MouseButtons, MouseEventArgs,
+    State, Transition, VirtualKeyCode,
+};
 use piet::Color;
 use piet_web::WebRenderContext;
 use seed::{prelude::*, *};
@@ -52,41 +55,53 @@ impl Default for Model {
 }
 
 impl Model {
-    fn on_mouse_down(
-        &mut self,
-        location: Point2D<f64, DrawingSpace>,
-        cursor: Point2D<f64, CanvasSpace>,
-    ) {
-        let args = modes::MouseEventArgs {
-            location,
-            cursor,
-            button_state: modes::MouseButtons::LEFT_BUTTON,
-        };
-
-        let mut ctx = Context {
-            world: &mut self.world,
-            window: &mut self.window,
-        };
-        log::debug!("[ON_MOUSE_DOWN] {:?}, {:?}", args, self.current_state);
-        let trans = self.current_state.on_mouse_down(&mut ctx, &args);
-        self.handle_transition(trans);
+    fn handle_event<F>(&mut self, handler: F) -> bool
+    where
+        F: FnOnce(&mut dyn State, &mut Context<'_>) -> Transition,
+    {
+        let mut suppress_redraw = false;
+        let transition = handler(
+            &mut *self.current_state,
+            &mut Context {
+                world: &mut self.world,
+                window: &mut self.window,
+                default_layer: self.default_layer,
+                suppress_redraw: &mut suppress_redraw,
+            },
+        );
+        self.handle_transition(transition);
+        if suppress_redraw {
+            log::debug!("Redraw suppressed");
+        }
+        !suppress_redraw
     }
 
-    fn on_key_pressed(&mut self, args: KeyboardEventArgs) {
-        let mut ctx = Context {
-            world: &mut self.world,
-            window: &mut self.window,
-        };
+    fn on_mouse_down(&mut self, cursor: Point2D<f64, CanvasSpace>) -> bool {
+        let args = self.mouse_event_args(cursor);
+        log::debug!("[ON_MOUSE_DOWN] {:?}, {:?}", args, self.current_state);
+        self.handle_event(|state, ctx| state.on_mouse_down(ctx, &args))
+    }
 
+    fn on_mouse_up(&mut self, cursor: Point2D<f64, CanvasSpace>) -> bool {
+        let args = self.mouse_event_args(cursor);
+        log::debug!("[ON_MOUSE_UP] {:?}, {:?}", args, self.current_state);
+        self.handle_event(|state, ctx| state.on_mouse_up(ctx, &args))
+    }
+
+    fn on_mouse_move(&mut self, cursor: Point2D<f64, CanvasSpace>) -> bool {
+        let args = self.mouse_event_args(cursor);
+        self.handle_event(|state, ctx| state.on_mouse_move(ctx, &args))
+    }
+
+    fn on_key_pressed(&mut self, args: KeyboardEventArgs) -> bool {
         log::debug!("[ON_KEY_PRESSED] {:?}, {:?}", args, self.current_state);
-        let trans = self.current_state.on_key_pressed(&mut ctx, &args);
-        self.handle_transition(trans);
+        self.handle_event(|state, ctx| state.on_key_pressed(ctx, &args))
     }
 
     fn handle_transition(&mut self, transition: Transition) {
         match transition {
             Transition::ChangeState(new_state) => {
-                log::trace!(
+                log::debug!(
                     "Changing state {:?} => {:?}",
                     self.current_state,
                     new_state
@@ -96,6 +111,25 @@ impl Model {
             Transition::DoNothing => {},
         }
     }
+
+    fn mouse_event_args(
+        &self,
+        cursor: Point2D<f64, CanvasSpace>,
+    ) -> MouseEventArgs {
+        let viewports = self.world.read_storage();
+        let viewport = self.window.viewport(&viewports);
+        let location = arcs::window::to_drawing_coordinates(
+            cursor,
+            viewport,
+            self.canvas_size,
+        );
+
+        MouseEventArgs {
+            location,
+            cursor,
+            button_state: MouseButtons::LEFT_BUTTON,
+        }
+    }
 }
 
 /// A temporary struct which presents a "view" of [`Model`] which can be used
@@ -103,6 +137,8 @@ impl Model {
 struct Context<'model> {
     world: &'model mut World,
     window: &'model mut Window,
+    default_layer: Entity,
+    suppress_redraw: &'model mut bool,
 }
 
 impl<'model> ApplicationContext for Context<'model> {
@@ -111,6 +147,10 @@ impl<'model> ApplicationContext for Context<'model> {
     fn world_mut(&mut self) -> &mut World { &mut self.world }
 
     fn viewport(&self) -> Entity { self.window.0 }
+
+    fn default_layer(&self) -> Entity { self.default_layer }
+
+    fn suppress_redraw(&mut self) { *self.suppress_redraw = true; }
 }
 
 fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
@@ -122,27 +162,18 @@ fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
-    log::debug!("Handling {:?}", msg);
+    log::trace!("Handling {:?}", msg);
 
-    match msg {
+    let needs_render = match msg {
         Msg::Rendered => {
             if let Some(canvas) = seed::canvas(CANVAS_ID) {
                 draw(&canvas, model);
-                orders.skip();
             }
+            false
         },
-        Msg::Clicked(cursor) => {
-            let location = {
-                let viewports = model.world.read_storage();
-                let viewport = model.window.viewport(&viewports);
-                arcs::window::to_drawing_coordinates(
-                    cursor,
-                    viewport,
-                    model.canvas_size,
-                )
-            };
-            model.on_mouse_down(location, cursor);
-        },
+        Msg::MouseDown(cursor) => model.on_mouse_down(cursor),
+        Msg::MouseUp(cursor) => model.on_mouse_up(cursor),
+        Msg::MouseMove(cursor) => model.on_mouse_move(cursor),
         Msg::KeyPressed(args) => model.on_key_pressed(args),
         Msg::WindowResized => {
             if let Some(parent_size) =
@@ -150,23 +181,25 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             {
                 log::debug!("Changing the canvas to {}", parent_size);
                 model.canvas_size = parent_size;
-
-                orders.render();
             }
-        },
-    }
 
-    // make sure we redraw the canvas
-    orders.after_next_render(|_| Msg::Rendered);
+            true
+        },
+    };
+
+    if needs_render {
+        // make sure we redraw the canvas
+        // orders.after_next_render(|_| Msg::Rendered);
+    }
 }
 
-fn draw(canvas: &HtmlCanvasElement, model: &mut Model) {
+fn draw(canvas: &HtmlCanvasElement, model: &Model) {
     let mut canvas_ctx = seed::canvas_context_2d(&canvas);
     let browser_window = seed::window();
     let ctx = WebRenderContext::new(&mut canvas_ctx, &browser_window);
 
     let mut system = model.window.render_system(ctx, model.canvas_size);
-    RunNow::setup(&mut system, &mut model.world);
+    // RunNow::setup(&mut system, &mut model.world);
     RunNow::run_now(&mut system, &model.world);
 }
 
@@ -184,6 +217,10 @@ fn parent_size(element: &HtmlElement) -> Option<Size2D<f64, CanvasSpace>> {
 }
 
 fn view(model: &Model) -> impl View<Msg> {
+    if let Some(canvas) = seed::canvas(CANVAS_ID) {
+        draw(&canvas, model);
+    }
+
     div![div![
         attrs![ At::Class => "canvas-container" ],
         style! {
@@ -199,7 +236,9 @@ fn view(model: &Model) -> impl View<Msg> {
                 At::Height => model.canvas_size.height,
                 At::TabIndex => "1",
             ],
-            mouse_ev(Ev::MouseDown, Msg::from_click_event),
+            mouse_ev(Ev::MouseDown, |e| Msg::MouseDown(canvas_location(e))),
+            mouse_ev(Ev::MouseUp, |e| Msg::MouseUp(canvas_location(e))),
+            mouse_ev(Ev::MouseMove, |e| Msg::MouseMove(canvas_location(e))),
             keyboard_ev(Ev::KeyDown, Msg::from_key_press)
         ],
     ]]
@@ -212,24 +251,36 @@ pub fn window_events(_model: &Model) -> Vec<Listener<Msg>> {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Msg {
     Rendered,
-    Clicked(Point2D<f64, CanvasSpace>),
-    WindowResized,
+    MouseDown(Point2D<f64, CanvasSpace>),
+    MouseUp(Point2D<f64, CanvasSpace>),
+    MouseMove(Point2D<f64, CanvasSpace>),
     KeyPressed(KeyboardEventArgs),
+    WindowResized,
+}
+
+fn canvas_location(ev: MouseEvent) -> Point2D<f64, CanvasSpace> {
+    let x = ev.offset_x().into();
+    let y = ev.offset_y().into();
+
+    Point2D::new(x, y)
 }
 
 impl Msg {
-    pub fn from_click_event(ev: MouseEvent) -> Self {
-        let x = ev.offset_x().into();
-        let y = ev.offset_y().into();
-
-        Msg::Clicked(Point2D::new(x, y))
-    }
-
     pub fn from_key_press(ev: KeyboardEvent) -> Self {
+        let key = match ev.key().parse::<VirtualKeyCode>() {
+            Ok(got) => Some(got),
+            Err(_) => {
+                // encountered an unknown key code, log it so we can update the
+                // FromStr impl
+                log::warn!("Encountered an unknown key: {}", ev.key());
+                None
+            },
+        };
+
         Msg::KeyPressed(KeyboardEventArgs {
             shift_pressed: ev.shift_key(),
             control_pressed: ev.ctrl_key(),
-            key: ev.key().parse().ok(),
+            key,
         })
     }
 }
@@ -243,4 +294,16 @@ pub fn render() {
         .after_mount(after_mount)
         .window_events(window_events)
         .build_and_start();
+}
+
+fn time_it<F, R>(func: F) -> R
+where
+    F: FnOnce() -> R,
+{
+    let name = std::any::type_name::<F>();
+    web_sys::console::time_with_label(name);
+    let ret = func();
+    web_sys::console::time_end_with_label(name);
+
+    ret
 }

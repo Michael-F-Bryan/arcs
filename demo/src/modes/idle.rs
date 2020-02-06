@@ -28,6 +28,15 @@ impl State for Idle {
             _ => Transition::DoNothing,
         }
     }
+
+    fn on_mouse_move(
+        &mut self,
+        ctx: &mut dyn ApplicationContext,
+        _event_args: &MouseEventArgs,
+    ) -> Transition {
+        ctx.suppress_redraw();
+        Transition::DoNothing
+    }
 }
 
 impl Default for Idle {
@@ -66,6 +75,15 @@ impl State for WaitingToSelect {
                 Transition::DoNothing
             },
         }
+    }
+
+    fn on_mouse_move(
+        &mut self,
+        ctx: &mut dyn ApplicationContext,
+        _event_args: &MouseEventArgs,
+    ) -> Transition {
+        ctx.suppress_redraw();
+        Transition::DoNothing
     }
 }
 

@@ -24,6 +24,8 @@ pub trait ApplicationContext {
     fn world_mut(&mut self) -> &mut World;
     /// Something with the [`Viewport`] component.
     fn viewport(&self) -> Entity;
+    /// The default [`arcs::components::Layer`].
+    fn default_layer(&self) -> Entity;
 
     /// An optimisation hint that the canvas doesn't need to be redrawn after
     /// this event handler returns.
@@ -115,6 +117,8 @@ impl<'a, A: ApplicationContext + ?Sized> ApplicationContext for &'a mut A {
     fn viewport(&self) -> Entity { (**self).viewport() }
 
     fn suppress_redraw(&mut self) { (**self).suppress_redraw(); }
+
+    fn default_layer(&self) -> Entity { (**self).default_layer() }
 }
 
 pub trait State: Debug + AsAny {
@@ -242,11 +246,15 @@ impl KeyboardEventArgs {
 #[allow(non_camel_case_types)]
 pub enum VirtualKeyCode {
     Escape,
+    Enter,
+    Control,
+    Shift,
+    Alt,
     Left,
     Up,
     Right,
     Down,
-    Back,
+    Backspace,
     Return,
     Space,
     A,
@@ -374,6 +382,22 @@ impl FromStr for VirtualKeyCode {
             "x" => Ok(VirtualKeyCode::x),
             "y" => Ok(VirtualKeyCode::y),
             "z" => Ok(VirtualKeyCode::z),
+            "0" => Ok(VirtualKeyCode::Key0),
+            "1" => Ok(VirtualKeyCode::Key1),
+            "2" => Ok(VirtualKeyCode::Key2),
+            "3" => Ok(VirtualKeyCode::Key3),
+            "4" => Ok(VirtualKeyCode::Key4),
+            "5" => Ok(VirtualKeyCode::Key5),
+            "6" => Ok(VirtualKeyCode::Key6),
+            "7" => Ok(VirtualKeyCode::Key7),
+            "8" => Ok(VirtualKeyCode::Key8),
+            "9" => Ok(VirtualKeyCode::Key9),
+            "Enter" => Ok(VirtualKeyCode::Enter),
+            "Backspace" => Ok(VirtualKeyCode::Backspace),
+            "Escape" => Ok(VirtualKeyCode::Escape),
+            "Shift" => Ok(VirtualKeyCode::Shift),
+            "Control" => Ok(VirtualKeyCode::Control),
+            "Alt" => Ok(VirtualKeyCode::Alt),
             _ => Err("Unknown KeyboardEvent key"),
         }
     }
