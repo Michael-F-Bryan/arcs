@@ -3,7 +3,7 @@ pub mod modes;
 use arcs::{
     components::{Dimension, Layer, Name, PointStyle},
     window::Window,
-    CanvasSpace, DrawingSpace,
+    CanvasSpace,
 };
 use euclid::{Point2D, Size2D};
 use log::Level;
@@ -70,9 +70,6 @@ impl Model {
             },
         );
         self.handle_transition(transition);
-        if suppress_redraw {
-            log::debug!("Redraw suppressed");
-        }
         !suppress_redraw
     }
 
@@ -161,16 +158,11 @@ fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
     AfterMount::new(Model::default())
 }
 
-fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
+fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
     log::trace!("Handling {:?}", msg);
 
     let needs_render = match msg {
-        Msg::Rendered => {
-            if let Some(canvas) = seed::canvas(CANVAS_ID) {
-                draw(&canvas, model);
-            }
-            false
-        },
+        Msg::Rendered => true,
         Msg::MouseDown(cursor) => model.on_mouse_down(cursor),
         Msg::MouseUp(cursor) => model.on_mouse_up(cursor),
         Msg::MouseMove(cursor) => model.on_mouse_move(cursor),
@@ -188,18 +180,19 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     };
 
     if needs_render {
-        // make sure we redraw the canvas
-        // orders.after_next_render(|_| Msg::Rendered);
+        if let Some(canvas) = seed::canvas(CANVAS_ID) {
+            draw(&canvas, model);
+        }
     }
 }
 
-fn draw(canvas: &HtmlCanvasElement, model: &Model) {
+fn draw(canvas: &HtmlCanvasElement, model: &mut Model) {
     let mut canvas_ctx = seed::canvas_context_2d(&canvas);
     let browser_window = seed::window();
     let ctx = WebRenderContext::new(&mut canvas_ctx, &browser_window);
 
     let mut system = model.window.render_system(ctx, model.canvas_size);
-    // RunNow::setup(&mut system, &mut model.world);
+    RunNow::setup(&mut system, &mut model.world);
     RunNow::run_now(&mut system, &model.world);
 }
 
@@ -217,10 +210,6 @@ fn parent_size(element: &HtmlElement) -> Option<Size2D<f64, CanvasSpace>> {
 }
 
 fn view(model: &Model) -> impl View<Msg> {
-    if let Some(canvas) = seed::canvas(CANVAS_ID) {
-        draw(&canvas, model);
-    }
-
     div![div![
         attrs![ At::Class => "canvas-container" ],
         style! {
@@ -294,16 +283,4 @@ pub fn render() {
         .after_mount(after_mount)
         .window_events(window_events)
         .build_and_start();
-}
-
-fn time_it<F, R>(func: F) -> R
-where
-    F: FnOnce() -> R,
-{
-    let name = std::any::type_name::<F>();
-    web_sys::console::time_with_label(name);
-    let ret = func();
-    web_sys::console::time_end_with_label(name);
-
-    ret
 }

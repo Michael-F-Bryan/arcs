@@ -29,6 +29,34 @@ impl State for Idle {
         }
     }
 
+    fn on_mouse_down(
+        &mut self,
+        ctx: &mut dyn ApplicationContext,
+        args: &MouseEventArgs,
+    ) -> Transition {
+        if let Transition::ChangeState(new_state) =
+            self.nested.on_mouse_down(ctx, args)
+        {
+            self.nested = new_state;
+        }
+
+        Transition::DoNothing
+    }
+
+    fn on_mouse_up(
+        &mut self,
+        ctx: &mut dyn ApplicationContext,
+        args: &MouseEventArgs,
+    ) -> Transition {
+        if let Transition::ChangeState(new_state) =
+            self.nested.on_mouse_up(ctx, args)
+        {
+            self.nested = new_state;
+        }
+
+        Transition::DoNothing
+    }
+
     fn on_mouse_move(
         &mut self,
         ctx: &mut dyn ApplicationContext,

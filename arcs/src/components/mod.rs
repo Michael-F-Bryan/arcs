@@ -6,10 +6,10 @@ mod drawing_object;
 mod layer;
 mod name;
 mod selected;
+mod spatial_entity;
 mod styles;
 mod viewport;
 mod vtable;
-mod spatial_entity;
 
 pub use bounding_box::BoundingBox;
 pub use dimension::Dimension;
@@ -17,10 +17,10 @@ pub use drawing_object::{DrawingObject, Geometry};
 pub use layer::Layer;
 pub use name::{Name, NameTable};
 pub use selected::Selected;
+pub use spatial_entity::{Space, SpatialEntity};
 pub use styles::{LineStyle, PointStyle, WindowStyle};
 pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
-pub use spatial_entity::{SpatialEntity, Space};
 
 use specs::World;
 
@@ -53,4 +53,6 @@ pub fn register(world: &mut World) {
         log::debug!("Registering {}", component.name());
         component.register(world);
     }
+
+    world.insert(Space::default());
 }
