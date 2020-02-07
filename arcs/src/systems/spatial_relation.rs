@@ -9,7 +9,6 @@ pub struct SpatialRelation {
     changes: ReaderId<ComponentEvent>,
     to_insert: BitSet,
     to_update: BitSet,
-    to_remove: BitSet,
 }
 
 impl SpatialRelation {
@@ -20,7 +19,6 @@ impl SpatialRelation {
             changes: world.write_storage::<BoundingBox>().register_reader(),
             to_insert: BitSet::new(),
             to_update: BitSet::new(),
-            to_remove: BitSet::new(),
         }
     }
 }
@@ -36,7 +34,6 @@ impl<'world> System<'world> for SpatialRelation {
         // clear any left-over flags
         self.to_insert.clear();
         self.to_update.clear();
-        self.to_remove.clear();
 
         let (mut space, bounds, entities) = data;
 
@@ -50,15 +47,9 @@ impl<'world> System<'world> for SpatialRelation {
                     self.to_update.add(id);
                 },
                 ComponentEvent::Removed(id) => {
-                    println!("Removed {:?}", id);
-                    self.to_remove.add(id);
                     space.remove_by_id(id);
                 },
             }
-        }
-
-        for ent in entities.join(){
-            println!("ent {:#?}", ent);
         }
 
         for (ent, bounding_box, _) in
@@ -71,11 +62,6 @@ impl<'world> System<'world> for SpatialRelation {
             (&entities, &bounds, &self.to_update).join()
         {
             space.modify(SpatialEntity::new(*bounding_box, ent));
-        }
-
-        // FIXME: This iterator is always empty, why?
-        for (ent, _, _) in (&entities, &bounds, &self.to_remove).join() {
-            space.remove(ent);
         }
     }
 
