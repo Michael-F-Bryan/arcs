@@ -9,7 +9,7 @@ use euclid::{Point2D, Size2D};
 use log::Level;
 use modes::{
     ApplicationContext, Idle, KeyboardEventArgs, MouseButtons, MouseEventArgs,
-    State, Transition, VirtualKeyCode,
+    State, Transition, VirtualKeyCode, AddPointMode, AddLineMode
 };
 use piet::Color;
 use piet_web::WebRenderContext;
@@ -49,7 +49,7 @@ impl Default for Model {
             window,
             default_layer,
             canvas_size: Size2D::new(300.0, 150.0),
-            current_state: Box::new(Idle::default()),
+            current_state: Box::new(AddLineMode::default()),
         }
     }
 }
