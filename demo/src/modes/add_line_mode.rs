@@ -273,6 +273,14 @@ impl State for WaitingToPlaceEnd {
 
         Transition::DoNothing
     }
+
+    fn on_cancelled(&mut self, ctx: &mut dyn ApplicationContext) {
+        // make sure we clean up the temporary entities.
+        let _ = ctx.world_mut().delete_entity(self.temp_start);
+        if let Some(temp_ent) = self.temp_line {
+            let _ = ctx.world_mut().delete_entity(temp_ent);
+        } 
+    }
 }
 
 #[derive(Debug)]
