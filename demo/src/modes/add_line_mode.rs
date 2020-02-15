@@ -175,12 +175,14 @@ impl State for PlacingStartPoint {
 #[derive(Debug)]
 struct WaitingToPlaceEnd {
     temp_start: Entity,
+    temp_line: Option<Entity>,
 }
 
 impl WaitingToPlaceEnd {
     pub fn new(temp_start: Entity) -> WaitingToPlaceEnd {
         WaitingToPlaceEnd {
-            temp_start
+            temp_start,
+            temp_line: None
         }
     }
 }
@@ -207,33 +209,71 @@ impl State for WaitingToPlaceEnd {
             .with(Selected)
             .build();
         
+        match self.temp_line {
+            None => {
+                let start: Point;
+                match ctx.world().read_storage::<DrawingObject>().get(self.temp_start).unwrap().geometry {
+                    Geometry::Point(pt) => start = pt,
+                    _ => panic!(),
+                }
+        
+                self.temp_line = Some(ctx
+                    .world_mut()
+                    .create_entity()
+                    .with(DrawingObject {
+                        geometry: Geometry::Line(Line::new(
+                            start, args.location)),
+                        layer,
+                    })
+                    .build());
+            },
+            Some(_) => ()
+        }
+
+        Transition::ChangeState(Box::new(PlacingEndPoint::new(self.temp_start, temp_point, self.temp_line.unwrap())))
+    }
+
+    fn on_mouse_move(
+        &mut self,
+        ctx: &mut dyn ApplicationContext,
+        event_args: &MouseEventArgs,
+    ) -> Transition {
+
+        let layer = ctx.default_layer();
+
         let start: Point;
         match ctx.world().read_storage::<DrawingObject>().get(self.temp_start).unwrap().geometry {
             Geometry::Point(pt) => start = pt,
             _ => panic!(),
         }
 
-        let temp_line = ctx
-            .world_mut()
-            .create_entity()
-            .with(DrawingObject {
-                geometry: Geometry::Line(Line::new(
-                    start, args.location)),
-                layer,
-            })
-            .build();
+        // replace temp_line
+        let line = Line::new(start, event_args.location);
+        match self.temp_line {
+            Some(ent) => {
+                ctx
+                    .world()
+                    .write_storage::<DrawingObject>()
+                    .get_mut(ent)
+                    .unwrap()
+                    .geometry = Geometry::Line(line);
+            },
+            None => {
+                self.temp_line = Some(ctx
+                    .world_mut()
+                    .create_entity()
+                    .with(DrawingObject {
+                        geometry: Geometry::Line(Line::new(
+                            start, event_args.location)),
+                        layer,
+                    })
+                    .build());
+                    }
+        }
 
-        Transition::ChangeState(Box::new(PlacingEndPoint::new(self.temp_start, temp_point, temp_line)))
-    }
-
-    fn on_mouse_move(
-        &mut self,
-        ctx: &mut dyn ApplicationContext,
-        _event_args: &MouseEventArgs,
-    ) -> Transition {
-        ctx.suppress_redraw();
         Transition::DoNothing
-    }}
+    }
+}
 
 #[derive(Debug)]
 struct PlacingEndPoint {
