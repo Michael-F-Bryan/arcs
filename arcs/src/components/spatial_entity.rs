@@ -1,41 +1,41 @@
-use crate::{
-    components::BoundingBox,
-    {Point, Arc},
-    algorithms::{Bounded},
-};
-use specs::{Entity, world::Index};
-use aabb_quadtree::{QuadTree, Spatial, ItemId};
-use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
-use std::collections::HashMap;
+use crate::{algorithms::Bounded, components::BoundingBox, Arc, Point};
+use aabb_quadtree::{ItemId, QuadTree, Spatial};
 use euclid::Angle;
+use quadtree_euclid::{TypedPoint2D, TypedRect, TypedSize2D};
+use specs::{world::Index, Entity};
+use std::collections::HashMap;
 
-pub(crate) type SpatialTree = QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>;
+pub(crate) type SpatialTree =
+    QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>;
 
 /// A intermediate struct that maps an [`Entity`] to its [`BoundingBox`]
-/// 
-/// This is used to populate an efficient spatial lookup structure like a `QuadTree`
+///
+/// This is used to populate an efficient spatial lookup structure like a
+/// `QuadTree`
 #[derive(Debug, Copy, Clone)]
 pub struct SpatialEntity {
     pub bounds: BoundingBox,
-    pub entity: Entity
+    pub entity: Entity,
 }
 
 impl Spatial<f64> for SpatialEntity {
     fn aabb(&self) -> TypedRect<f32, f64> {
         let bb = self.bounds;
         TypedRect::<f32, f64>::new(
-            // TypedRects have their origin at the bottom left corner (this is undocumented!)
-            TypedPoint2D::new(bb.bottom_left().x as f32, bb.bottom_left().y as f32),
-            TypedSize2D::new(bb.width().0 as f32, bb.height().0 as f32))
+            // TypedRects have their origin at the bottom left corner (this is
+            // undocumented!)
+            TypedPoint2D::new(
+                bb.bottom_left().x as f32,
+                bb.bottom_left().y as f32,
+            ),
+            TypedSize2D::new(bb.width().0 as f32, bb.height().0 as f32),
+        )
     }
 }
 
 impl SpatialEntity {
     pub fn new(bounds: BoundingBox, entity: Entity) -> SpatialEntity {
-        SpatialEntity {
-            bounds,
-            entity
-        }
+        SpatialEntity { bounds, entity }
     }
 }
 
@@ -44,33 +44,34 @@ impl SpatialEntity {
 #[derive(Debug)]
 pub struct Space {
     quadtree: SpatialTree,
-    ids: HashMap<Entity, ItemId>
+    ids: HashMap<Entity, ItemId>,
 }
 
 impl Default for Space {
     fn default() -> Self {
         Space {
             quadtree: Self::default_tree(),
-            ids: HashMap::new()
+            ids: HashMap::new(),
         }
     }
 }
 
 impl Space {
-    // FIXME: Hard-code is bad-bad
-    pub const WORLD_RADIUS: f64 = 1_000_000.0;
     const TREE_ALLOW_DUPLICATES: bool = true;
-    const TREE_MIN_CHILDREN: usize = 4;
     const TREE_MAX_CHILDREN: usize = 16;
     const TREE_MAX_DEPTH: usize = 8;
+    const TREE_MIN_CHILDREN: usize = 4;
     const TREE_SIZE_HINT: usize = 4;
+    // FIXME: Hard-code is bad-bad
+    pub const WORLD_RADIUS: f64 = 1_000_000.0;
 
-    fn default_tree() -> SpatialTree{
+    fn default_tree() -> SpatialTree {
         // Initialize quadtree
         let size = BoundingBox::new(
             Point::new(-Self::WORLD_RADIUS, -Self::WORLD_RADIUS),
-            Point::new(Self::WORLD_RADIUS, Self::WORLD_RADIUS)
-            ).aabb();
+            Point::new(Self::WORLD_RADIUS, Self::WORLD_RADIUS),
+        )
+        .aabb();
         let quadtree: SpatialTree = QuadTree::new(
             size,
             Self::TREE_ALLOW_DUPLICATES,
@@ -96,16 +97,20 @@ impl Space {
         quadtree
     }
 
-    /// Modifies the spatial position of the given [`SpatialEntity`] inside of [`Space`]
-    /// If the [`SpatialEntity`] is not already inside of [`Space`] it will be inserted.
+    /// Modifies the spatial position of the given [`SpatialEntity`] inside of
+    /// [`Space`] If the [`SpatialEntity`] is not already inside of
+    /// [`Space`] it will be inserted.
     pub fn modify(&mut self, spatial: SpatialEntity) {
-        if !self.quadtree.bounding_box().contains_rect(&spatial.bounds.aabb()) {
+        if !self
+            .quadtree
+            .bounding_box()
+            .contains_rect(&spatial.bounds.aabb())
+        {
             self.resize(spatial.bounds);
         }
         let id = if self.ids.contains_key(&spatial.entity) {
             self.modify_entity(spatial)
-        }
-        else {
+        } else {
             self.insert_entity(spatial)
         };
         // Update hashmap
@@ -115,8 +120,7 @@ impl Space {
     fn insert_entity(&mut self, spatial: SpatialEntity) -> ItemId {
         if let Some(id) = self.quadtree.insert(spatial) {
             id
-        }
-        else {
+        } else {
             panic!("ERROR: Failed to insert {:?} into Space!", self)
         }
     }
@@ -163,13 +167,9 @@ impl Space {
         self.quadtree.iter().map(|(_, (ent, _))| *ent)
     }
 
-    pub fn len(&self) -> usize {
-        self.quadtree.len()
-    }
+    pub fn len(&self) -> usize { self.quadtree.len() }
 
-    pub fn is_empty(&self) -> bool {
-        self.quadtree.is_empty()
-    }
+    pub fn is_empty(&self) -> bool { self.quadtree.is_empty() }
 
     // FIXME: radius in CanvasSpace in method signature
     /// Performs a spatial query in an radius around a given [`Point`]
@@ -177,13 +177,15 @@ impl Space {
     /// close to the given point
     /// The returned iterator can be empty
     pub fn query_point<'this>(
-        &'this self, point: Point, radius: f64
+        &'this self,
+        point: Point,
+        radius: f64,
     ) -> impl Iterator<Item = SpatialEntity> + 'this {
         let cursor_circle = Arc::from_centre_radius(
             point,
             radius,
             Angle::radians(0.0),
-            Angle::radians(2.0 * std::f64::consts::PI)
+            Angle::radians(2.0 * std::f64::consts::PI),
         );
         self.query_region(cursor_circle.bounding_box())
     }
@@ -193,7 +195,8 @@ impl Space {
     /// of the given BoundingBox
     /// The returned iterator can be empty
     pub fn query_region<'this>(
-        &'this self, region: BoundingBox
+        &'this self,
+        region: BoundingBox,
     ) -> impl Iterator<Item = SpatialEntity> + 'this {
         self.quadtree.query(region.aabb()).into_iter().map(|q| *q.0)
     }
@@ -207,9 +210,10 @@ impl Space {
     }
 
     /// Resizes the inner quadtree to the given **bigger** size
-    /// 
+    ///
     /// # Panics
-    /// Panics if the size given is not bigger then the initial bounding_box of the [`Space`]
+    /// Panics if the size given is not bigger then the initial bounding_box of
+    /// the [`Space`]
     pub fn resize(&mut self, size: impl Spatial<f64>) {
         if self.quadtree.bounding_box().contains_rect(&size.aabb()) {
             panic!("Space.resize() ERROR: Size to resize to is smaller then the tree!")
@@ -236,11 +240,15 @@ mod tests {
     #[test]
     fn space_should_resize() {
         let mut space = Space::default();
-        assert_eq!(space.quadtree.bounding_box().max_x() as f64, Space::WORLD_RADIUS);
+        assert_eq!(
+            space.quadtree.bounding_box().max_x() as f64,
+            Space::WORLD_RADIUS
+        );
         let new_radius = 2_000_000.0;
         let new_size = BoundingBox::new(
             Point::new(-new_radius, -new_radius),
-            Point::new(new_radius, new_radius));
+            Point::new(new_radius, new_radius),
+        );
         space.resize(new_size);
         assert_eq!(space.quadtree.bounding_box().max_x() as f64, new_radius);
     }

@@ -1,6 +1,6 @@
 use crate::{
     algorithms::AffineTransformable,
-    components::{BoundingBox, Viewport, Geometry, DrawingObject},
+    components::{BoundingBox, DrawingObject, Geometry, Viewport},
     Arc, Transform, Vector,
 };
 

@@ -1,8 +1,8 @@
 use crate::{algorithms::Bounded, DrawingSpace, Length, Point, Vector};
+use aabb_quadtree::Spatial;
 use euclid::{num::Zero, Size2D};
+use quadtree_euclid::{TypedPoint2D, TypedRect, TypedSize2D};
 use specs::prelude::*;
-use aabb_quadtree::{Spatial};
-use quadtree_euclid::{TypedRect, TypedPoint2D, TypedSize2D};
 
 /// An axis-aligned bounding box.
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -19,9 +19,14 @@ impl Spatial<f64> for BoundingBox {
     fn aabb(&self) -> TypedRect<f32, f64> {
         let bb = self;
         TypedRect::<f32, f64>::new(
-            // TypedRects have their origin at the bottom left corner (this is undocumented!)
-            TypedPoint2D::new(bb.bottom_left().x as f32, bb.bottom_left().y as f32),
-            TypedSize2D::new(bb.width().0 as f32, bb.height().0 as f32))
+            // TypedRects have their origin at the bottom left corner (this is
+            // undocumented!)
+            TypedPoint2D::new(
+                bb.bottom_left().x as f32,
+                bb.bottom_left().y as f32,
+            ),
+            TypedSize2D::new(bb.width().0 as f32, bb.height().0 as f32),
+        )
     }
 }
 
@@ -67,8 +72,16 @@ impl BoundingBox {
         width: Length,
         height: Length,
     ) -> Self {
-        debug_assert!(width >= Length::zero(), "{} should not be negative", width);
-        debug_assert!(height >= Length::zero(), "{} should not be negative", height);
+        debug_assert!(
+            width >= Length::zero(),
+            "{} should not be negative",
+            width
+        );
+        debug_assert!(
+            height >= Length::zero(),
+            "{} should not be negative",
+            height
+        );
 
         let diagonal = Vector::from_lengths(width / 2.0, height / 2.0);
         let bottom_left = centre - diagonal;
