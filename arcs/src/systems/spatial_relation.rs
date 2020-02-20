@@ -1,6 +1,4 @@
-use crate::{
-    components::{SpatialEntity, Space, BoundingBox},
-};
+use crate::components::{BoundingBox, Space, SpatialEntity};
 use specs::prelude::*;
 
 /// A [`System`] which keeps track of the spatial relation of entities
@@ -14,7 +12,7 @@ pub struct SpatialRelation {
 impl SpatialRelation {
     pub const NAME: &'static str = module_path!();
 
-    pub fn new(world: &World) -> Self {        
+    pub fn new(world: &World) -> Self {
         SpatialRelation {
             changes: world.write_storage::<BoundingBox>().register_reader(),
             to_insert: BitSet::new(),
@@ -27,7 +25,7 @@ impl<'world> System<'world> for SpatialRelation {
     type SystemData = (
         Write<'world, Space>,
         ReadStorage<'world, BoundingBox>,
-        Entities<'world>
+        Entities<'world>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -76,7 +74,9 @@ impl<'world> System<'world> for SpatialRelation {
 
         space.clear();
 
-        for (entity, bounding_box) in (&world.entities(), &bounding_storage).join() {
+        for (entity, bounding_box) in
+            (&world.entities(), &bounding_storage).join()
+        {
             space.modify(SpatialEntity::new(*bounding_box, entity));
         }
     }
@@ -85,15 +85,17 @@ impl<'world> System<'world> for SpatialRelation {
 #[cfg(test)]
 mod tests {
     use crate::{
-        components::{register, Layer, Name, DrawingObject, Geometry, LineStyle, Dimension, Space},
-        {Point, Line},
-        systems::{SpatialRelation, SyncBounds},
         algorithms::{Bounded, Translate},
-        Vector
+        components::{
+            register, Dimension, DrawingObject, Geometry, Layer, LineStyle,
+            Name, Space,
+        },
+        systems::{SpatialRelation, SyncBounds},
+        Line, Point, Vector,
     };
-    use specs::prelude::*;
-    use piet::Color;
     use euclid::Length;
+    use piet::Color;
+    use specs::prelude::*;
 
     #[test]
     fn setup_creates_all_outstanding_spatial_entities() {
@@ -101,7 +103,7 @@ mod tests {
 
         // make sure we register all components
         register(&mut world);
-    
+
         let layer = Layer::create(
             world.create_entity(),
             Name::new("default"),
@@ -110,7 +112,7 @@ mod tests {
                 visible: true,
             },
         );
-    
+
         // Add a line to our world
         let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
         let first = world
@@ -124,8 +126,7 @@ mod tests {
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .with(line.bounding_box())
-            .build()
-        ;
+            .build();
 
         // Setup our spatial system
         let mut system = SpatialRelation::new(&world);
@@ -134,7 +135,6 @@ mod tests {
         let space = world.read_resource::<Space>();
         assert_eq!(space.len(), 1);
         assert_eq!(space.iter().next().unwrap().entity, first);
-
     }
 
     #[test]
@@ -143,7 +143,7 @@ mod tests {
 
         // make sure we register all components
         register(&mut world);
-    
+
         let layer = Layer::create(
             world.create_entity(),
             Name::new("default"),
@@ -152,7 +152,7 @@ mod tests {
                 visible: true,
             },
         );
-    
+
         // Add a line to our world
         let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
         let first = world
@@ -166,13 +166,12 @@ mod tests {
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .with(line.bounding_box())
-            .build()
-        ;
+            .build();
 
         // Setup our spatial system
         let mut system = SpatialRelation::new(&world);
         System::setup(&mut system, &mut world);
-        
+
         // make some changes after the initial setup
         let line = Line::new(Point::new(3.0, 0.0), Point::new(-1.0, 2.0));
         let second = world
@@ -186,14 +185,14 @@ mod tests {
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .with(line.bounding_box())
-            .build()
-        ;
+            .build();
 
         // Test if the system works
         system.run_now(&world);
 
         // query which is inside the bounding_box of first
-        let query: Vec<_> = world.read_resource::<Space>()
+        let query: Vec<_> = world
+            .read_resource::<Space>()
             .query_point(Point::new(3.0, -0.5), 1.0)
             .collect();
         assert!(!query.is_empty());
@@ -201,13 +200,15 @@ mod tests {
         assert_eq!(query[0].entity, first);
 
         // query which is inside bounding_box of both first and second
-        let query: Vec<_> = world.read_resource::<Space>()
+        let query: Vec<_> = world
+            .read_resource::<Space>()
             .query_point(Point::new(2.5, 0.5), 1.0)
             .collect();
         assert!(!query.is_empty());
         assert_eq!(query.len(), 2);
-        assert!((query[0].entity == first && query[1].entity == second) |
-                (query[0].entity == second && query[1].entity == first)
+        assert!(
+            (query[0].entity == first && query[1].entity == second)
+                | (query[0].entity == second && query[1].entity == first)
         );
     }
 
@@ -217,7 +218,7 @@ mod tests {
 
         // make sure we register all components
         register(&mut world);
-    
+
         let layer = Layer::create(
             world.create_entity(),
             Name::new("default"),
@@ -226,7 +227,7 @@ mod tests {
                 visible: true,
             },
         );
-    
+
         // Add a line to our world
         let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
         let first = world
@@ -240,8 +241,7 @@ mod tests {
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .with(line.bounding_box())
-            .build()
-        ;
+            .build();
 
         // Setup our spatial system and our syncbounds system
         let mut spatial_system = SpatialRelation::new(&world);
@@ -249,8 +249,10 @@ mod tests {
         let mut syncbounds_system = SyncBounds::new(&world);
         System::setup(&mut syncbounds_system, &mut world);
 
-        // Do first query before modification to test everything works as expected
-        let query: Vec<_> = world.read_resource::<Space>()
+        // Do first query before modification to test everything works as
+        // expected
+        let query: Vec<_> = world
+            .read_resource::<Space>()
             .query_point(Point::new(3.0, -0.5), 1.0)
             .collect();
         assert!(!query.is_empty());
@@ -258,9 +260,11 @@ mod tests {
         assert_eq!(query[0].entity, first);
 
         // Modify geometry of our drawing_object
-        let mut temp_line = Line::new(Point::new(3.0, 0.0), Point::new(-1.0, 2.0));
+        let mut temp_line =
+            Line::new(Point::new(3.0, 0.0), Point::new(-1.0, 2.0));
         temp_line.translate(Vector::new(100.0, 0.0));
-        world.write_storage::<DrawingObject>()
+        world
+            .write_storage::<DrawingObject>()
             .get_mut(first)
             .unwrap()
             .geometry = Geometry::Line(temp_line);
@@ -270,7 +274,8 @@ mod tests {
         spatial_system.run_now(&world);
 
         // do the same query again, this time we expect no results
-        let query: Vec<_> = world.read_resource::<Space>()
+        let query: Vec<_> = world
+            .read_resource::<Space>()
             .query_point(Point::new(3.0, -0.5), 1.0)
             .collect();
         assert!(query.is_empty());
@@ -282,7 +287,7 @@ mod tests {
 
         // make sure we register all components
         register(&mut world);
-    
+
         let layer = Layer::create(
             world.create_entity(),
             Name::new("default"),
@@ -291,7 +296,7 @@ mod tests {
                 visible: true,
             },
         );
-    
+
         // Add a line to our world
         let line = Line::new(Point::new(2.0, 1.0), Point::new(5.0, -1.0));
         let first = world
@@ -305,8 +310,7 @@ mod tests {
                 stroke: Color::rgb8(0xff, 0, 0),
             })
             .with(line.bounding_box())
-            .build()
-        ;
+            .build();
 
         // Setup our spatial system and our syncbounds system
         let mut spatial_system = SpatialRelation::new(&world);
@@ -314,8 +318,10 @@ mod tests {
         let mut syncbounds_system = SyncBounds::new(&world);
         System::setup(&mut syncbounds_system, &mut world);
 
-        // Do first query before modification to test everything works as expected
-        let query: Vec<_> = world.read_resource::<Space>()
+        // Do first query before modification to test everything works as
+        // expected
+        let query: Vec<_> = world
+            .read_resource::<Space>()
             .query_point(Point::new(3.0, -0.5), 1.0)
             .collect();
         assert!(!query.is_empty());
@@ -331,7 +337,8 @@ mod tests {
         spatial_system.run_now(&world);
 
         // do the same query again, this time we expect no results
-        let query: Vec<_> = world.read_resource::<Space>()
+        let query: Vec<_> = world
+            .read_resource::<Space>()
             .query_point(Point::new(3.0, -0.5), 1.0)
             .collect();
         assert!(query.is_empty());

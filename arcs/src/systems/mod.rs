@@ -22,5 +22,9 @@ pub fn register_background_tasks<'a, 'b>(
             &[],
         )
         .with(SyncBounds::new(world), SyncBounds::NAME, &[])
-        .with(SpatialRelation::new(world), SpatialRelation::NAME, &[SyncBounds::NAME])
+        .with(
+            SpatialRelation::new(world),
+            SpatialRelation::NAME,
+            &[SyncBounds::NAME],
+        )
 }
