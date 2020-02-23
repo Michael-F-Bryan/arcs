@@ -154,13 +154,17 @@ impl State for DraggingSelection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use arcs::{components::Viewport, Point};
+    use arcs::{
+        components::{Layer, Name, Viewport},
+        Point,
+    };
     use euclid::Scale;
     use specs::{Builder, Entity, World, WorldExt};
 
     struct DummyContext {
         world: World,
         viewport: Entity,
+        default_layer: Entity,
     }
 
     impl Default for DummyContext {
@@ -175,7 +179,17 @@ mod tests {
                 })
                 .build();
 
-            DummyContext { world, viewport }
+            let default_layer = Layer::create(
+                world.create_entity(),
+                Name::from("default"),
+                Layer::default(),
+            );
+
+            DummyContext {
+                world,
+                viewport,
+                default_layer,
+            }
         }
     }
 
@@ -185,6 +199,8 @@ mod tests {
         fn world_mut(&mut self) -> &mut World { &mut self.world }
 
         fn viewport(&self) -> Entity { self.viewport }
+
+        fn default_layer(&self) -> Entity { self.default_layer }
     }
 
     #[test]

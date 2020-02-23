@@ -26,6 +26,14 @@ impl Borrow<str> for Name {
     fn borrow(&self) -> &str { self.0.as_str() }
 }
 
+impl<'a> From<&'a str> for Name {
+    fn from(s: &'a str) -> Self { Name::new(s) }
+}
+
+impl From<String> for Name {
+    fn from(s: String) -> Self { Name::new(s) }
+}
+
 impl Component for Name {
     type Storage = FlaggedStorage<Name, HashMapStorage<Name>>;
 }
