@@ -1,4 +1,4 @@
-use euclid::{Point2D, Vector2D};
+use euclid::{Length, Point2D, Vector2D};
 
 /// A line connecting [`Line::start`] to [`Line::end`].
 #[derive(Debug, Default, PartialEq)]
@@ -20,7 +20,12 @@ impl<S> Line<S> {
 
     pub fn length(self) -> f64 { self.displacement().length() }
 
-    pub fn perpendicular_distance_to(self, point: Point2D<f64, S>) -> f64 {
+    pub fn perpendicular_distance_to(
+        self,
+        point: Point2D<f64, S>,
+    ) -> Length<f64, S> {
+        const SOME_SMALL_NUMBER: f64 = std::f64::EPSILON * 100.0;
+
         let side_a = self.start - point;
         let side_b = self.end - point;
         let area = Vector2D::cross(side_a, side_b) / 2.0;
@@ -28,11 +33,11 @@ impl<S> Line<S> {
         // area = base * height / 2
         let base_length = self.length();
 
-        if base_length.abs() < 0.0001 {
+        Length::new(if base_length.abs() < SOME_SMALL_NUMBER {
             side_a.length()
         } else {
             area * 2.0 / base_length
-        }
+        })
     }
 }
 
