@@ -1,25 +1,29 @@
-use crate::{Point, Vector};
+use euclid::{Point2D, Vector2D};
 
 /// A line connecting [`Line::start`] to [`Line::end`].
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub struct Line {
-    pub start: Point,
-    pub end: Point,
+#[derive(Debug, Default, PartialEq)]
+pub struct Line<S> {
+    pub start: Point2D<f64, S>,
+    pub end: Point2D<f64, S>,
 }
 
-impl Line {
-    pub const fn new(start: Point, end: Point) -> Self { Line { start, end } }
+impl<S> Line<S> {
+    pub const fn new(start: Point2D<f64, S>, end: Point2D<f64, S>) -> Self {
+        Line { start, end }
+    }
 
-    pub fn displacement(&self) -> Vector { self.end - self.start }
+    pub fn displacement(&self) -> Vector2D<f64, S> { self.end - self.start }
 
-    pub fn direction(&self) -> Vector { self.displacement().normalize() }
+    pub fn direction(&self) -> Vector2D<f64, S> {
+        self.displacement().normalize()
+    }
 
     pub fn length(self) -> f64 { self.displacement().length() }
 
-    pub fn perpendicular_distance_to(self, point: Point) -> f64 {
+    pub fn perpendicular_distance_to(self, point: Point2D<f64, S>) -> f64 {
         let side_a = self.start - point;
         let side_b = self.end - point;
-        let area = Vector::cross(side_a, side_b) / 2.0;
+        let area = Vector2D::cross(side_a, side_b) / 2.0;
 
         // area = base * height / 2
         let base_length = self.length();
@@ -32,9 +36,16 @@ impl Line {
     }
 }
 
+impl<S> Copy for Line<S> {}
+
+impl<S> Clone for Line<S> {
+    fn clone(&self) -> Self { *self }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{Point, Vector};
 
     #[test]
     fn calculate_length() {
