@@ -36,7 +36,7 @@ impl<S> Line<S> {
         Length::new(if base_length.abs() < SOME_SMALL_NUMBER {
             side_a.length()
         } else {
-            area * 2.0 / base_length
+            area.abs() * 2.0 / base_length
         })
     }
 }

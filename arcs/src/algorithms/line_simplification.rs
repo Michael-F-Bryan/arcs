@@ -43,6 +43,10 @@ fn simplify_points<Space>(
             max_by_key(rest, |p| line_segment.perpendicular_distance_to(*p))
         {
             if distance > tolerance {
+                // note: index is the index into `rest`, but we want it relative
+                // to `point`
+                let ix = ix + 1;
+
                 simplify_points(&points[..=ix], tolerance, buffer);
                 buffer.push(points[ix]);
                 simplify_points(&points[ix..], tolerance, buffer);
@@ -81,6 +85,24 @@ mod tests {
     use std::f64::consts::PI;
 
     #[test]
+    fn line_with_one_point() {
+        let points = vec![Point::new(0.0, 0.0)];
+
+        let got = simplify(&points, Length::new(1.0));
+
+        assert_eq!(got, points);
+    }
+
+    #[test]
+    fn line_with_two_points() {
+        let points = vec![Point::new(0.0, 0.0), Point::new(10.0, 2.0)];
+
+        let got = simplify(&points, Length::new(1.0));
+
+        assert_eq!(got, points);
+    }
+
+    #[test]
     fn simplify_a_straight_line_to_two_points() {
         let points: Vec<Point> =
             (0..100).map(|i| Point::new(i as f64, i as f64)).collect();
@@ -105,6 +127,29 @@ mod tests {
         let should_be = &[points[0], points[99]];
 
         let got = simplify(&points, Length::new(max_jitter * 2.0));
+
+        assert_eq!(got, should_be);
+    }
+
+    #[test]
+    fn simplify_more_realistic_line() {
+        // Found by drawing it out on paper and using a ruler to determine
+        // point coordinates
+        let line = vec![
+            Point::new(-43.0, 8.0),
+            Point::new(-24.0, 19.0),
+            Point::new(-13.0, 23.0),
+            Point::new(-8.0, 36.0),
+            Point::new(7.0, 40.0),
+            Point::new(24.0, 12.0),
+            Point::new(44.0, -6.0),
+            Point::new(57.0, 2.0),
+            Point::new(70.0, 7.0),
+        ];
+        let should_be = vec![line[0], line[4], line[6], line[8]];
+        let ruler_width = Length::new(20.0);
+
+        let got = simplify(&line, ruler_width / 2.0);
 
         assert_eq!(got, should_be);
     }
