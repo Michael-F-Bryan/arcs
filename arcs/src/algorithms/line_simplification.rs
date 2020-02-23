@@ -36,7 +36,10 @@ fn simplify_points<Space>(
     tolerance: Length<f64, Space>,
     buffer: &mut Vec<Point2D<f64, Space>>,
 ) {
-    if let [first, rest @ .., last] = points {
+    if let [first, .., last] = points {
+        // FIXME: replace with `if let [first, rest @ .., last]` in rust 1.42
+        let rest = &points[1..points.len() - 1];
+
         let line_segment = Line::new(*first, *last);
 
         if let Some((ix, distance)) =
@@ -85,6 +88,15 @@ mod tests {
     use std::f64::consts::PI;
 
     #[test]
+    fn empty_line() {
+        let points: Vec<Point> = Vec::new();
+
+        let got = simplify(&points, Length::new(1.0));
+
+        assert!(got.is_empty());
+    }
+
+    #[test]
     fn line_with_one_point() {
         let points = vec![Point::new(0.0, 0.0)];
 
@@ -105,7 +117,7 @@ mod tests {
     #[test]
     fn simplify_a_straight_line_to_two_points() {
         let points: Vec<Point> =
-            (0..100).map(|i| Point::new(i as f64, i as f64)).collect();
+            (0..100).map(|i| Point::new(i as f64, 0.0)).collect();
         let should_be = &[points[0], points[99]];
 
         let got = simplify(&points, Length::new(0.1));
