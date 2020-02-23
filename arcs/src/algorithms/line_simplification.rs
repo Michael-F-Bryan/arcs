@@ -36,24 +36,27 @@ fn simplify_points<Space>(
     tolerance: Length<f64, Space>,
     buffer: &mut Vec<Point2D<f64, Space>>,
 ) {
-    if let [first, .., last] = points {
-        // FIXME: replace with `if let [first, rest @ .., last]` in rust 1.42
-        let rest = &points[1..points.len() - 1];
+    // TODO: replace this with `if let [first, rest @ .., last]` in rust 1.42
+    if points.len() < 2 {
+        return;
+    }
+    let first = points.first().unwrap();
+    let last = points.last().unwrap();
+    let rest = &points[1..points.len() - 1];
 
-        let line_segment = Line::new(*first, *last);
+    let line_segment = Line::new(*first, *last);
 
-        if let Some((ix, distance)) =
-            max_by_key(rest, |p| line_segment.perpendicular_distance_to(*p))
-        {
-            if distance > tolerance {
-                // note: index is the index into `rest`, but we want it relative
-                // to `point`
-                let ix = ix + 1;
+    if let Some((ix, distance)) =
+        max_by_key(rest, |p| line_segment.perpendicular_distance_to(*p))
+    {
+        if distance > tolerance {
+            // note: index is the index into `rest`, but we want it relative
+            // to `point`
+            let ix = ix + 1;
 
-                simplify_points(&points[..=ix], tolerance, buffer);
-                buffer.push(points[ix]);
-                simplify_points(&points[ix..], tolerance, buffer);
-            }
+            simplify_points(&points[..=ix], tolerance, buffer);
+            buffer.push(points[ix]);
+            simplify_points(&points[ix..], tolerance, buffer);
         }
     }
 }
