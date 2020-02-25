@@ -1,18 +1,19 @@
-use crate::{Angle, Orientation, Point, Vector};
+use crate::{Angle, Orientation};
+use euclid::{Point2D, Vector2D};
 use std::f64::consts::PI;
 
 /// A circle segment.
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub struct Arc {
-    centre: Point,
+#[derive(Debug, PartialEq)]
+pub struct Arc<S> {
+    centre: Point2D<f64, S>,
     radius: f64,
     start_angle: Angle,
     sweep_angle: Angle,
 }
 
-impl Arc {
+impl<S> Arc<S> {
     pub fn from_centre_radius(
-        centre: Point,
+        centre: Point2D<f64, S>,
         radius: f64,
         start_angle: Angle,
         sweep_angle: Angle,
@@ -28,9 +29,9 @@ impl Arc {
     }
 
     pub fn from_three_points(
-        start: Point,
-        middle: Point,
-        end: Point,
+        start: Point2D<f64, S>,
+        middle: Point2D<f64, S>,
+        end: Point2D<f64, S>,
     ) -> Option<Self> {
         debug_assert!(
             Orientation::of(start, middle, end) != Orientation::Collinear
@@ -49,7 +50,7 @@ impl Arc {
         ))
     }
 
-    pub const fn centre(self) -> Point { self.centre }
+    pub const fn centre(self) -> Point2D<f64, S> { self.centre }
 
     pub const fn radius(self) -> f64 { self.radius }
 
@@ -63,15 +64,15 @@ impl Arc {
 
     pub fn is_clockwise(self) -> bool { self.sweep_angle < Angle::zero() }
 
-    pub fn start(self) -> Point { self.point_at(Angle::zero()) }
+    pub fn start(self) -> Point2D<f64, S> { self.point_at(Angle::zero()) }
 
-    pub fn end(self) -> Point { self.point_at(self.sweep_angle()) }
+    pub fn end(self) -> Point2D<f64, S> { self.point_at(self.sweep_angle()) }
 
-    pub fn point_at(self, angle: Angle) -> Point {
+    pub fn point_at(self, angle: Angle) -> Point2D<f64, S> {
         let angle = self.start_angle() + angle;
         let (x, y) = angle.sin_cos();
         let r = self.radius();
-        let displacement_from_centre = Vector::new(r * x, r * y);
+        let displacement_from_centre = Vector2D::new(r * x, r * y);
 
         self.centre() + displacement_from_centre
     }
@@ -96,11 +97,11 @@ impl Arc {
     pub fn is_major_arc(&self) -> bool { !self.is_minor_arc() }
 }
 
-fn sweep_angle_from_3_points(
-    start: Point,
-    middle: Point,
-    end: Point,
-    centre: Point,
+fn sweep_angle_from_3_points<S>(
+    start: Point2D<f64, S>,
+    middle: Point2D<f64, S>,
+    end: Point2D<f64, S>,
+    centre: Point2D<f64, S>,
 ) -> Angle {
     debug_assert!(
         Orientation::of(start, middle, end) != Orientation::Collinear
@@ -124,15 +125,22 @@ fn sweep_angle_from_3_points(
     }
 }
 
+impl<S> Copy for Arc<S> {}
+
+impl<S> Clone for Arc<S> {
+    fn clone(&self) -> Self { *self }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{DrawingSpace, Point};
 
     macro_rules! test_contains_angle {
         ($name:ident, $arc:expr, $degrees:expr => $expected:expr) => {
             #[test]
             fn $name() {
-                let arc: Arc = $arc;
+                let arc: Arc<DrawingSpace> = $arc;
                 let angle = Angle::degrees($degrees);
 
                 let got = arc.contains_angle(angle);

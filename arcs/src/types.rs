@@ -1,4 +1,7 @@
+use euclid::{Point2D, Vector2D};
+
 /// The cartesian coordinate system used by everything in a drawing.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub enum DrawingSpace {}
 
 /// The coordinate system used for graphical objects rendered to a canvas.
@@ -12,17 +15,18 @@ pub enum DrawingSpace {}
 /// functions for converting back and forth, with
 /// [`crate::window::to_drawing_coordinates()`] and
 /// [`crate::window::to_canvas_coordinates()`] being the most useful.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd)]
 pub enum CanvasSpace {}
 
 /// A 2D vector for working in [`DrawingSpace`].
-pub type Vector = euclid::Vector2D<f64, DrawingSpace>;
+pub type Vector = Vector2D<f64, DrawingSpace>;
 /// A transform matrix which for translating something within [`DrawingSpace`].
 pub type Transform = euclid::Transform2D<f64, DrawingSpace, DrawingSpace>;
 /// A strongly-typed angle, useful for dealing with the pesky modular arithmetic
 /// normally associated with circles and angles.
 pub type Angle = euclid::Angle<f64>;
 /// A location in [`DrawingSpace`].
-pub type Point = euclid::Point2D<f64, DrawingSpace>;
+pub type Point = Point2D<f64, DrawingSpace>;
 /// A length in [`DrawingSpace`].
 pub type Length = euclid::Length<f64, DrawingSpace>;
 
@@ -36,7 +40,11 @@ pub enum Orientation {
 
 impl Orientation {
     /// Find the orientation of 3 [`Point`]s.
-    pub fn of(first: Point, second: Point, third: Point) -> Orientation {
+    pub fn of<S>(
+        first: Point2D<f64, S>,
+        second: Point2D<f64, S>,
+        third: Point2D<f64, S>,
+    ) -> Orientation {
         let value = (second.y - first.y) * (third.x - second.x)
             - (second.x - first.x) * (third.y - second.y);
 
@@ -51,19 +59,19 @@ impl Orientation {
 }
 
 /// Find the centre of an arc which passes through 3 [`Point`]s.
-pub fn centre_of_three_points(
-    first: Point,
-    second: Point,
-    third: Point,
-) -> Option<Point> {
+pub fn centre_of_three_points<S>(
+    first: Point2D<f64, S>,
+    second: Point2D<f64, S>,
+    third: Point2D<f64, S>,
+) -> Option<Point2D<f64, S>> {
     // it's easier to do the math using vectors, but for semantic correctness we
     // accept points
     let first = first.to_vector();
     let second = second.to_vector();
     let third = third.to_vector();
 
-    let temp = Vector::dot(second, second);
-    let bc = (Vector::dot(first, first) - temp) / 2.0;
+    let temp = Vector2D::dot(second, second);
+    let bc = (Vector2D::dot(first, first) - temp) / 2.0;
     let cd = (temp - third.x * third.x - third.y * third.y) / 2.0;
     let determinant = (first.x - second.x) * (second.y - third.y)
         - (second.x - third.x) * (first.y - second.y);
@@ -78,7 +86,7 @@ pub fn centre_of_three_points(
     let y =
         ((first.x - second.x) * cd - (second.x - third.x) * bc) / determinant;
 
-    Some(Point::new(x, y))
+    Some(Point2D::new(x, y))
 }
 
 #[cfg(test)]
