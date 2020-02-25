@@ -26,7 +26,6 @@ before_deploy:
   # prepare API docs
   - cd $TRAVIS_BUILD_DIR/arcs
   - cargo doc --verbose
-  - echo '<meta http-equiv="refresh" content="0; url=arcs/index.html" /> ' > target/doc/index.html
   # then copy the docs to the public/crate_docs/ directory
   - cd $TRAVIS_BUILD_DIR
   - mkdir public
@@ -38,6 +37,8 @@ before_deploy:
   - ls --recursive demo -I target
   # going to the root GitHub Pages page should show the demo
   - echo '<meta http-equiv="refresh" content="0; url=demo/index.html" /> ' > public/index.html
+  # And we want to show docs for `arcs` by default
+  - echo '<meta http-equiv="refresh" content="0; url=arcs/index.html" /> ' > public/doc/index.html
 
 deploy:
   provider: pages
