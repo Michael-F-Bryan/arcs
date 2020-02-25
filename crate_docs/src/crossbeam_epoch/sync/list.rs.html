@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/crossbeam-epoch-0.8.0/src/sync/list.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>list.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../crossbeam_epoch/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/crossbeam-epoch-0.8.2/src/sync/list.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>list.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../crossbeam_epoch/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -476,6 +476,15 @@
 <span id="476">476</span>
 <span id="477">477</span>
 <span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Lock-free intrusive linked list.</span>
 <span class="doccomment">//!</span>
@@ -722,35 +731,44 @@
                 <span class="comment">// This entry was removed. Try unlinking it from the list.</span>
                 <span class="kw">let</span> <span class="ident">succ</span> <span class="op">=</span> <span class="ident">succ</span>.<span class="ident">with_tag</span>(<span class="number">0</span>);
 
-                <span class="comment">// The tag should never be zero, because removing a node after a logically deleted</span>
+                <span class="comment">// The tag should always be zero, because removing a node after a logically deleted</span>
                 <span class="comment">// node leaves the list in an invalid state.</span>
                 <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">curr</span>.<span class="ident">tag</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span>);
 
-                <span class="kw">match</span> <span class="self">self</span>
+                <span class="comment">// Try to unlink `curr` from the list, and get the new value of `self.pred`.</span>
+                <span class="kw">let</span> <span class="ident">succ</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>
                     .<span class="ident">pred</span>
                     .<span class="ident">compare_and_set</span>(<span class="self">self</span>.<span class="ident">curr</span>, <span class="ident">succ</span>, <span class="ident">Acquire</span>, <span class="self">self</span>.<span class="ident">guard</span>)
                 {
                     <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="comment">// We succeeded in unlinking this element from the list, so we have to</span>
-                        <span class="comment">// schedule deallocation. Deferred drop is okay, because `list.delete()`</span>
-                        <span class="comment">// can only be called if `T: &#39;static`.</span>
+                        <span class="comment">// We succeeded in unlinking `curr`, so we have to schedule</span>
+                        <span class="comment">// deallocation. Deferred drop is okay, because `list.delete()` can only be</span>
+                        <span class="comment">// called if `T: &#39;static`.</span>
                         <span class="kw">unsafe</span> {
                             <span class="ident">C</span>::<span class="ident">finalize</span>(<span class="self">self</span>.<span class="ident">curr</span>.<span class="ident">deref</span>(), <span class="self">self</span>.<span class="ident">guard</span>);
                         }
 
-                        <span class="comment">// Move over the removed by only advancing `curr`, not `pred`.</span>
-                        <span class="self">self</span>.<span class="ident">curr</span> <span class="op">=</span> <span class="ident">succ</span>;
-                        <span class="kw">continue</span>;
+                        <span class="comment">// `succ` is the new value of `self.pred`.</span>
+                        <span class="ident">succ</span>
                     }
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="comment">// A concurrent thread modified the predecessor node. Since it might&#39;ve</span>
-                        <span class="comment">// been deleted, we need to restart from `head`.</span>
-                        <span class="self">self</span>.<span class="ident">pred</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">head</span>;
-                        <span class="self">self</span>.<span class="ident">curr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">head</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>, <span class="self">self</span>.<span class="ident">guard</span>);
+                    <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="comment">// `e.current` is the current value of `self.pred`.</span>
+                        <span class="ident">e</span>.<span class="ident">current</span>
+                    }
+                };
 
-                        <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">IterError</span>::<span class="ident">Stalled</span>));
-                    }
+                <span class="comment">// If the predecessor node is already marked as deleted, we need to restart from</span>
+                <span class="comment">// `head`.</span>
+                <span class="kw">if</span> <span class="ident">succ</span>.<span class="ident">tag</span>() <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+                    <span class="self">self</span>.<span class="ident">pred</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">head</span>;
+                    <span class="self">self</span>.<span class="ident">curr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">head</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>, <span class="self">self</span>.<span class="ident">guard</span>);
+
+                    <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">IterError</span>::<span class="ident">Stalled</span>));
                 }
+
+                <span class="comment">// Move over the removed by only advancing `curr`, not `pred`.</span>
+                <span class="self">self</span>.<span class="ident">curr</span> <span class="op">=</span> <span class="ident">succ</span>;
+                <span class="kw">continue</span>;
             }
 
             <span class="comment">// Move one step forward.</span>

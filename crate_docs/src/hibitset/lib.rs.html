@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/hibitset-0.6.2/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../hibitset/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/hibitset-0.6.3/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../hibitset/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -721,6 +721,153 @@
 <span id="721">721</span>
 <span id="722">722</span>
 <span id="723">723</span>
+<span id="724">724</span>
+<span id="725">725</span>
+<span id="726">726</span>
+<span id="727">727</span>
+<span id="728">728</span>
+<span id="729">729</span>
+<span id="730">730</span>
+<span id="731">731</span>
+<span id="732">732</span>
+<span id="733">733</span>
+<span id="734">734</span>
+<span id="735">735</span>
+<span id="736">736</span>
+<span id="737">737</span>
+<span id="738">738</span>
+<span id="739">739</span>
+<span id="740">740</span>
+<span id="741">741</span>
+<span id="742">742</span>
+<span id="743">743</span>
+<span id="744">744</span>
+<span id="745">745</span>
+<span id="746">746</span>
+<span id="747">747</span>
+<span id="748">748</span>
+<span id="749">749</span>
+<span id="750">750</span>
+<span id="751">751</span>
+<span id="752">752</span>
+<span id="753">753</span>
+<span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! # hibitset</span>
 <span class="doccomment">//!</span>
@@ -953,6 +1100,153 @@
         <span class="self">self</span>.<span class="ident">layer1</span>.<span class="ident">clear</span>();
         <span class="self">self</span>.<span class="ident">layer2</span>.<span class="ident">clear</span>();
         <span class="self">self</span>.<span class="ident">layer3</span> <span class="op">=</span> <span class="number">0</span>;
+    }
+
+    <span class="doccomment">/// How many bits are in a `usize`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This value can be trivially determined. It is provided here as a constant for clarity.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use hibitset::BitSet;</span>
+    <span class="doccomment">/// assert_eq!(BitSet::BITS_PER_USIZE, std::mem::size_of::&lt;usize&gt;()*8);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;32&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BITS_PER_USIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">32</span>;
+
+    <span class="doccomment">/// How many bits are in a `usize`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This value can be trivially determined. It is provided here as a constant for clarity.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use hibitset::BitSet;</span>
+    <span class="doccomment">/// assert_eq!(BitSet::BITS_PER_USIZE, std::mem::size_of::&lt;usize&gt;()*8);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;64&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BITS_PER_USIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">64</span>;
+
+    <span class="doccomment">/// Returns the bottom layer of the bitset as a slice. Each bit in this slice refers to a single</span>
+    <span class="doccomment">/// `Index`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The slice&#39;s length will be at least the length needed to reflect all the `1`s in the bitset,</span>
+    <span class="doccomment">/// but is not otherwise guaranteed. Consider it to be an implementation detail.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use hibitset::BitSet;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let index: u32 = 12345;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let mut bitset = BitSet::new();</span>
+    <span class="doccomment">/// bitset.add(index);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // layer 0 is 1:1 with Indexes, so we expect that bit in the slice to be set</span>
+    <span class="doccomment">/// let slice = bitset.layer0_as_slice();</span>
+    <span class="doccomment">/// let bit_index = index as usize;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // map that bit index to a usize in the slice and a bit within that usize</span>
+    <span class="doccomment">/// let slice_index = bit_index / BitSet::BITS_PER_USIZE;</span>
+    <span class="doccomment">/// let bit_at_index = bit_index % BitSet::BITS_PER_USIZE;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(slice[slice_index], 1 &lt;&lt; bit_at_index);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">layer0_as_slice</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">usize</span>] {
+        <span class="self">self</span>.<span class="ident">layer0</span>.<span class="ident">as_slice</span>()
+    }
+
+    <span class="doccomment">/// How many `Index`es are described by as single layer 1 bit, intended for use with</span>
+    <span class="doccomment">/// `BitSet::layer1_as_slice()`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// `BitSet`s are defined in terms of `usize`s summarizing `usize`s, so this value can be</span>
+    <span class="doccomment">/// trivially determined. It is provided here as a constant for clarity.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use hibitset::BitSet;</span>
+    <span class="doccomment">/// assert_eq!(BitSet::LAYER1_GRANULARITY, BitSet::BITS_PER_USIZE);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LAYER1_GRANULARITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">BITS_PER_USIZE</span>;
+
+    <span class="doccomment">/// Returns the second layer of the bitset as a slice. Each bit in this slice summarizes a</span>
+    <span class="doccomment">/// corresponding `usize` from `layer0`. (If `usize` is 64 bits, bit 0 will be set if any</span>
+    <span class="doccomment">/// `Index`es 0-63 are set, bit 1 will be set if any `Index`es 64-127 are set, etc.)</span>
+    <span class="doccomment">/// `BitSet::LAYER1_GRANULARITY` reflects how many indexes are summarized per layer 1 bit.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The slice&#39;s length is not guaranteed, except that it will be at least the length needed to</span>
+    <span class="doccomment">/// reflect all the `1`s in the bitset.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use hibitset::BitSet;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let index: u32 = 12345;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let mut bitset = BitSet::new();</span>
+    <span class="doccomment">/// bitset.add(index);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // layer 1 summarizes multiple indexes per bit, so divide appropriately</span>
+    <span class="doccomment">/// let slice = bitset.layer1_as_slice();</span>
+    <span class="doccomment">/// let bit_index = index as usize / BitSet::LAYER1_GRANULARITY;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // map that bit index to a usize in the slice and a bit within that usize</span>
+    <span class="doccomment">/// let slice_index = bit_index / BitSet::BITS_PER_USIZE;</span>
+    <span class="doccomment">/// let bit_at_index = bit_index % BitSet::BITS_PER_USIZE;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(slice[slice_index], 1 &lt;&lt; bit_at_index);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">layer1_as_slice</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">usize</span>] {
+        <span class="self">self</span>.<span class="ident">layer1</span>.<span class="ident">as_slice</span>()
+    }
+
+    <span class="doccomment">/// How many `Index`es are described by as single layer 2 bit, intended for use with</span>
+    <span class="doccomment">/// `BitSet::layer2_as_slice()`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// `BitSet`s are defined in terms of `usize`s summarizing `usize`s, so this value can be</span>
+    <span class="doccomment">/// trivially determined. It is provided here as a constant for clarity.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use hibitset::BitSet;</span>
+    <span class="doccomment">/// assert_eq!(BitSet::LAYER2_GRANULARITY, BitSet::LAYER1_GRANULARITY * BitSet::BITS_PER_USIZE);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LAYER2_GRANULARITY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">LAYER1_GRANULARITY</span> <span class="op">*</span> <span class="self">Self</span>::<span class="ident">BITS_PER_USIZE</span>;
+
+    <span class="doccomment">/// Returns the third layer of the bitset as a slice. Each bit in this slice summarizes a</span>
+    <span class="doccomment">/// corresponding `usize` from `layer1`. If `usize` is 64 bits, bit 0 will be set if any</span>
+    <span class="doccomment">/// `Index`es 0-4095 are set, bit 1 will be set if any `Index`es 4096-8191 are set, etc.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The slice&#39;s length is not guaranteed, except that it will be at least the length needed to</span>
+    <span class="doccomment">/// reflect all the `1`s in the bitset.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use hibitset::BitSet;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let index: u32 = 12345;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let mut bitset = BitSet::new();</span>
+    <span class="doccomment">/// bitset.add(index);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // layer 2 summarizes multiple indexes per bit, so divide appropriately</span>
+    <span class="doccomment">/// let slice = bitset.layer2_as_slice();</span>
+    <span class="doccomment">/// let bit_index = index as usize / BitSet::LAYER2_GRANULARITY;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // map that bit index to a usize in the slice and a bit within that usize</span>
+    <span class="doccomment">/// let slice_index = bit_index / BitSet::BITS_PER_USIZE;</span>
+    <span class="doccomment">/// let bit_at_index = bit_index % BitSet::BITS_PER_USIZE;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(slice[slice_index], 1 &lt;&lt; bit_at_index);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">layer2_as_slice</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">usize</span>] {
+        <span class="self">self</span>.<span class="ident">layer2</span>.<span class="ident">as_slice</span>()
     }
 }
 

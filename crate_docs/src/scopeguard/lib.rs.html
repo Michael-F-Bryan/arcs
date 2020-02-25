@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/scopeguard-1.0.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../scopeguard/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/scopeguard-1.1.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../scopeguard/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -623,9 +623,9 @@
 <span class="doccomment">//!     let drop_counter = Cell::new(0);</span>
 <span class="doccomment">//!     {</span>
 <span class="doccomment">//!         // Create a scope guard using `defer!` for the current scope</span>
-<span class="doccomment">//!         defer! {{</span>
+<span class="doccomment">//!         defer! {</span>
 <span class="doccomment">//!             drop_counter.set(1 + drop_counter.get());</span>
-<span class="doccomment">//!         }};</span>
+<span class="doccomment">//!         }</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!         // Do regular operations here in the meantime.</span>
 <span class="doccomment">//!</span>
@@ -652,7 +652,7 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//! extern crate scopeguard;</span>
-<span class="doccomment">//! </span>
+<span class="doccomment">//!</span>
 <span class="doccomment">//! use std::fs::*;</span>
 <span class="doccomment">//! use std::io::{self, Write};</span>
 <span class="doccomment">//! # // Mock file so that we don&#39;t actually write a file</span>
@@ -663,7 +663,7 @@
 <span class="doccomment">//! #     fn sync_all(&amp;self) -&gt; io::Result&lt;()&gt; { Ok(()) }</span>
 <span class="doccomment">//! # }</span>
 <span class="doccomment">//! # use self::MockFile as File;</span>
-<span class="doccomment">//! </span>
+<span class="doccomment">//!</span>
 <span class="doccomment">//! fn try_main() -&gt; io::Result&lt;()&gt; {</span>
 <span class="doccomment">//!     let f = File::create(&quot;newfile.txt&quot;)?;</span>
 <span class="doccomment">//!     let mut file = scopeguard::guard(f, |f| {</span>
@@ -693,7 +693,7 @@
 <span class="doccomment">//! //</span>
 <span class="doccomment">//! // For optimization purposes we temporarily violate an invariant of the</span>
 <span class="doccomment">//! // Vec, that it owns all of its elements.</span>
-<span class="doccomment">//! // </span>
+<span class="doccomment">//! //</span>
 <span class="doccomment">//! // The safe approach is to use swap, which means two writes to memory,</span>
 <span class="doccomment">//! // the optimization is to use a “hole” which uses only one write of memory</span>
 <span class="doccomment">//! // for each position it moves.</span>
@@ -824,44 +824,41 @@
 
 <span class="doccomment">/// Macro to create a `ScopeGuard` (always run).</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The macro takes one expression `$e`, which is the body of a closure</span>
-<span class="doccomment">/// that will run when the scope is exited. The expression can</span>
-<span class="doccomment">/// be a whole block.</span>
+<span class="doccomment">/// The macro takes statements, which are the body of a closure</span>
+<span class="doccomment">/// that will run when the scope is exited.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">defer</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">guard</span>((), <span class="op">|</span>()<span class="op">|</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>);
-    }
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">guard</span>((), <span class="op">|</span>()<span class="op">|</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>)<span class="op">*</span> });
+    };
 }
 
 <span class="doccomment">/// Macro to create a `ScopeGuard` (run on successful scope exit).</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The macro takes one expression `$e`, which is the body of a closure</span>
-<span class="doccomment">/// that will run when the scope is exited. The expression can</span>
-<span class="doccomment">/// be a whole block.</span>
+<span class="doccomment">/// The macro takes statements, which are the body of a closure</span>
+<span class="doccomment">/// that will run when the scope is exited.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Requires crate feature `use_std`.</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">defer_on_success</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">guard_on_success</span>((), <span class="op">|</span>()<span class="op">|</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>);
-    }
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">guard_on_success</span>((), <span class="op">|</span>()<span class="op">|</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>)<span class="op">*</span> });
+    };
 }
 
 <span class="doccomment">/// Macro to create a `ScopeGuard` (run on unwinding from panic).</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The macro takes one expression `$e`, which is the body of a closure</span>
-<span class="doccomment">/// that will run when the scope is exited. The expression can</span>
-<span class="doccomment">/// be a whole block.</span>
+<span class="doccomment">/// The macro takes statements, which are the body of a closure</span>
+<span class="doccomment">/// that will run when the scope is exited.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Requires crate feature `use_std`.</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">defer_on_unwind</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">guard_on_unwind</span>((), <span class="op">|</span>()<span class="op">|</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>);
-    }
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">guard_on_unwind</span>((), <span class="op">|</span>()<span class="op">|</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>)<span class="op">*</span> });
+    };
 }
 
 <span class="doccomment">/// `ScopeGuard` is a scope guard that may own a protected value.</span>
@@ -871,7 +868,7 @@
 <span class="doccomment">/// (except if panic or other code aborts; so as long as destructors run).</span>
 <span class="doccomment">/// It is run only once.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The `S` parameter for [`Strategy`](Strategy.t.html) determines if</span>
+<span class="doccomment">/// The `S` parameter for [`Strategy`](trait.Strategy.html) determines if</span>
 <span class="doccomment">/// the closure actually runs.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The guard&#39;s closure will be called with the held value in the destructor.</span>
@@ -883,6 +880,7 @@
 {
     <span class="ident">value</span>: <span class="ident">ManuallyDrop</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">dropfn</span>: <span class="ident">ManuallyDrop</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>,
+    <span class="comment">// fn(S) -&gt; S is used, so that the S is not taken into account for auto traits.</span>
     <span class="ident">strategy</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw">fn</span>(<span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">S</span><span class="op">&gt;</span>,
 }
 
@@ -907,6 +905,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// extern crate scopeguard;</span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// use scopeguard::{guard, ScopeGuard};</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// fn conditional() -&gt; bool { true }</span>
@@ -926,7 +925,7 @@
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="ident">guard</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
-        <span class="comment">// Cannot pattern match out of Drop-implementing types, so</span>
+        <span class="comment">// Cannot move out of Drop-implementing types, so</span>
         <span class="comment">// ptr::read the value and forget the guard.</span>
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">ptr</span>::<span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">guard</span>.<span class="ident">value</span>);
@@ -975,14 +974,14 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// extern crate scopeguard;</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// use scopeguard::ScopeGuard;</span>
 <span class="doccomment">/// # fn main() {</span>
 <span class="doccomment">/// {</span>
-<span class="doccomment">///     let guard = scopeguard::guard((), |_| { });</span>
+<span class="doccomment">///     let guard = scopeguard::guard((), |_| {});</span>
 <span class="doccomment">///</span>
 <span class="doccomment">///     // rest of the code here</span>
-<span class="doccomment">///     </span>
+<span class="doccomment">///</span>
 <span class="doccomment">///     // we reached the end of scope without unwinding - defuse it</span>
 <span class="doccomment">///     ScopeGuard::into_inner(guard);</span>
 <span class="doccomment">/// }</span>
@@ -998,18 +997,19 @@
 
 <span class="comment">// ScopeGuard can be Sync even if F isn&#39;t because the closure is</span>
 <span class="comment">// not accessible from references.</span>
-<span class="comment">// The guard does not store any instance of S, so it is also irellevant.</span>
+<span class="comment">// The guard does not store any instance of S, so it is also irrelevant.</span>
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">ScopeGuard</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">S</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Sync</span>,
           <span class="ident">F</span>: <span class="ident">FnOnce</span>(<span class="ident">T</span>),
           <span class="ident">S</span>: <span class="ident">Strategy</span>
-{ }
+{}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">S</span><span class="op">&gt;</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">ScopeGuard</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span>, <span class="ident">S</span><span class="op">&gt;</span>
     <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">FnOnce</span>(<span class="ident">T</span>),
           <span class="ident">S</span>: <span class="ident">Strategy</span>
 {
     <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">T</span>;
+
     <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">T</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">value</span>
     }
@@ -1020,7 +1020,7 @@
           <span class="ident">S</span>: <span class="ident">Strategy</span>
 {
     <span class="kw">fn</span> <span class="ident">deref_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span> {
-        <span class="kw-2">&amp;</span><span class="kw-2">mut</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">value</span>
+        <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">value</span>
     }
 }
 

@@ -446,7 +446,7 @@ initialize a <code>MaybeUninit</code>.</p>
 <span class="comment">// Now we can use `buf` as a normal slice:</span>
 <span class="ident">buf</span>.<span class="ident">sort_unstable</span>();
 <span class="macro">assert</span><span class="macro">!</span>(
-    <span class="ident">buf</span>.<span class="ident">chunks</span>(<span class="number">2</span>).<span class="ident">all</span>(<span class="op">|</span><span class="ident">chunk</span><span class="op">|</span> <span class="ident">chunk</span>[<span class="number">0</span>] <span class="op">&lt;</span><span class="op">=</span> <span class="ident">chunk</span>[<span class="number">1</span>]),
+    <span class="ident">buf</span>.<span class="ident">windows</span>(<span class="number">2</span>).<span class="ident">all</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>[<span class="number">0</span>] <span class="op">&lt;</span><span class="op">=</span> <span class="ident">pair</span>[<span class="number">1</span>]),
     <span class="string">&quot;buffer is sorted&quot;</span>,
 );</pre></div>
 <h3 id="incorrect-usages-of-this-method-1" class="section-header"><a href="#incorrect-usages-of-this-method-1"><em>Incorrect</em> usages of this method:</a></h3>

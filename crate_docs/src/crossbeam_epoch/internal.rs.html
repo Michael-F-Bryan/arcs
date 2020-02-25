@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/crossbeam-epoch-0.8.0/src/internal.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>internal.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../crossbeam_epoch/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/crossbeam-epoch-0.8.2/src/internal.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>internal.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../crossbeam_epoch/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -593,6 +593,70 @@
 <span id="593">593</span>
 <span id="594">594</span>
 <span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
+<span id="648">648</span>
+<span id="649">649</span>
+<span id="650">650</span>
+<span id="651">651</span>
+<span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The global data and participant for garbage collection.</span>
 <span class="doccomment">//!</span>
@@ -634,13 +698,13 @@
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">cell</span>::{<span class="ident">Cell</span>, <span class="ident">UnsafeCell</span>};
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">mem</span>::{<span class="self">self</span>, <span class="ident">ManuallyDrop</span>};
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">num</span>::<span class="ident">Wrapping</span>;
-<span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">ptr</span>, <span class="ident">fmt</span>};
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">Ordering</span>;
+<span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">fmt</span>, <span class="ident">ptr</span>};
 
 <span class="kw">use</span> <span class="ident">crossbeam_utils</span>::<span class="ident">CachePadded</span>;
 
-<span class="kw">use</span> <span class="ident">atomic</span>::{<span class="ident">Shared</span>, <span class="ident">Owned</span>};
+<span class="kw">use</span> <span class="ident">atomic</span>::{<span class="ident">Owned</span>, <span class="ident">Shared</span>};
 <span class="kw">use</span> <span class="ident">collector</span>::{<span class="ident">Collector</span>, <span class="ident">LocalHandle</span>};
 <span class="kw">use</span> <span class="ident">deferred</span>::<span class="ident">Deferred</span>;
 <span class="kw">use</span> <span class="ident">epoch</span>::{<span class="ident">AtomicEpoch</span>, <span class="ident">Epoch</span>};
@@ -658,7 +722,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Bag</span> {
     <span class="doccomment">/// Stashed objects.</span>
     <span class="ident">deferreds</span>: [<span class="ident">Deferred</span>; <span class="ident">MAX_OBJECTS</span>],
-    <span class="ident">len</span>: <span class="ident">usize</span>
+    <span class="ident">len</span>: <span class="ident">usize</span>,
 }
 
 <span class="doccomment">/// `Bag::try_push()` requires that it is safe for another thread to execute the given functions.</span>
@@ -700,29 +764,91 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Bag</span> {
+    <span class="comment">// TODO(taiki-e): when the minimum supported Rust version is bumped to 1.31+,</span>
+    <span class="comment">// replace this with `#[rustfmt::skip]`.</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">rustfmt</span>, <span class="ident">rustfmt_skip</span>)]</span>
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="comment">// TODO: [no_op; MAX_OBJECTS] syntax blocked by https://github.com/rust-lang/rust/issues/49147</span>
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sanitize&quot;</span>))]</span>
-        <span class="kw">return</span> <span class="ident">Bag</span> { <span class="ident">len</span>: <span class="number">0</span>, <span class="ident">deferreds</span>:
-            [<span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
-             <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>)]
+        <span class="kw">return</span> <span class="ident">Bag</span> {
+            <span class="ident">len</span>: <span class="number">0</span>,
+            <span class="ident">deferreds</span>: [
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+            ],
         };
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;sanitize&quot;</span>)]</span>
-        <span class="kw">return</span> <span class="ident">Bag</span> { <span class="ident">len</span>: <span class="number">0</span>, <span class="ident">deferreds</span>: [<span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>), <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>)] };
+        <span class="kw">return</span> <span class="ident">Bag</span> {
+            <span class="ident">len</span>: <span class="number">0</span>,
+            <span class="ident">deferreds</span>: [
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+                <span class="ident">Deferred</span>::<span class="ident">new</span>(<span class="ident">no_op_func</span>),
+            ],
+        };
     }
 }
 
@@ -740,7 +866,9 @@
 <span class="comment">// can&#39;t #[derive(Debug)] because Debug is not implemented for arrays 64 items long</span>
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Bag</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Bag&quot;</span>).<span class="ident">field</span>(<span class="string">&quot;deferreds&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">deferreds</span>[..<span class="self">self</span>.<span class="ident">len</span>]).<span class="ident">finish</span>()
+        <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Bag&quot;</span>)
+            .<span class="ident">field</span>(<span class="string">&quot;deferreds&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">deferreds</span>[..<span class="self">self</span>.<span class="ident">len</span>])
+            .<span class="ident">finish</span>()
     }
 }
 

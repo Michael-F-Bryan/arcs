@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/components/bounding_box.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>bounding_box.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../arcs/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `arcs/src/components/bounding_box.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>bounding_box.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../arcs/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -158,12 +158,25 @@
 <span id="158">158</span>
 <span id="159">159</span>
 <span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">Bounded</span>, <span class="ident">DrawingSpace</span>, <span class="ident">Length</span>, <span class="ident">Point</span>, <span class="ident">Vector</span>};
+<span class="kw">use</span> <span class="ident">aabb_quadtree</span>::<span class="ident">Spatial</span>;
 <span class="kw">use</span> <span class="ident">euclid</span>::{<span class="ident">num</span>::<span class="ident">Zero</span>, <span class="ident">Size2D</span>};
+<span class="kw">use</span> <span class="ident">quadtree_euclid</span>::{<span class="ident">TypedPoint2D</span>, <span class="ident">TypedRect</span>, <span class="ident">TypedSize2D</span>};
 <span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">aabb_quadtree</span>::{<span class="ident">Spatial</span>};
-<span class="kw">use</span> <span class="ident">quadtree_euclid</span>::{<span class="ident">TypedRect</span>, <span class="ident">TypedPoint2D</span>, <span class="ident">TypedSize2D</span>};
 
 <span class="doccomment">/// An axis-aligned bounding box.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
@@ -180,9 +193,14 @@
     <span class="kw">fn</span> <span class="ident">aabb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">f64</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">bb</span> <span class="op">=</span> <span class="self">self</span>;
         <span class="ident">TypedRect</span>::<span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">f64</span><span class="op">&gt;</span>::<span class="ident">new</span>(
-            <span class="comment">// TypedRects have their origin at the bottom left corner (this is undocumented!)</span>
-            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(<span class="ident">bb</span>.<span class="ident">bottom_left</span>().<span class="ident">x</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">bb</span>.<span class="ident">bottom_left</span>().<span class="ident">y</span> <span class="kw">as</span> <span class="ident">f32</span>),
-            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">bb</span>.<span class="ident">width</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">bb</span>.<span class="ident">height</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">f32</span>))
+            <span class="comment">// TypedRects have their origin at the bottom left corner (this is</span>
+            <span class="comment">// undocumented!)</span>
+            <span class="ident">TypedPoint2D</span>::<span class="ident">new</span>(
+                <span class="ident">bb</span>.<span class="ident">bottom_left</span>().<span class="ident">x</span> <span class="kw">as</span> <span class="ident">f32</span>,
+                <span class="ident">bb</span>.<span class="ident">bottom_left</span>().<span class="ident">y</span> <span class="kw">as</span> <span class="ident">f32</span>,
+            ),
+            <span class="ident">TypedSize2D</span>::<span class="ident">new</span>(<span class="ident">bb</span>.<span class="ident">width</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">bb</span>.<span class="ident">height</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">f32</span>),
+        )
     }
 }
 
@@ -228,8 +246,16 @@
         <span class="ident">width</span>: <span class="ident">Length</span>,
         <span class="ident">height</span>: <span class="ident">Length</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">width</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">Length</span>::<span class="ident">zero</span>(), <span class="string">&quot;{} should not be negative&quot;</span>, <span class="ident">width</span>);
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">height</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">Length</span>::<span class="ident">zero</span>(), <span class="string">&quot;{} should not be negative&quot;</span>, <span class="ident">height</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(
+            <span class="ident">width</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">Length</span>::<span class="ident">zero</span>(),
+            <span class="string">&quot;{} should not be negative&quot;</span>,
+            <span class="ident">width</span>
+        );
+        <span class="macro">debug_assert</span><span class="macro">!</span>(
+            <span class="ident">height</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">Length</span>::<span class="ident">zero</span>(),
+            <span class="string">&quot;{} should not be negative&quot;</span>,
+            <span class="ident">height</span>
+        );
 
         <span class="kw">let</span> <span class="ident">diagonal</span> <span class="op">=</span> <span class="ident">Vector</span>::<span class="ident">from_lengths</span>(<span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>, <span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>);
         <span class="kw">let</span> <span class="ident">bottom_left</span> <span class="op">=</span> <span class="ident">centre</span> <span class="op">-</span> <span class="ident">diagonal</span>;
