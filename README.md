@@ -33,7 +33,7 @@ containing a list of related features or concepts.
 - [ ] Milestone: Online demo
   - [x] Render correctly to a HTML5 `<canvas>`
   - Interactive tools for creating drawing objects:
-    - [ ] Point
+    - [x] Point
     - [ ] Line
     - [ ] Arc
   - [ ] Move items between layers
