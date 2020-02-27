@@ -104,6 +104,22 @@
 <span id="104">104</span>
 <span id="105">105</span>
 <span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">euclid</span>::{<span class="ident">Point2D</span>, <span class="ident">Vector2D</span>};
 
@@ -166,6 +182,22 @@
 }
 
 <span class="doccomment">/// Find the centre of an arc which passes through 3 [`Point`]s.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Note</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If the points are collinear then the problem is ambiguous, the radius</span>
+<span class="doccomment">/// effectively becomes infinite and our centre could be literally anywhere.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```rust</span>
+<span class="doccomment">/// # use arcs::Point;</span>
+<span class="doccomment">/// let first = Point::new(0.0, 0.0);</span>
+<span class="doccomment">/// let second = Point::new(1.0, 0.0);</span>
+<span class="doccomment">/// let third = Point::new(25.0, 0.0);</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let got = arcs::centre_of_three_points(first, second, third);</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert!(got.is_none());</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">centre_of_three_points</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(
     <span class="ident">first</span>: <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">S</span><span class="op">&gt;</span>,
     <span class="ident">second</span>: <span class="ident">Point2D</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">S</span><span class="op">&gt;</span>,

@@ -253,6 +253,9 @@
 <span id="253">253</span>
 <span id="254">254</span>
 <span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">algorithms</span>::<span class="ident">Bounded</span>, <span class="ident">components</span>::<span class="ident">BoundingBox</span>, <span class="ident">Arc</span>, <span class="ident">Point</span>};
 <span class="kw">use</span> <span class="ident">aabb_quadtree</span>::{<span class="ident">ItemId</span>, <span class="ident">QuadTree</span>, <span class="ident">Spatial</span>};
@@ -260,6 +263,9 @@
 <span class="kw">use</span> <span class="ident">quadtree_euclid</span>::{<span class="ident">TypedPoint2D</span>, <span class="ident">TypedRect</span>, <span class="ident">TypedSize2D</span>};
 <span class="kw">use</span> <span class="ident">specs</span>::{<span class="ident">world</span>::<span class="ident">Index</span>, <span class="ident">Entity</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
+
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_imports</span>)]</span> <span class="comment">// for rustdoc links</span>
+<span class="kw">use</span> <span class="ident">specs</span>::<span class="ident">prelude</span>::<span class="ident">Resource</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type</span> <span class="ident">SpatialTree</span> <span class="op">=</span>
     <span class="ident">QuadTree</span><span class="op">&lt;</span><span class="ident">SpatialEntity</span>, <span class="ident">f64</span>, [(<span class="ident">ItemId</span>, <span class="ident">TypedRect</span><span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">f64</span><span class="op">&gt;</span>); <span class="number">0</span>]<span class="op">&gt;</span>;
