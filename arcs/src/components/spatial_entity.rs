@@ -5,6 +5,9 @@ use quadtree_euclid::{TypedPoint2D, TypedRect, TypedSize2D};
 use specs::{world::Index, Entity};
 use std::collections::HashMap;
 
+#[allow(unused_imports)] // for rustdoc links
+use specs::prelude::Resource;
+
 pub(crate) type SpatialTree =
     QuadTree<SpatialEntity, f64, [(ItemId, TypedRect<f32, f64>); 0]>;
 
