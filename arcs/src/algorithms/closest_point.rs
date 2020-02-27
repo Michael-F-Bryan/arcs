@@ -1,9 +1,13 @@
 use crate::{
+    algorithms::Length,
     components::{DrawingObject, Geometry},
     Arc, Line, Point, Vector,
 };
-use euclid::Scale;
-use std::iter::FromIterator;
+use euclid::{approxeq::ApproxEq, Scale};
+use std::{
+    cmp::{Ordering, PartialOrd},
+    iter::FromIterator,
+};
 
 /// Find the location on an object which is closest to a target point.
 pub trait ClosestPoint {
@@ -23,7 +27,7 @@ impl ClosestPoint for Point {
 
 impl ClosestPoint for Line {
     fn closest_point(&self, target: Point) -> Closest {
-        if self.length() == 0.0 {
+        if self.length().approx_eq(&0.0) {
             return Closest::One(self.start);
         }
 
@@ -46,7 +50,30 @@ impl ClosestPoint for Line {
 }
 
 impl ClosestPoint for Arc {
-    fn closest_point(&self, _target: Point) -> Closest { unimplemented!() }
+    fn closest_point(&self, target: Point) -> Closest {
+        let radial = dbg!(target - self.centre());
+
+        if radial.length().approx_eq(&0.0) {
+            return Closest::Infinite;
+        }
+
+        let angle_of_closest_point = dbg!(radial.angle_from_x_axis());
+        let ideal_closest_point =
+            self.centre() + radial.normalize() * self.radius();
+
+        if self.contains_angle(angle_of_closest_point) {
+            return Closest::One(ideal_closest_point);
+        }
+
+        let to_start = (self.start() - ideal_closest_point).length();
+        let to_end = (self.end() - ideal_closest_point).length();
+
+        match PartialOrd::partial_cmp(&to_start, &to_end) {
+            Some(Ordering::Less) => Closest::One(self.start()),
+            Some(Ordering::Greater) => Closest::One(self.end()),
+            _ => Closest::Many(vec![self.start(), self.end()]),
+        }
+    }
 }
 
 impl ClosestPoint for Geometry {
@@ -115,6 +142,7 @@ impl FromIterator<Point> for Closest {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Angle;
 
     #[test]
     fn on_the_line() {
@@ -171,5 +199,38 @@ mod tests {
         let got = line.closest_point(Point::new(-5.0, 5.0));
 
         assert_eq!(got, Closest::One(start));
+    }
+
+    #[test]
+    fn centre_of_an_arc() {
+        let centre = Point::zero();
+        let arc =
+            Arc::from_centre_radius(centre, 10.0, Angle::zero(), Angle::pi());
+
+        let got = arc.closest_point(centre);
+
+        assert_eq!(got, Closest::Infinite);
+    }
+
+    #[test]
+    fn arc_start_point() {
+        let centre = Point::zero();
+        let arc =
+            Arc::from_centre_radius(centre, 10.0, Angle::zero(), Angle::pi());
+
+        let got = arc.closest_point(arc.start());
+
+        assert_eq!(got, Closest::One(arc.start()));
+    }
+
+    #[test]
+    fn arc_end_point() {
+        let centre = Point::zero();
+        let arc =
+            Arc::from_centre_radius(centre, 10.0, Angle::zero(), Angle::pi());
+
+        let got = arc.closest_point(arc.end());
+
+        assert_eq!(got, Closest::One(arc.end()));
     }
 }
