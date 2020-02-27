@@ -1,6 +1,9 @@
 use crate::primitives::Line;
 use euclid::{Length, Point2D};
 
+#[allow(unused_imports)] // rustdoc links
+use crate::algorithms::Approximate;
+
 /// Decimate a curve composed of line segments to a *"simpler"* curve with fewer
 /// points.
 ///
@@ -9,6 +12,12 @@ use euclid::{Length, Point2D};
 ///
 /// You may want to research the [Ramer–Douglas–Peucker algorithm][wiki] for
 /// the exact details and assumptions that can be made.
+///
+/// # Note
+///
+/// This differs from [`Approximate`] in that no new points are created,
+/// [`simplify()`] just tries to remove as many points as possible while
+/// ensuring the resulting curve is roughly the same shape.
 ///
 /// [wiki]: https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
 pub fn simplify<Space>(

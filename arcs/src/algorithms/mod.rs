@@ -1,4 +1,4 @@
-//! Common algorithms.
+//! Useful algorithms and functionality for manipulating graphical objects.
 
 mod affine_transform;
 mod approximate;
