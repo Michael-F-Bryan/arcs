@@ -70,11 +70,10 @@ impl<S> Arc<S> {
 
     pub fn point_at(self, angle: Angle) -> Point2D<f64, S> {
         let angle = self.start_angle() + angle;
-        let (x, y) = angle.sin_cos();
+        let (sin, cos) = angle.sin_cos();
         let r = self.radius();
-        let displacement_from_centre = Vector2D::new(r * x, r * y);
 
-        self.centre() + displacement_from_centre
+        self.centre() + Vector2D::new(r * cos, r * sin)
     }
 
     pub fn contains_angle(self, angle: Angle) -> bool {
@@ -134,7 +133,8 @@ impl<S> Clone for Arc<S> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{DrawingSpace, Point};
+    use crate::{DrawingSpace, Point, Vector};
+    use euclid::approxeq::ApproxEq;
 
     macro_rules! test_contains_angle {
         ($name:ident, $arc:expr, $degrees:expr => $expected:expr) => {
@@ -198,5 +198,26 @@ mod tests {
         let got = Arc::from_three_points(c, b, a).unwrap();
 
         assert_eq!(got, expected);
+    }
+
+    #[test]
+    fn basic_properties() {
+        let centre = Point::new(5.0, 100.0);
+        let radius = 10.0;
+        let start_angle = Angle::zero();
+        let sweep_angle = Angle::frac_pi_2();
+
+        let arc =
+            Arc::from_centre_radius(centre, 10.0, start_angle, sweep_angle);
+
+        assert_eq!(arc.start_angle(), start_angle);
+        assert_eq!(arc.sweep_angle(), sweep_angle);
+        assert_eq!(arc.end_angle(), start_angle + sweep_angle);
+        assert_eq!(arc.centre(), centre);
+        assert_eq!(arc.radius(), radius);
+        assert_eq!(arc.radius(), radius);
+        assert_eq!(arc.start(), centre + Vector::new(radius, 0.0));
+        let expected_end = centre + Vector::new(0.0, radius);
+        assert!(arc.end().approx_eq(&expected_end));
     }
 }

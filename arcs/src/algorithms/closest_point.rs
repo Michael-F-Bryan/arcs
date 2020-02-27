@@ -4,10 +4,7 @@ use crate::{
     Arc, Line, Point, Vector,
 };
 use euclid::{approxeq::ApproxEq, Scale};
-use std::{
-    cmp::{Ordering, PartialOrd},
-    iter::FromIterator,
-};
+use std::iter::FromIterator;
 
 /// Find the location on an object which is closest to a target point.
 pub trait ClosestPoint {
@@ -51,13 +48,13 @@ impl ClosestPoint for Line {
 
 impl ClosestPoint for Arc {
     fn closest_point(&self, target: Point) -> Closest {
-        let radial = dbg!(target - self.centre());
+        let radial = target - self.centre();
 
         if radial.length().approx_eq(&0.0) {
             return Closest::Infinite;
         }
 
-        let angle_of_closest_point = dbg!(radial.angle_from_x_axis());
+        let angle_of_closest_point = radial.angle_from_x_axis();
         let ideal_closest_point =
             self.centre() + radial.normalize() * self.radius();
 
@@ -68,10 +65,12 @@ impl ClosestPoint for Arc {
         let to_start = (self.start() - ideal_closest_point).length();
         let to_end = (self.end() - ideal_closest_point).length();
 
-        match PartialOrd::partial_cmp(&to_start, &to_end) {
-            Some(Ordering::Less) => Closest::One(self.start()),
-            Some(Ordering::Greater) => Closest::One(self.end()),
-            _ => Closest::Many(vec![self.start(), self.end()]),
+        if to_start.approx_eq(&to_end) {
+            Closest::Many(vec![self.start(), self.end()])
+        } else if to_start < to_end {
+            Closest::One(self.start())
+        } else {
+            Closest::One(self.end())
         }
     }
 }
@@ -232,5 +231,16 @@ mod tests {
         let got = arc.closest_point(arc.end());
 
         assert_eq!(got, Closest::One(arc.end()));
+    }
+
+    #[test]
+    fn midway_between_arc_end_points() {
+        let centre = Point::zero();
+        let arc =
+            Arc::from_centre_radius(centre, 10.0, Angle::zero(), Angle::pi());
+
+        let got = arc.closest_point(Point::new(0.0, -10.0));
+
+        assert_eq!(got, Closest::Many(vec![arc.start(), arc.end()]));
     }
 }
