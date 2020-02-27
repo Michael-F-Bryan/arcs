@@ -59,6 +59,22 @@ impl Orientation {
 }
 
 /// Find the centre of an arc which passes through 3 [`Point`]s.
+///
+/// # Note
+///
+/// If the points are collinear then the problem is ambiguous, the radius
+/// effectively becomes infinite and our centre could be literally anywhere.
+///
+/// ```rust
+/// # use arcs::Point;
+/// let first = Point::new(0.0, 0.0);
+/// let second = Point::new(1.0, 0.0);
+/// let third = Point::new(25.0, 0.0);
+///
+/// let got = arcs::centre_of_three_points(first, second, third);
+///
+/// assert!(got.is_none());
+/// ```
 pub fn centre_of_three_points<S>(
     first: Point2D<f64, S>,
     second: Point2D<f64, S>,

@@ -7,6 +7,65 @@ use euclid::{approxeq::ApproxEq, Scale};
 use std::iter::FromIterator;
 
 /// Find the location on an object which is closest to a target point.
+///
+/// # Usage
+///
+/// When trying to find the closest point to a [`Line`] you have the simple
+/// cases, like when the point is directly on or above the line.
+///
+/// ```rust
+/// # use arcs::{Point, Line, algorithms::{ClosestPoint, Closest}};
+/// let start = Point::new(-10.0, 0.0);
+/// let line = Line::new(start, Point::new(10.0, 0.0));
+///
+/// // a point on the line is closest to itself
+/// assert_eq!(line.closest_point(start), Closest::One(start));
+///
+/// // somewhere directly above the line
+/// let random_point = Point::new(8.0, -5.0);
+/// assert_eq!(
+///     line.closest_point(random_point),
+///     Closest::One(Point::new(8.0, 0.0)),
+/// );
+/// ```
+///
+/// You can also have situations where there are multiple locations on an object
+/// which are closest to the part. For example, somewhere halfway between the
+/// start and end of an [`Arc`].
+///
+/// ```rust
+/// # use arcs::{Point, Arc, Angle, algorithms::{ClosestPoint, Closest}};
+/// let arc = Arc::from_centre_radius(
+///     Point::new(0.0, 0.0),
+///     10.0,
+///     Angle::zero(),
+///     Angle::frac_pi_2() * 3.0,
+/// );
+///
+/// let start = arc.start();
+/// let end = arc.end();
+/// let midpoint = start.lerp(end, 0.5);
+///
+/// assert_eq!(
+///     arc.closest_point(midpoint),
+///     Closest::Many(vec![start, end]),
+/// );
+/// ```
+///
+/// And by definition, there are infinitely many points on an arc which are
+/// close to the centre.
+///
+/// ```rust
+/// # use arcs::{Point, Arc, Angle, algorithms::{ClosestPoint, Closest}};
+/// let arc = Arc::from_centre_radius(
+///     Point::new(0.0, 0.0),
+///     10.0,
+///     Angle::zero(),
+///     Angle::pi(),
+/// );
+///
+/// assert_eq!(arc.closest_point(arc.centre()), Closest::Infinite);
+/// ```
 pub trait ClosestPoint {
     /// Calculate the closest point to `target`.
     fn closest_point(&self, target: Point) -> Closest;
