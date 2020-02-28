@@ -1,0 +1,2 @@
+sign-commit = true
+tag-name = "v{{version}}"
