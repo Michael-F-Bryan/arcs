@@ -165,6 +165,9 @@ mod tests {
     test_contains_angle!(inside_reverse_arc,
         Arc::from_centre_radius(Point::zero(), 1.0, Angle::frac_pi_4(), -Angle::frac_pi_4()),
         45.0 => true);
+    test_contains_angle!(inside_major_reverse_arc,
+        Arc::from_centre_radius(Point::zero(), 1.0, Angle::zero(), Angle::degrees(-270.)),
+        180.0 => true);
 
     #[test]
     fn arc_from_three_points() {
