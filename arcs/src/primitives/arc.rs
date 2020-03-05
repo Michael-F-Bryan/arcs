@@ -77,16 +77,16 @@ impl<S> Arc<S> {
     }
 
     pub fn contains_angle(self, angle: Angle) -> bool {
-        let start_angle = self.start_angle();
-        let end_angle = self.end_angle();
-
-        let (min, max) = if start_angle < end_angle {
-            (start_angle, end_angle)
+        let diff = angle.positive() - self.start_angle.positive();
+        if diff > Angle::zero() {
+            self.sweep_angle >= diff
+                || self.sweep_angle <= -(Angle::two_pi() - diff)
+        } else if diff < Angle::zero() {
+            self.sweep_angle <= diff
+                || self.sweep_angle >= (Angle::two_pi() + diff)
         } else {
-            (end_angle, start_angle)
-        };
-
-        (min <= angle) && (angle <= max)
+            true
+        }
     }
 
     pub fn is_minor_arc(&self) -> bool {
