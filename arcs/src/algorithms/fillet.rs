@@ -20,7 +20,9 @@ pub fn fillet_three_points(
 
     let rotation_angle = (angle_2 - angle_1).signed();
 
-    if rotation_angle.get().approx_eq(&0.0) {
+    if rotation_angle.approx_eq(&Angle::zero())
+        || rotation_angle.positive().approx_eq(&Angle::pi())
+    {
         return Err(FilletError::CollinearLines);
     }
 
@@ -50,13 +52,13 @@ pub fn fillet_three_points(
 
     let start_point = corner - incoming.direction() * length_to_remove.0;
 
-    let start_to_centre = if rotation_angle > Angle::zero() {
-        r_theta(radius, angle_1 + Angle::frac_pi_2())
-    } else {
+    let start_to_centre = if rotation_angle >= Angle::zero() {
         r_theta(radius, angle_1 - Angle::frac_pi_2())
+    } else {
+        r_theta(radius, angle_1 + Angle::frac_pi_2())
     };
 
-    let centre = start_point + start_to_centre;
+    let centre = dbg!(start_point) - dbg!(start_to_centre);
 
     Ok(Arc::from_centre_radius(
         centre,
@@ -139,5 +141,39 @@ mod tests {
             .unwrap();
 
         assert_eq!(got, should_be);
+    }
+
+    #[test]
+    fn collinear_lines() {
+        let start = Point::new(90.0, 0.0);
+        let corner = Point::new(100.0, 0.0);
+        let radius = Length::new(20.0);
+
+        let err =
+            fillet_three_points(start, corner, start, radius).unwrap_err();
+
+        assert_eq!(err, FilletError::CollinearLines);
+    }
+
+    #[test]
+    fn insufficient_length() {
+        let start = Point::new(90.0, 0.0);
+        let corner = Point::new(100.0, 0.0);
+        let end = Point::new(100.0, 1000.0);
+        let radius = Length::new(20.0);
+        assert!((start - corner).length() < radius.get());
+
+        let err = fillet_three_points(start, corner, end, radius).unwrap_err();
+
+        match err {
+            FilletError::InsufficientLength {
+                required,
+                available,
+            } => {
+                assert!(required.approx_eq(&radius));
+                assert!(available.approx_eq(&Length::new(10.0)));
+            },
+            other => panic!("Unexpected error, {:?}", other),
+        }
     }
 }
