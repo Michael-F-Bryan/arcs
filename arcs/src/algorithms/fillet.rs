@@ -176,4 +176,42 @@ mod tests {
             other => panic!("Unexpected error, {:?}", other),
         }
     }
+
+    #[test]
+    fn clockwise_top_right_corner() {
+        let start = Point::new(0.0, 10.0);
+        let corner = Point::new(10.0, 10.0);
+        let end = Point::new(10.0, 0.0);
+        let radius = 5.0;
+        let should_be = Arc::from_centre_radius(
+            Point::new(5.0, 5.0),
+            radius,
+            Angle::frac_pi_2(),
+            -Angle::frac_pi_2(),
+        );
+
+        let got = fillet_three_points(start, corner, end, Length::new(radius))
+            .unwrap();
+
+        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
+    }
+
+    #[test]
+    fn anticlockwise_top_left_corner() {
+        let start = Point::new(10.0, 10.0);
+        let corner = Point::new(0.0, 10.0);
+        let end = Point::new(0.0, 0.0);
+        let radius = 5.0;
+        let should_be = Arc::from_centre_radius(
+            Point::new(5.0, 5.0),
+            radius,
+            Angle::frac_pi_2(),
+            Angle::frac_pi_2(),
+        );
+
+        let got = fillet_three_points(start, corner, end, Length::new(radius))
+            .unwrap();
+
+        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
+    }
 }
