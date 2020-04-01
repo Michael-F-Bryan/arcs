@@ -1,4 +1,4 @@
-use euclid::{Length, Point2D, Vector2D};
+use euclid::{approxeq::ApproxEq, Length, Point2D, Vector2D};
 
 /// A line connecting [`Line::start`] to [`Line::end`].
 #[derive(Debug, Default, PartialEq)]
@@ -45,6 +45,20 @@ impl<S> Copy for Line<S> {}
 
 impl<S> Clone for Line<S> {
     fn clone(&self) -> Self { *self }
+}
+
+impl<S> ApproxEq<f64> for Line<S> {
+    #[inline]
+    fn approx_epsilon() -> f64 { f64::approx_epsilon() }
+
+    #[inline]
+    fn approx_eq_eps(&self, other: &Self, approx_epsilon: &f64) -> bool {
+        let Line { start, end } = self;
+        let approx_epsilon = Point2D::new(*approx_epsilon, *approx_epsilon);
+
+        start.approx_eq_eps(&other.start, &approx_epsilon)
+            && end.approx_eq_eps(&other.end, &approx_epsilon)
+    }
 }
 
 #[cfg(test)]

@@ -1,2 +1,5 @@
 [workspace]
 members = ["arcs", "demo"]
+
+[patch.crates-io]
+euclid = { git = "https://github.com/Michael-F-Bryan/euclid.git", branch = "more-approx-eq" }

@@ -1,5 +1,5 @@
 use crate::{Angle, Orientation};
-use euclid::{Point2D, Vector2D};
+use euclid::{approxeq::ApproxEq, Point2D, Vector2D};
 use std::f64::consts::PI;
 
 /// A circle segment.
@@ -128,6 +128,27 @@ impl<S> Copy for Arc<S> {}
 
 impl<S> Clone for Arc<S> {
     fn clone(&self) -> Self { *self }
+}
+
+impl<S> ApproxEq<f64> for Arc<S> {
+    #[inline]
+    fn approx_epsilon() -> f64 { f64::approx_epsilon() }
+
+    #[inline]
+    fn approx_eq_eps(&self, other: &Self, approx_epsilon: &f64) -> bool {
+        let Arc {
+            centre,
+            radius,
+            start_angle,
+            sweep_angle,
+        } = self;
+        let point_epsilon = Point2D::new(*approx_epsilon, *approx_epsilon);
+
+        centre.approx_eq_eps(&other.centre, &point_epsilon)
+            && radius.approx_eq_eps(&other.radius, &approx_epsilon)
+            && start_angle.approx_eq_eps(&other.start_angle, &approx_epsilon)
+            && sweep_angle.approx_eq_eps(&other.sweep_angle, &approx_epsilon)
+    }
 }
 
 #[cfg(test)]
