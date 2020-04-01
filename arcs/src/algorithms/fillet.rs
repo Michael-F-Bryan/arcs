@@ -50,7 +50,7 @@ pub fn fillet_three_points(
         });
     }
 
-    let start_point = corner - dbg!(incoming.direction() * length_to_remove.0);
+    let start_point = corner - incoming.direction() * length_to_remove.0;
 
     let start_to_centre = if rotation_angle >= Angle::zero() {
         r_theta(radius, angle_1 - Angle::frac_pi_2())
@@ -58,7 +58,7 @@ pub fn fillet_three_points(
         r_theta(radius, angle_1 + Angle::frac_pi_2())
     };
 
-    let centre = dbg!(start_point) - dbg!(start_to_centre);
+    let centre = start_point - start_to_centre;
 
     Ok(Arc::from_centre_radius(
         centre,
@@ -121,7 +121,7 @@ mod tests {
         let got = fillet_three_points(start, corner, end, Length::new(radius))
             .unwrap();
 
-        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
+        assert!(got.approx_eq(&should_be), "{:#?} != {:#?}", got, should_be);
     }
 
     #[test]
@@ -140,7 +140,7 @@ mod tests {
         let got = fillet_three_points(start, corner, end, Length::new(radius))
             .unwrap();
 
-        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
+        assert!(got.approx_eq(&should_be), "{:#?} != {:#?}", got, should_be);
     }
 
     #[test]
@@ -193,7 +193,7 @@ mod tests {
         let got = fillet_three_points(start, corner, end, Length::new(radius))
             .unwrap();
 
-        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
+        assert!(got.approx_eq(&should_be), "{:#?} != {:#?}", got, should_be);
     }
 
     #[test]
@@ -212,6 +212,86 @@ mod tests {
         let got = fillet_three_points(start, corner, end, Length::new(radius))
             .unwrap();
 
-        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
+        assert!(got.approx_eq(&should_be), "{:#?} != {:#?}", got, should_be);
+    }
+
+    #[test]
+    fn check_some_known_fillets() {
+        let inputs = vec![
+            // bottom-right corner, acw fillet
+            (
+                Vector::new(10.0, 0.0),
+                Vector::new(0.0, 10.0),
+                Arc::from_centre_radius(
+                    Point::new(5.0, 5.0),
+                    5.0,
+                    Angle::frac_pi_2() * 3.0,
+                    Angle::frac_pi_2(),
+                ),
+            ),
+            // acute bottom-right corner, acw fillet
+            (
+                Vector::new(10.0, 0.0),
+                r_theta(Length::new(10.0), Angle::frac_pi_3() * 2.0),
+                Arc::from_centre_radius(
+                    Point::new(1.3404836634747797, 5.0),
+                    5.0,
+                    Angle::frac_pi_2() * 3.0,
+                    Angle::frac_pi_3() * 2.0,
+                ),
+            ),
+            // acute bottom-right corner, cw fillet
+            (
+                r_theta(Length::new(10.0), -Angle::frac_pi_3()),
+                Vector::new(-10.0, 0.0),
+                Arc::from_centre_radius(
+                    Point::new(1.3397, -5.0),
+                    5.0,
+                    Angle::frac_pi_2(),
+                    Angle::frac_pi_3() * 2.0,
+                ),
+            ),
+            // top-left corner, cw fillet
+            (
+                Vector::new(10.0, 0.0),
+                Vector::new(0.0, -10.0),
+                Arc::from_centre_radius(
+                    Point::new(5.0, -5.0),
+                    5.0,
+                    Angle::frac_pi_2(),
+                    -Angle::frac_pi_2(),
+                ),
+            ),
+            // bottom-left corner, cw fillet
+            (
+                Vector::new(-10.0, 0.0),
+                Vector::new(0.0, 10.0),
+                Arc::from_centre_radius(
+                    Point::new(-5.0, 5.0),
+                    5.0,
+                    Angle::frac_pi_2() * -3.0,
+                    -Angle::frac_pi_2(),
+                ),
+            ),
+        ];
+
+        for (first_line, second_line, should_be) in inputs {
+            let start = Point::zero();
+            let corner = start + first_line;
+            let end = corner + second_line;
+
+            let got = fillet_three_points(start, corner, end, Length::new(5.0))
+                .unwrap();
+
+            assert!(
+                got.approx_eq_eps(&should_be, &0.001),
+                "\nStart:\t{:?}\nCorner:\t{:?}\nEnd:\t{:?}\n\nLeft:  {:.3?} \nRight: {:.3?}\n",
+                start,
+                corner,
+                end,
+                got,
+                should_be
+            );
+        }
     }
 }
