@@ -50,7 +50,7 @@ pub fn fillet_three_points(
         });
     }
 
-    let start_point = corner - incoming.direction() * length_to_remove.0;
+    let start_point = corner - dbg!(incoming.direction() * length_to_remove.0);
 
     let start_to_centre = if rotation_angle >= Angle::zero() {
         r_theta(radius, angle_1 - Angle::frac_pi_2())
@@ -121,7 +121,7 @@ mod tests {
         let got = fillet_three_points(start, corner, end, Length::new(radius))
             .unwrap();
 
-        assert_eq!(got, should_be);
+        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
     }
 
     #[test]
@@ -133,14 +133,14 @@ mod tests {
         let should_be = Arc::from_centre_radius(
             Point::new(80.0, 20.0),
             radius,
-            Angle::frac_pi_2(),
+            Angle::zero(),
             -Angle::frac_pi_2(),
         );
 
         let got = fillet_three_points(start, corner, end, Length::new(radius))
             .unwrap();
 
-        assert_eq!(got, should_be);
+        assert!(got.approx_eq(&should_be), "{:#?} != {:?}", got, should_be);
     }
 
     #[test]
