@@ -8,7 +8,7 @@ use std::{
     iter::{Chain, Once},
 };
 
-/// Approximate a shape with a bunch of [`Point`]s.
+/// Approximate a shape with a bunch of [`Point2D`]s.
 pub trait Approximate<Space> {
     /// An iterator over the approximated vertices.
     type Iter: Iterator<Item = Point2D<f64, Space>>;

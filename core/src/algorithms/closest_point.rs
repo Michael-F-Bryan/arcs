@@ -144,9 +144,9 @@ impl<Space> ClosestPoint<Space> for Arc<Space> {
 pub enum Closest<Space> {
     /// There are infinitely solutions.
     Infinite,
-    /// There is a single closest [`Point`].
+    /// There is a single closest [`Point2D`].
     One(Point2D<f64, Space>),
-    /// There are multiple closest [`Point`]s.
+    /// There are multiple closest [`Point2D`]s.
     Many(Vec<Point2D<f64, Space>>),
 }
 
@@ -159,7 +159,7 @@ impl<Space> Closest<Space> {
         }
     }
 
-    /// Get a slice of all the closest [`Point`]s.
+    /// Get a slice of all the closest [`Point2D`]s.
     ///
     /// # Note
     ///

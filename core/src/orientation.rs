@@ -12,7 +12,7 @@ pub enum Orientation {
 }
 
 impl Orientation {
-    /// Find the orientation of 3 [`Point`]s.
+    /// Find the orientation of 3 [`Point2D`]s.
     pub fn of<S>(
         first: Point2D<f64, S>,
         second: Point2D<f64, S>,
@@ -31,7 +31,7 @@ impl Orientation {
     }
 }
 
-/// Find the centre of an arc which passes through 3 [`Point`]s.
+/// Find the centre of an arc which passes through 3 [`Point2D`]s.
 ///
 /// # Note
 ///

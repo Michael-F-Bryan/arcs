@@ -25,7 +25,7 @@ impl<Space> Length for Line<Space> {
 }
 
 impl<Space> Length for Vector2D<f64, Space> {
-    /// Calculates the [`Vector`]'s magnitude.
+    /// Calculates the [`Vector2D`]'s magnitude.
     ///
     /// ```rust
     /// # use arcs_core::algorithms::Length;
