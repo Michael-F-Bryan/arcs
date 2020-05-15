@@ -1,10 +1,10 @@
 use crate::{
     algorithms::Bounded,
     components::{
-        BoundingBox, DrawingObject, Geometry, Layer, LineStyle, PointStyle,
-        Viewport, WindowStyle,
+        DrawingObject, Geometry, Layer, LineStyle, PointStyle, Viewport,
+        WindowStyle,
     },
-    CanvasSpace, DrawingSpace, Line, Point,
+    BoundingBox, CanvasSpace, DrawingSpace, Line, Point,
 };
 use euclid::{Point2D, Scale, Size2D};
 use kurbo::Circle;

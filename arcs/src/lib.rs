@@ -18,24 +18,15 @@
 //! [mco]: https://en.wikipedia.org/wiki/Mars_Climate_Orbiter
 
 #![forbid(unsafe_code)]
-#[deny(
-    missing_debug_implementations,
-    missing_copy_implementations,
-    missing_docs
-)]
-pub mod algorithms;
+
+// #![deny(
+//     missing_debug_implementations,
+//     missing_copy_implementations,
+//     missing_docs
+// )]
+
 pub mod components;
-pub mod primitives;
 pub mod systems;
-mod types;
 pub mod window;
 
-/// An [`primitives::Arc`] in [`DrawingSpace`].
-pub type Arc = primitives::Arc<DrawingSpace>;
-/// A [`primitives::Line`] in [`DrawingSpace`].
-pub type Line = primitives::Line<DrawingSpace>;
-
-pub use types::{
-    centre_of_three_points, Angle, CanvasSpace, DrawingSpace, Length,
-    Orientation, Point, Transform, Vector,
-};
+pub use arcs_core::*;

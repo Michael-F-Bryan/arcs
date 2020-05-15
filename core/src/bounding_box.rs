@@ -130,6 +130,11 @@ impl BoundingBox {
     }
 }
 
+#[cfg(feature = "ecs")]
+impl specs::Component for BoundingBox {
+    type Storage = specs::FlaggedStorage<Self, specs::DenseVecStorage<Self>>;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

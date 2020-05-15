@@ -17,18 +17,17 @@ travis-ci = { repository = "Michael-F-Bryan/arcs", branch = "master" }
 
 [dependencies]
 anyhow = "1"
-log = "0.4"
-piet = "0.0.7"
-specs = "0.15"
-specs-derive = "0.4"
-shred-derive = "0.6"
-kurbo = "0.5"
-shred = "0.9"
+arcs-core = { path = "../core", features = ["ecs"] }
 cgmath = "0.17.0"
+euclid = "0.20"
+kurbo = "0.6"
 lazy_static = "1"
-aabb-quadtree = "0.2.0"
-quadtree_euclid = { package = "euclid", version = "0.19.8" }
-euclid = "0.20.7"
+log = "0.4"
+piet = "0.1.0"
+shred = "0.10"
+shred-derive = "0.6"
+specs = "0.16"
+specs-derive = "0.4"
 
 [dev-dependencies]
 piet-common = "0.0.7"
