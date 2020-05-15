@@ -1,15 +1,13 @@
-use crate::{
-    algorithms::AffineTransformable,
-    Arc, BoundingBox, Transform, Vector,
-};
+use crate::{algorithms::AffineTransformable, primitives::Arc, BoundingBox};
+use euclid::{Transform2D, Vector2D};
 
 /// Something which can be moved around "rigidly" in *Drawing Space*.
-pub trait Translate {
+pub trait Translate<Space> {
     /// Translate this object in-place.
-    fn translate(&mut self, displacement: Vector);
+    fn translate(&mut self, displacement: Vector2D<f64, Space>);
 
     /// A convenience method for getting a translated copy of this object.
-    fn translated(&self, displacement: Vector) -> Self
+    fn translated(&self, displacement: Vector2D<f64, Space>) -> Self
     where
         Self: Sized + Clone,
     {
@@ -20,17 +18,17 @@ pub trait Translate {
     }
 }
 
-impl<A: AffineTransformable> Translate for A {
-    fn translate(&mut self, displacement: Vector) {
-        self.transform(Transform::create_translation(
+impl<Space, A: AffineTransformable> Translate<Space> for A {
+    fn translate(&mut self, displacement: Vector2D<f64, Space>) {
+        self.transform(Transform2D::create_translation(
             displacement.x,
             displacement.y,
         ));
     }
 }
 
-impl Translate for Arc {
-    fn translate(&mut self, displacement: Vector) {
+impl<Space> Translate<Space> for Arc<Space> {
+    fn translate(&mut self, displacement: Vector2D<f64, Space>) {
         *self = Arc::from_centre_radius(
             self.centre().translated(displacement),
             self.radius(),
@@ -40,8 +38,8 @@ impl Translate for Arc {
     }
 }
 
-impl Translate for BoundingBox {
-    fn translate(&mut self, displacement: Vector) {
+impl<Space> Translate<Space> for BoundingBox<Space> {
+    fn translate(&mut self, displacement: Vector2D<f64, Space>) {
         *self = BoundingBox::new_unchecked(
             self.bottom_left().translated(displacement),
             self.top_right().translated(displacement),
@@ -52,7 +50,9 @@ impl Translate for BoundingBox {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Point;
+
+    type Point = euclid::default::Point2D<f64>;
+    type Vector = euclid::default::Vector2D<f64>;
 
     #[test]
     fn translate_point() {

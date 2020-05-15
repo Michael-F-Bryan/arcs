@@ -1,4 +1,5 @@
-use crate::{Arc, Line, Vector};
+use crate::primitives::{Arc, Line};
+use euclid::Vector2D;
 
 /// Something which has a finite length.
 pub trait Length {
@@ -10,7 +11,7 @@ impl<'a, L: Length + ?Sized> Length for &'a L {
     fn length(&self) -> f64 { (*self).length() }
 }
 
-impl Length for Line {
+impl<Space> Length for Line<Space> {
     /// Calculates the length of the line.
     ///
     /// ```rust
@@ -22,7 +23,7 @@ impl Length for Line {
     fn length(&self) -> f64 { self.displacement().length() }
 }
 
-impl Length for Vector {
+impl<Space> Length for Vector2D<f64, Space> {
     /// Calculates the [`Vector`]'s magnitude.
     ///
     /// ```rust
@@ -34,7 +35,7 @@ impl Length for Vector {
     fn length(&self) -> f64 { euclid::Vector2D::length(self) }
 }
 
-impl Length for Arc {
+impl<Space> Length for Arc<Space> {
     /// Calculates the length of an [`Arc`].
     ///
     /// ```rust
@@ -56,7 +57,9 @@ impl Length for Arc {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Angle, Point};
+    use crate::Angle;
+
+    type Point = euclid::default::Point2D<f64>;
 
     #[test]
     fn line() {

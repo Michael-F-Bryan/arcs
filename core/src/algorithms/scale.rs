@@ -1,4 +1,4 @@
-use crate::{algorithms::ScaleNonUniform, Arc};
+use crate::{algorithms::ScaleNonUniform, primitives::Arc};
 
 /// Something who's dimensions can be scaled uniformly.
 pub trait Scale {
@@ -23,7 +23,7 @@ impl<S: ScaleNonUniform> Scale for S {
     }
 }
 
-impl Scale for Arc {
+impl<Space> Scale for Arc<Space> {
     fn scale(&mut self, scale_factor: f64) {
         *self = Arc::from_centre_radius(
             self.centre().scaled(scale_factor),
@@ -39,9 +39,14 @@ mod tests {
     use super::*;
     use crate::{
         algorithms::{AffineTransformable, Translate},
-        Arc, BoundingBox, Line, Point, Transform, Vector,
+        primitives::{Arc, Line},
+        BoundingBox,
     };
     use euclid::Angle;
+
+    pub type Vector = euclid::default::Vector2D<f64>;
+    pub type Transform = euclid::default::Transform2D<f64>;
+    pub type Point = euclid::default::Point2D<f64>;
 
     #[test]
     fn scale_vector() {

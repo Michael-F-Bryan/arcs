@@ -11,17 +11,12 @@
 
 pub mod algorithms;
 mod bounding_box;
+mod orientation;
 pub mod primitives;
-mod types;
 
 pub use bounding_box::BoundingBox;
+pub use orientation::{centre_of_three_points, Orientation};
 
-/// An [`primitives::Arc`] in [`DrawingSpace`].
-pub type Arc = primitives::Arc<DrawingSpace>;
-/// A [`primitives::Line`] in [`DrawingSpace`].
-pub type Line = primitives::Line<DrawingSpace>;
-
-pub use types::{
-    centre_of_three_points, Angle, CanvasSpace, DrawingSpace, Length,
-    Orientation, Point, Transform, Vector,
-};
+/// A strongly-typed angle, useful for dealing with the pesky modular arithmetic
+/// normally associated with circles and angles.
+pub type Angle = euclid::Angle<f64>;

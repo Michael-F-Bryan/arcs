@@ -1,5 +1,8 @@
-use crate::{algorithms::Length, Arc, Line, Point, Vector};
-use euclid::{approxeq::ApproxEq, Scale};
+use crate::{
+    algorithms::Length,
+    primitives::{Arc, Line},
+};
+use euclid::{approxeq::ApproxEq, Point2D, Scale, Vector2D};
 use std::iter::FromIterator;
 
 /// Find the location on an object which is closest to a target point.
@@ -62,23 +65,25 @@ use std::iter::FromIterator;
 ///
 /// assert_eq!(arc.closest_point(arc.centre()), Closest::Infinite);
 /// ```
-pub trait ClosestPoint {
+pub trait ClosestPoint<Space> {
     /// Calculate the closest point to `target`.
-    fn closest_point(&self, target: Point) -> Closest;
+    fn closest_point(&self, target: Point2D<f64, Space>) -> Closest<Space>;
 }
 
-impl<'c, C: ClosestPoint + ?Sized> ClosestPoint for &'c C {
-    fn closest_point(&self, target: Point) -> Closest {
+impl<'c, Space, C: ClosestPoint<Space> + ?Sized> ClosestPoint<Space> for &'c C {
+    fn closest_point(&self, target: Point2D<f64, Space>) -> Closest<Space> {
         (*self).closest_point(target)
     }
 }
 
-impl ClosestPoint for Point {
-    fn closest_point(&self, _target: Point) -> Closest { Closest::One(*self) }
+impl<Space> ClosestPoint<Space> for Point2D<f64, Space> {
+    fn closest_point(&self, _target: Point2D<f64, Space>) -> Closest<Space> {
+        Closest::One(*self)
+    }
 }
 
-impl ClosestPoint for Line {
-    fn closest_point(&self, target: Point) -> Closest {
+impl<Space> ClosestPoint<Space> for Line<Space> {
+    fn closest_point(&self, target: Point2D<f64, Space>) -> Closest<Space> {
         if self.length().approx_eq(&0.0) {
             return Closest::One(self.start);
         }
@@ -88,7 +93,7 @@ impl ClosestPoint for Line {
 
         // equation of the line: start + t * displacement, where 0 <= t <= 1
 
-        let t = Vector::dot(target - start, displacement)
+        let t = Vector2D::dot(target - start, displacement)
             / (self.length() * self.length());
 
         Closest::One(if t <= 0.0 {
@@ -101,8 +106,8 @@ impl ClosestPoint for Line {
     }
 }
 
-impl ClosestPoint for Arc {
-    fn closest_point(&self, target: Point) -> Closest {
+impl<Space> ClosestPoint<Space> for Arc<Space> {
+    fn closest_point(&self, target: Point2D<f64, Space>) -> Closest<Space> {
         let radial = target - self.centre();
 
         if radial.length().approx_eq(&0.0) {
@@ -133,16 +138,16 @@ impl ClosestPoint for Arc {
 /// An enum containing the different possible solutions for
 /// [`ClosestPoint::closest_point()`].
 #[derive(Debug, Clone, PartialEq)]
-pub enum Closest {
+pub enum Closest<Space> {
     /// There are infinitely solutions.
     Infinite,
     /// There is a single closest [`Point`].
-    One(Point),
+    One(Point2D<f64, Space>),
     /// There are multiple closest [`Point`]s.
-    Many(Vec<Point>),
+    Many(Vec<Point2D<f64, Space>>),
 }
 
-impl Closest {
+impl<Space> Closest<Space> {
     /// Are there infinitely many closest points?
     pub fn is_infinite(&self) -> bool {
         match self {
@@ -156,7 +161,7 @@ impl Closest {
     /// # Note
     ///
     /// This will be empty if there are infinitely many closest points.
-    pub fn points(&self) -> &[Point] {
+    pub fn points(&self) -> &[Point2D<f64, Space>] {
         match self {
             Closest::Infinite => &[],
             Closest::One(item) => std::slice::from_ref(item),
@@ -165,8 +170,10 @@ impl Closest {
     }
 }
 
-impl FromIterator<Point> for Closest {
-    fn from_iter<I: IntoIterator<Item = Point>>(iter: I) -> Closest {
+impl<Space> FromIterator<Point2D<f64, Space>> for Closest<Space> {
+    fn from_iter<I: IntoIterator<Item = Point2D<f64, Space>>>(
+        iter: I,
+    ) -> Closest<Space> {
         let items = Vec::from_iter(iter);
 
         match items.len() {
@@ -181,6 +188,8 @@ impl FromIterator<Point> for Closest {
 mod tests {
     use super::*;
     use crate::Angle;
+
+    type Point = euclid::default::Point2D<f64>;
 
     #[test]
     fn on_the_line() {

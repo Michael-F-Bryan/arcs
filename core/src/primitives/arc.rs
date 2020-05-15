@@ -169,14 +169,16 @@ impl<S> Clone for Arc<S> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{DrawingSpace, Point, Vector};
-    use euclid::approxeq::ApproxEq;
+    use euclid::{approxeq::ApproxEq, UnknownUnit};
+
+    type Point = euclid::default::Point2D<f64>;
+    type Vector = euclid::default::Vector2D<f64>;
 
     macro_rules! test_contains_angle {
         ($name:ident, $arc:expr, $degrees:expr => $expected:expr) => {
             #[test]
             fn $name() {
-                let arc: Arc<DrawingSpace> = $arc;
+                let arc: Arc<UnknownUnit> = $arc;
                 let angle = Angle::degrees($degrees);
 
                 let got = arc.contains_angle(angle);

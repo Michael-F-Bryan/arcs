@@ -96,8 +96,9 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Point;
     use std::f64::consts::PI;
+
+    type Point = euclid::default::Point2D<f64>;
 
     #[test]
     fn empty_line() {

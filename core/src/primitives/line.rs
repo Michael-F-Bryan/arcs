@@ -62,7 +62,9 @@ impl<S> Clone for Line<S> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Point, Vector};
+
+    type Point = euclid::default::Point2D<f64>;
+    type Vector = euclid::default::Vector2D<f64>;
 
     #[test]
     fn calculate_length() {
