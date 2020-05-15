@@ -13,7 +13,8 @@ use std::iter::FromIterator;
 /// cases, like when the point is directly on or above the line.
 ///
 /// ```rust
-/// # use arcs_core::{Point, Line, algorithms::{ClosestPoint, Closest}};
+/// # use arcs_core::{primitives::Line, algorithms::{ClosestPoint, Closest}};
+/// # type Point = euclid::default::Point2D<f64>;
 /// let start = Point::new(-10.0, 0.0);
 /// let line = Line::new(start, Point::new(10.0, 0.0));
 ///
@@ -33,7 +34,8 @@ use std::iter::FromIterator;
 /// start and end of an [`Arc`].
 ///
 /// ```rust
-/// # use arcs_core::{Point, Arc, Angle, algorithms::{ClosestPoint, Closest}};
+/// # use arcs_core::{primitives::Arc, algorithms::{ClosestPoint, Closest}, Angle};
+/// # type Point = euclid::default::Point2D<f64>;
 /// let arc = Arc::from_centre_radius(
 ///     Point::new(0.0, 0.0),
 ///     10.0,
@@ -55,7 +57,8 @@ use std::iter::FromIterator;
 /// close to the centre.
 ///
 /// ```rust
-/// # use arcs_core::{Point, Arc, Angle, algorithms::{ClosestPoint, Closest}};
+/// # use arcs_core::{primitives::Arc, algorithms::{ClosestPoint, Closest}, Angle};
+/// # type Point = euclid::default::Point2D<f64>;
 /// let arc = Arc::from_centre_radius(
 ///     Point::new(0.0, 0.0),
 ///     10.0,

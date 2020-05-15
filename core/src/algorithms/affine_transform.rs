@@ -13,7 +13,8 @@ use euclid::default::Transform2D;
 /// to build up the overall transform matrix to be applied.
 ///
 /// ```rust
-/// use arcs_core::{Point, Angle, algorithms::AffineTransformable};
+/// use arcs_core::{Angle, algorithms::AffineTransformable};
+/// # type Point = euclid::default::Point2D<f64>;
 /// use euclid::{Transform2D, approxeq::ApproxEq};
 ///
 /// let point = Point::new(10.0, 10.0);

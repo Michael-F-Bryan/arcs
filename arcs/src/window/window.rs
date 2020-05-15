@@ -106,7 +106,7 @@ struct RenderSystem<'window, B> {
 
 impl<'window, B> RenderSystem<'window, B> {
     /// Calculate the area of the drawing displayed by the viewport.
-    fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox {
+    fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox<DrawingSpace> {
         let window_size = viewport
             .pixels_per_drawing_unit
             .inv()
@@ -269,13 +269,13 @@ struct DrawOrder<'world> {
     entities: Entities<'world>,
     drawing_objects: ReadStorage<'world, DrawingObject>,
     layers: ReadStorage<'world, Layer>,
-    bounding_boxes: ReadStorage<'world, BoundingBox>,
+    bounding_boxes: ReadStorage<'world, BoundingBox<DrawingSpace>>,
 }
 
 impl<'world> DrawOrder<'world> {
     fn calculate(
         &self,
-        viewport_dimensions: BoundingBox,
+        viewport_dimensions: BoundingBox<DrawingSpace>,
     ) -> impl Iterator<Item = (Entity, &'_ DrawingObject)> + '_ {
         type EntitiesByZLevel<'a> =
             BTreeMap<Reverse<usize>, Vec<(Entity, &'a DrawingObject)>>;

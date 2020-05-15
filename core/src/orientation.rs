@@ -39,7 +39,7 @@ impl Orientation {
 /// effectively becomes infinite and our centre could be literally anywhere.
 ///
 /// ```rust
-/// # use arcs_core::Point;
+/// # type Point = euclid::default::Point2D<f64>;
 /// let first = Point::new(0.0, 0.0);
 /// let second = Point::new(1.0, 0.0);
 /// let third = Point::new(25.0, 0.0);

@@ -40,7 +40,8 @@ impl<S> Arc<S> {
     /// You can use this constructor in the normal way.
     ///
     /// ```rust
-    /// use arcs_core::{Arc, Point};
+    /// # type Point = euclid::default::Point2D<f64>;
+    /// use arcs_core::primitives::Arc;
     ///
     /// let right = Point::new(10.0, 0.0);
     /// let above = Point::new(0.0, 10.0);
@@ -56,7 +57,8 @@ impl<S> Arc<S> {
     /// This will fail if the three points are [`Orientation::Collinear`].
     ///
     /// ```rust
-    /// use arcs_core::{Arc, Point};
+    /// # type Point = euclid::default::Point2D<f64>;
+    /// use arcs_core::primitives::Arc;
     ///
     /// let start = Point::new(0.0, 0.0);
     /// let middle = Point::new(10.0, 0.0);

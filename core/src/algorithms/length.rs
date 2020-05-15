@@ -15,7 +15,8 @@ impl<Space> Length for Line<Space> {
     /// Calculates the length of the line.
     ///
     /// ```rust
-    /// # use arcs_core::{algorithms::Length, Line, Point};
+    /// # use arcs_core::{algorithms::Length, primitives::Line};
+    /// # type Point = euclid::default::Point2D<f64>;
     /// let line = Line::new(Point::zero(), Point::new(5.0, 0.0));
     ///
     /// assert_eq!(line.length(), 5.0);
@@ -27,7 +28,8 @@ impl<Space> Length for Vector2D<f64, Space> {
     /// Calculates the [`Vector`]'s magnitude.
     ///
     /// ```rust
-    /// # use arcs_core::{algorithms::Length, Vector};
+    /// # use arcs_core::algorithms::Length;
+    /// # type Vector = euclid::default::Vector2D<f64>;
     /// let vector = Vector::new(3.0, 4.0);
     ///
     /// assert_eq!(vector.length(), 5.0);
@@ -39,7 +41,8 @@ impl<Space> Length for Arc<Space> {
     /// Calculates the length of an [`Arc`].
     ///
     /// ```rust
-    /// # use arcs_core::{algorithms::Length, Arc, Point, Angle};
+    /// # use arcs_core::{algorithms::Length, primitives::Arc, Angle};
+    /// # type Point = euclid::default::Point2D<f64>;
     /// # use std::f64::consts::PI;
     /// let radius = 50.0;
     /// let arc = Arc::from_centre_radius(

@@ -23,6 +23,7 @@ pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
 
 use specs::World;
+use crate::DrawingSpace;
 
 /// Get an iterator over the [`ComponentVtable`] for all known
 /// [`specs::Component`] types.
@@ -30,7 +31,7 @@ pub(crate) fn known_components(
 ) -> impl Iterator<Item = &'static ComponentVtable> + 'static {
     lazy_static::lazy_static! {
         static ref VTABLES: Vec<ComponentVtable> = vec![
-            ComponentVtable::for_type::<arcs_core::BoundingBox>(),
+            ComponentVtable::for_type::<arcs_core::BoundingBox<DrawingSpace>>(),
             ComponentVtable::for_type::<DrawingObject>(),
             ComponentVtable::for_type::<Layer>(),
             ComponentVtable::for_type::<Name>(),

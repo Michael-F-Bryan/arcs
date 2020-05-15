@@ -27,6 +27,14 @@
 
 pub mod components;
 pub mod systems;
+mod types;
 pub mod window;
 
 pub use arcs_core::*;
+
+pub use types::{CanvasSpace, DrawingSpace, Length, Point, Transform, Vector};
+
+/// An [`primitives::Arc`] in [`DrawingSpace`].
+pub type Arc = primitives::Arc<DrawingSpace>;
+/// A [`primitives::Line`] in [`DrawingSpace`].
+pub type Line = primitives::Line<DrawingSpace>;

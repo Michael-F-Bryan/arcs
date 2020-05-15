@@ -22,7 +22,7 @@ impl crate::algorithms::Scale for Viewport {
     }
 }
 
-impl Translate for Viewport {
+impl Translate<DrawingSpace> for Viewport {
     fn translate(&mut self, displacement: Vector) {
         self.centre.translate(displacement);
     }

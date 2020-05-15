@@ -7,7 +7,8 @@ use euclid::Transform2D;
 /// # Examples
 ///
 /// ```rust
-/// use arcs_core::{Line, Point, algorithms::ScaleNonUniform};
+/// use arcs_core::{primitives::Line, algorithms::ScaleNonUniform};
+/// # type Point = euclid::default::Point2D<f64>;
 ///
 /// let original = Line::new(Point::zero(), Point::new(10.0, 10.0));
 ///
