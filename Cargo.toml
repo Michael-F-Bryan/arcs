@@ -1,2 +1,2 @@
 [workspace]
-members = ["arcs", "core", "demo"]
+members = ["arcs", "core"]

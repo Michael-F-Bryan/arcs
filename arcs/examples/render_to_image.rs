@@ -79,7 +79,7 @@ fn main() {
     // We'll need a canvas to draw things on
     let width = 640;
     let height = 480;
-    let device = piet_common::Device::new().unwrap();
+    let mut device = piet_common::Device::new().unwrap();
     let mut bitmap_canvas = device.bitmap_target(width, height, 1.0).unwrap();
 
     {
