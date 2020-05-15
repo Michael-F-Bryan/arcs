@@ -1,3 +1,14 @@
+//! Core geometry primitives and algorithms extracted from the [`arcs`][arcs]
+//! crate.
+//!
+//! [arcs]: https://crates.io/crates/arcs/
+
+#![deny(
+    missing_debug_implementations,
+    missing_copy_implementations,
+    missing_docs
+)]
+
 pub mod algorithms;
 mod bounding_box;
 pub mod primitives;

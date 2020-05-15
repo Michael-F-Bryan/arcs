@@ -33,8 +33,11 @@ pub type Length = euclid::Length<f64, DrawingSpace>;
 /// How something may be oriented.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Orientation {
+    /// The points are arranged in a clockwise direction.
     Clockwise,
+    /// The points are arranged in an anti-clockwise direction.
     Anticlockwise,
+    /// The points are collinear.
     Collinear,
 }
 

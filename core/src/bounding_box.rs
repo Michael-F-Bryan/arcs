@@ -34,6 +34,8 @@ impl BoundingBox {
         }
     }
 
+    /// Create a [`BoundingBox`] based on it's centre and dimensions (as an
+    /// [`euclid::Size2D`]).
     pub fn from_centre_and_size(
         centre: Point,
         size: Size2D<f64, DrawingSpace>,
@@ -45,6 +47,7 @@ impl BoundingBox {
         )
     }
 
+    /// Create a [`BoundingBox`] based on it's centre and dimensions.
     pub fn from_centre_and_dimensions(
         centre: Point,
         width: Length,
@@ -67,15 +70,19 @@ impl BoundingBox {
         BoundingBox::new_unchecked(bottom_left, top_right)
     }
 
+    /// How wide is the [`BoundingBox`] in the X direction.
     pub fn width(self) -> Length { Length::new(self.diagonal().x) }
 
+    /// How high is the [`BoundingBox`] in the Y direction.
     pub fn height(self) -> Length { Length::new(self.diagonal().y) }
 
+    /// Calculate the box's area.
     pub fn area(self) -> f64 {
         let Vector { x, y, .. } = self.diagonal();
         x * y
     }
 
+    /// A vector from the bottom-left corner to the top-right corner.
     pub fn diagonal(self) -> Vector { self.top_right - self.bottom_left }
 
     /// Merge two [`BoundingBox`]es.
@@ -83,6 +90,8 @@ impl BoundingBox {
         BoundingBox::new(left.bottom_left, right.top_right)
     }
 
+    /// Create a [`BoundingBox`] which fully encompasses a set of [`Bounded`]
+    /// items.
     pub fn around<I, B>(items: I) -> Option<BoundingBox>
     where
         I: IntoIterator<Item = B>,
@@ -97,26 +106,35 @@ impl BoundingBox {
             })
     }
 
+    /// The bottom-left corner.
     pub fn bottom_left(self) -> Point { self.bottom_left }
 
+    /// The bottom-right corner.
     pub fn bottom_right(self) -> Point {
         self.bottom_left + Vector::from_lengths(self.width(), Length::zero())
     }
 
+    /// The top-right corner.
     pub fn top_right(self) -> Point { self.top_right }
 
+    /// The top-left corner.
     pub fn top_left(self) -> Point {
         self.bottom_left + Vector::from_lengths(Length::zero(), self.height())
     }
 
+    /// The minimum X value.
     pub fn min_x(self) -> f64 { self.bottom_left.x }
 
+    /// The minimum Y value.
     pub fn min_y(self) -> f64 { self.bottom_left.y }
 
+    /// The maximum X value.
     pub fn max_x(self) -> f64 { self.top_right.x }
 
+    /// The maximum Y value.
     pub fn max_y(self) -> f64 { self.top_right.y }
 
+    /// Does this [`BoundingBox`] fully contain another?
     pub fn fully_contains(self, other: BoundingBox) -> bool {
         self.min_x() <= other.min_x()
             && other.max_x() <= self.max_x()
@@ -124,6 +142,7 @@ impl BoundingBox {
             && other.max_y() <= self.max_y()
     }
 
+    /// Do these two [`BoundingBox`]es overlap?
     pub fn intersects_with(&self, other: BoundingBox) -> bool {
         // FIXME: Actually implement this
         self.fully_contains(other)

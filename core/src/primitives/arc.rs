@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use crate::{Angle, Orientation};
 use euclid::{Point2D, Vector2D};
 use std::f64::consts::PI;
@@ -12,6 +14,9 @@ pub struct Arc<S> {
 }
 
 impl<S> Arc<S> {
+    /// Create an [`Arc`] based upon its centre and radius.
+    ///
+    /// # Examples
     pub fn from_centre_radius(
         centre: Point2D<f64, S>,
         radius: f64,
@@ -28,15 +33,44 @@ impl<S> Arc<S> {
         }
     }
 
+    /// Try to find the [`Arc`] which will pass through three points.
+    ///
+    /// # Examples
+    ///
+    /// You can use this constructor in the normal way.
+    ///
+    /// ```rust
+    /// use arcs_core::{Arc, Point};
+    ///
+    /// let right = Point::new(10.0, 0.0);
+    /// let above = Point::new(0.0, 10.0);
+    /// let left = Point::new(-10.0, 0.0);
+    ///
+    /// let got = Arc::from_three_points(right, above, left).unwrap();
+    ///
+    /// assert_eq!(got.centre(), Point::zero());
+    /// assert_eq!(got.radius(), 10.0);
+    /// assert!(got.is_anticlockwise());
+    /// ```
+    ///
+    /// This will fail if the three points are [`Orientation::Collinear`].
+    ///
+    /// ```rust
+    /// use arcs_core::{Arc, Point};
+    ///
+    /// let start = Point::new(0.0, 0.0);
+    /// let middle = Point::new(10.0, 0.0);
+    /// let end = Point::new(20.0, 0.0);
+    ///
+    /// let got = Arc::from_three_points(start, middle, end);
+    ///
+    /// assert!(got.is_none());
+    /// ```
     pub fn from_three_points(
         start: Point2D<f64, S>,
         middle: Point2D<f64, S>,
         end: Point2D<f64, S>,
     ) -> Option<Self> {
-        debug_assert!(
-            Orientation::of(start, middle, end) != Orientation::Collinear
-        );
-
         let centre = crate::centre_of_three_points(start, middle, end)?;
         let radius = (start - centre).length();
         let start_angle = (start - centre).angle_from_x_axis();
@@ -50,8 +84,10 @@ impl<S> Arc<S> {
         ))
     }
 
+    /// The [`Arc`]'s centre point.
     pub const fn centre(self) -> Point2D<f64, S> { self.centre }
 
+    /// The [`Arc`]'s radius.
     pub const fn radius(self) -> f64 { self.radius }
 
     pub const fn start_angle(self) -> Angle { self.start_angle }
