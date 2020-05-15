@@ -1,7 +1,4 @@
-use crate::{
-    algorithms::Bounded,
-    components::{BoundingBox, DrawingObject},
-};
+use crate::{algorithms::Bounded, components::DrawingObject, BoundingBox, DrawingSpace};
 use specs::prelude::*;
 
 /// Lets us keep track of a [`DrawingObject`]'s rough location in *Drawing
@@ -27,7 +24,7 @@ impl SyncBounds {
 
 impl<'world> System<'world> for SyncBounds {
     type SystemData = (
-        WriteStorage<'world, BoundingBox>,
+        WriteStorage<'world, BoundingBox<DrawingSpace>>,
         ReadStorage<'world, DrawingObject>,
         Entities<'world>,
     );

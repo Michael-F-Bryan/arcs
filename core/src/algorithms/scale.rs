@@ -1,4 +1,4 @@
-use crate::{algorithms::ScaleNonUniform, components::Viewport, Arc};
+use crate::{algorithms::ScaleNonUniform, primitives::Arc};
 
 /// Something who's dimensions can be scaled uniformly.
 pub trait Scale {
@@ -23,7 +23,7 @@ impl<S: ScaleNonUniform> Scale for S {
     }
 }
 
-impl Scale for Arc {
+impl<Space> Scale for Arc<Space> {
     fn scale(&mut self, scale_factor: f64) {
         *self = Arc::from_centre_radius(
             self.centre().scaled(scale_factor),
@@ -34,25 +34,19 @@ impl Scale for Arc {
     }
 }
 
-impl Scale for Viewport {
-    /// Zoom the viewport, where a positive `scale_factor` will zoom in.
-    fn scale(&mut self, scale_factor: f64) {
-        assert!(scale_factor.is_finite() && scale_factor != 0.0);
-        self.pixels_per_drawing_unit = euclid::Scale::new(
-            self.pixels_per_drawing_unit.get() / scale_factor,
-        );
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::{
         algorithms::{AffineTransformable, Translate},
-        components::BoundingBox,
-        Arc, Line, Point, Transform, Vector,
+        primitives::{Arc, Line},
+        BoundingBox,
     };
     use euclid::Angle;
+
+    pub type Vector = euclid::default::Vector2D<f64>;
+    pub type Transform = euclid::default::Transform2D<f64>;
+    pub type Point = euclid::default::Point2D<f64>;
 
     #[test]
     fn scale_vector() {

@@ -1,6 +1,5 @@
-use crate::{
-    algorithms::AffineTransformable, components::BoundingBox, Transform,
-};
+use crate::{algorithms::AffineTransformable, BoundingBox};
+use euclid::Transform2D;
 
 /// Something who's dimensions can be scaled independently (the *non-uniform*
 /// bit) in the x and y directions.
@@ -8,7 +7,8 @@ use crate::{
 /// # Examples
 ///
 /// ```rust
-/// use arcs::{Line, Point, algorithms::ScaleNonUniform};
+/// use arcs_core::{primitives::Line, algorithms::ScaleNonUniform};
+/// # type Point = euclid::default::Point2D<f64>;
 ///
 /// let original = Line::new(Point::zero(), Point::new(10.0, 10.0));
 ///
@@ -35,11 +35,11 @@ pub trait ScaleNonUniform {
 
 impl<A: AffineTransformable> ScaleNonUniform for A {
     fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64) {
-        self.transform(Transform::create_scale(factor_x, factor_y));
+        self.transform(Transform2D::create_scale(factor_x, factor_y));
     }
 }
 
-impl ScaleNonUniform for BoundingBox {
+impl<Space> ScaleNonUniform for BoundingBox<Space> {
     fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64) {
         let bottom_left =
             self.bottom_left().scaled_non_uniform(factor_x, factor_y);
@@ -52,7 +52,10 @@ impl ScaleNonUniform for BoundingBox {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{algorithms::Translate, Line, Point, Vector};
+    use crate::{algorithms::Translate, primitives::Line};
+
+    type Point = euclid::default::Point2D<f64>;
+    type Vector = euclid::default::Vector2D<f64>;
 
     #[test]
     fn scale_point() {
@@ -88,7 +91,7 @@ mod tests {
         // method: keep in mind that transforms get composed *in reverse
         // execution order*
         let combined_transform =
-            Transform::create_translation(-base.x, -base.y)
+            Transform2D::create_translation(-base.x, -base.y)
                 .post_scale(factor_x, factor_y)
                 .post_translate(base);
 

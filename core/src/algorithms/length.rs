@@ -1,4 +1,5 @@
-use crate::{Arc, Line, Vector};
+use crate::primitives::{Arc, Line};
+use euclid::Vector2D;
 
 /// Something which has a finite length.
 pub trait Length {
@@ -10,11 +11,12 @@ impl<'a, L: Length + ?Sized> Length for &'a L {
     fn length(&self) -> f64 { (*self).length() }
 }
 
-impl Length for Line {
+impl<Space> Length for Line<Space> {
     /// Calculates the length of the line.
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, Line, Point};
+    /// # use arcs_core::{algorithms::Length, primitives::Line};
+    /// # type Point = euclid::default::Point2D<f64>;
     /// let line = Line::new(Point::zero(), Point::new(5.0, 0.0));
     ///
     /// assert_eq!(line.length(), 5.0);
@@ -22,11 +24,12 @@ impl Length for Line {
     fn length(&self) -> f64 { self.displacement().length() }
 }
 
-impl Length for Vector {
-    /// Calculates the [`Vector`]'s magnitude.
+impl<Space> Length for Vector2D<f64, Space> {
+    /// Calculates the [`Vector2D`]'s magnitude.
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, Vector};
+    /// # use arcs_core::algorithms::Length;
+    /// # type Vector = euclid::default::Vector2D<f64>;
     /// let vector = Vector::new(3.0, 4.0);
     ///
     /// assert_eq!(vector.length(), 5.0);
@@ -34,11 +37,12 @@ impl Length for Vector {
     fn length(&self) -> f64 { euclid::Vector2D::length(self) }
 }
 
-impl Length for Arc {
+impl<Space> Length for Arc<Space> {
     /// Calculates the length of an [`Arc`].
     ///
     /// ```rust
-    /// # use arcs::{algorithms::Length, Arc, Point, Angle};
+    /// # use arcs_core::{algorithms::Length, primitives::Arc, Angle};
+    /// # type Point = euclid::default::Point2D<f64>;
     /// # use std::f64::consts::PI;
     /// let radius = 50.0;
     /// let arc = Arc::from_centre_radius(
@@ -56,7 +60,9 @@ impl Length for Arc {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Angle, Point};
+    use crate::Angle;
+
+    type Point = euclid::default::Point2D<f64>;
 
     #[test]
     fn line() {

@@ -1,5 +1,6 @@
-use crate::{algorithms::Bounded, components::BoundingBox, Arc, Point};
+use crate::{algorithms::Bounded, Arc, Point};
 use aabb_quadtree::{ItemId, QuadTree, Spatial};
+use arcs_core::BoundingBox;
 use euclid::Angle;
 use quadtree_euclid::{TypedPoint2D, TypedRect, TypedSize2D};
 use specs::{world::Index, Entity};

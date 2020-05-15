@@ -1,20 +1,24 @@
-use crate::{Angle, Arc, Line, Point};
+use crate::{
+    primitives::{Arc, Line},
+    Angle,
+};
+use euclid::Point2D;
 use std::{
     iter,
     iter::{Chain, Once},
 };
 
-/// Approximate a shape with a bunch of [`Point`]s.
-pub trait Approximate {
+/// Approximate a shape with a bunch of [`Point2D`]s.
+pub trait Approximate<Space> {
     /// An iterator over the approximated vertices.
-    type Iter: Iterator<Item = Point>;
+    type Iter: Iterator<Item = Point2D<f64, Space>>;
 
     /// Approximate the shape, ensuring the resulting path is within `tolerance`
     /// units of the original.
     fn approximate(&self, tolerance: f64) -> Self::Iter;
 }
 
-impl<'a, A: Approximate + ?Sized> Approximate for &'a A {
+impl<'a, Space, A: Approximate<Space> + ?Sized> Approximate<Space> for &'a A {
     type Iter = A::Iter;
 
     fn approximate(&self, tolerance: f64) -> Self::Iter {
@@ -22,24 +26,24 @@ impl<'a, A: Approximate + ?Sized> Approximate for &'a A {
     }
 }
 
-impl Approximate for Point {
-    type Iter = Once<Point>;
+impl<Space> Approximate<Space> for Point2D<f64, Space> {
+    type Iter = Once<Point2D<f64, Space>>;
 
     fn approximate(&self, _tolerance: f64) -> Self::Iter {
         std::iter::once(*self)
     }
 }
 
-impl Approximate for Line {
-    type Iter = Chain<Once<Point>, Once<Point>>;
+impl<Space> Approximate<Space> for Line<Space> {
+    type Iter = Chain<Once<Point2D<f64, Space>>, Once<Point2D<f64, Space>>>;
 
     fn approximate(&self, _tolerance: f64) -> Self::Iter {
         iter::once(self.start).chain(iter::once(self.end))
     }
 }
 
-impl Approximate for Arc {
-    type Iter = ApproximatedArc;
+impl<Space> Approximate<Space> for Arc<Space> {
+    type Iter = ApproximatedArc<Space>;
 
     fn approximate(&self, tolerance: f64) -> Self::Iter {
         // Draw a chord between points A and B on a circle with centre C.
@@ -86,15 +90,15 @@ impl Approximate for Arc {
 /// `Arc::approximate()`.
 #[derive(Debug, Clone)]
 #[allow(missing_copy_implementations)] // iterators which are Copy are a footgun
-pub struct ApproximatedArc {
+pub struct ApproximatedArc<Space> {
     i: usize,
     steps: usize,
     step_size: Angle,
-    arc: Arc,
+    arc: Arc<Space>,
 }
 
-impl Iterator for ApproximatedArc {
-    type Item = Point;
+impl<Space> Iterator for ApproximatedArc<Space> {
+    type Item = Point2D<f64, Space>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.i > self.steps {
@@ -111,6 +115,8 @@ impl Iterator for ApproximatedArc {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    type Point = euclid::default::Point2D<f64>;
 
     #[test]
     fn approximate_arc_with_points() {

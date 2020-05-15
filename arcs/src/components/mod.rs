@@ -1,28 +1,29 @@
 //! Common components used by the `arcs` CAD library.
 
-mod bounding_box;
 mod dimension;
 mod drawing_object;
 mod layer;
 mod name;
 mod selected;
-mod spatial_entity;
 mod styles;
 mod viewport;
 mod vtable;
 
-pub use bounding_box::BoundingBox;
+// FIXME: I'm not 100% sure this was the right approach for a quadtree...
+// mod spatial_entity;
+// pub use spatial_entity::{Space, SpatialEntity};
+
 pub use dimension::Dimension;
 pub use drawing_object::{DrawingObject, Geometry};
 pub use layer::Layer;
 pub use name::{Name, NameTable};
 pub use selected::Selected;
-pub use spatial_entity::{Space, SpatialEntity};
 pub use styles::{LineStyle, PointStyle, WindowStyle};
 pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
 
 use specs::World;
+use crate::DrawingSpace;
 
 /// Get an iterator over the [`ComponentVtable`] for all known
 /// [`specs::Component`] types.
@@ -30,7 +31,7 @@ pub(crate) fn known_components(
 ) -> impl Iterator<Item = &'static ComponentVtable> + 'static {
     lazy_static::lazy_static! {
         static ref VTABLES: Vec<ComponentVtable> = vec![
-            ComponentVtable::for_type::<BoundingBox>(),
+            ComponentVtable::for_type::<arcs_core::BoundingBox<DrawingSpace>>(),
             ComponentVtable::for_type::<DrawingObject>(),
             ComponentVtable::for_type::<Layer>(),
             ComponentVtable::for_type::<Name>(),
@@ -53,6 +54,4 @@ pub fn register(world: &mut World) {
         log::debug!("Registering {}", component.name());
         component.register(world);
     }
-
-    world.insert(Space::default());
 }

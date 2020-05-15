@@ -1,5 +1,5 @@
-use crate::{DrawingSpace, Line, Point};
-use euclid::Transform2D;
+use crate::primitives::Line;
+use euclid::default::Transform2D;
 
 /// Something which can be transformed using an arbitrary [`Transform2D`] matrix
 /// and still be semantically valid.
@@ -13,7 +13,8 @@ use euclid::Transform2D;
 /// to build up the overall transform matrix to be applied.
 ///
 /// ```rust
-/// use arcs::{Point, Angle, algorithms::AffineTransformable};
+/// use arcs_core::{Angle, algorithms::AffineTransformable};
+/// # type Point = euclid::default::Point2D<f64>;
 /// use euclid::{Transform2D, approxeq::ApproxEq};
 ///
 /// let point = Point::new(10.0, 10.0);
@@ -29,12 +30,12 @@ use euclid::Transform2D;
 /// ```
 ///
 /// [wiki]: https://en.wikipedia.org/wiki/Affine_transformation
-pub trait AffineTransformable<Space = DrawingSpace> {
+pub trait AffineTransformable {
     /// Apply a transform matrix in-place.
-    fn transform(&mut self, transform: Transform2D<f64, Space, Space>);
+    fn transform(&mut self, transform: Transform2D<f64>);
 
     /// A convenience method for getting a transformed copy of this object.
-    fn transformed(&self, transform: Transform2D<f64, Space, Space>) -> Self
+    fn transformed(&self, transform: Transform2D<f64>) -> Self
     where
         Self: Sized + Clone,
     {
@@ -45,34 +46,32 @@ pub trait AffineTransformable<Space = DrawingSpace> {
     }
 }
 
-impl<'t, S, T: AffineTransformable<S> + ?Sized> AffineTransformable<S>
-    for &'t mut T
-{
-    fn transform(&mut self, transform: Transform2D<f64, S, S>) {
+impl<'t, T: AffineTransformable + ?Sized> AffineTransformable for &'t mut T {
+    fn transform(&mut self, transform: Transform2D<f64>) {
         (*self).transform(transform);
     }
 }
 
-impl<Space> AffineTransformable<Space> for euclid::Vector2D<f64, Space> {
-    fn transform(&mut self, transform: Transform2D<f64, Space, Space>) {
-        *self = transform.transform_vector(*self);
+impl<Space> AffineTransformable for euclid::Vector2D<f64, Space> {
+    fn transform(&mut self, transform: Transform2D<f64>) {
+        *self = transform
+            .pre_transform(&euclid::Transform2D::<f64, Space, _>::identity())
+            .post_transform(&euclid::Transform2D::<f64, _, Space>::identity())
+            .transform_vector(*self);
     }
 }
 
-impl AffineTransformable for Point {
-    fn transform(
-        &mut self,
-        transform: Transform2D<f64, DrawingSpace, DrawingSpace>,
-    ) {
-        *self = transform.transform_point(*self);
+impl<Space> AffineTransformable for euclid::Point2D<f64, Space> {
+    fn transform(&mut self, transform: Transform2D<f64>) {
+        *self = transform
+            .pre_transform(&euclid::Transform2D::<f64, Space, _>::identity())
+            .post_transform(&euclid::Transform2D::<f64, _, Space>::identity())
+            .transform_point(*self);
     }
 }
 
-impl AffineTransformable for Line {
-    fn transform(
-        &mut self,
-        transform: Transform2D<f64, DrawingSpace, DrawingSpace>,
-    ) {
+impl<Space> AffineTransformable for Line<Space> {
+    fn transform(&mut self, transform: Transform2D<f64>) {
         self.start.transform(transform);
         self.end.transform(transform);
     }

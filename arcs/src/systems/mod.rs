@@ -2,11 +2,11 @@
 
 mod bounds;
 mod name_table_bookkeeping;
-mod spatial_relation;
+// mod spatial_relation;
 
 pub use bounds::SyncBounds;
 pub use name_table_bookkeeping::NameTableBookkeeping;
-pub use spatial_relation::SpatialRelation;
+// pub use spatial_relation::SpatialRelation;
 
 use specs::{DispatcherBuilder, World};
 
@@ -22,9 +22,4 @@ pub fn register_background_tasks<'a, 'b>(
             &[],
         )
         .with(SyncBounds::new(world), SyncBounds::NAME, &[])
-        .with(
-            SpatialRelation::new(world),
-            SpatialRelation::NAME,
-            &[SyncBounds::NAME],
-        )
 }
