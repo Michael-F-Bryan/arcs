@@ -6,7 +6,8 @@
 #![deny(
     missing_debug_implementations,
     missing_copy_implementations,
-    missing_docs
+    missing_docs,
+    intra_doc_link_resolution_failure
 )]
 
 pub mod algorithms;

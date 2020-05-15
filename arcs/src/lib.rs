@@ -18,12 +18,7 @@
 //! [mco]: https://en.wikipedia.org/wiki/Mars_Climate_Orbiter
 
 #![forbid(unsafe_code)]
-
-// #![deny(
-//     missing_debug_implementations,
-//     missing_copy_implementations,
-//     missing_docs
-// )]
+#![deny(missing_debug_implementations, intra_doc_link_resolution_failure)]
 
 pub mod components;
 pub mod systems;
