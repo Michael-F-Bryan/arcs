@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["GAUSS_LEGENDRE_COEFFS_11",""],["GAUSS_LEGENDRE_COEFFS_24",""],["GAUSS_LEGENDRE_COEFFS_3",""],["GAUSS_LEGENDRE_COEFFS_5",""],["GAUSS_LEGENDRE_COEFFS_7",""],["GAUSS_LEGENDRE_COEFFS_9",""]],"fn":[["solve_cubic","Find real roots of cubic equation."],["solve_quadratic","Find real roots of quadratic equation."]]});

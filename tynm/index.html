@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `tynm` crate."><meta name="keywords" content="rust, rustlang, rust-lang, tynm"><title>tynm - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../tynm/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate tynm</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all tynm's items</p></a><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'tynm', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/tynm/lib.rs.html#3-230' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>tynm</a></span></h1><div class='docblock'><p>Returns type names with a specifiable number of module segments as a <code>String</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="comment">// === std library === //</span>
+<span class="macro">assert_eq</span><span class="macro">!</span>(
+    <span class="ident">std</span>::<span class="ident">any</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
+    <span class="string">&quot;core::option::Option&lt;alloc::string::String&gt;&quot;</span>,
+);
+
+<span class="comment">// === tynm === //</span>
+<span class="comment">// Simple type name:</span>
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">tynm</span>::<span class="ident">type_name</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(), <span class="string">&quot;Option&lt;String&gt;&quot;</span>,);
+
+<span class="comment">// Type name with 1 module segment, starting from the most significant module.</span>
+<span class="macro">assert_eq</span><span class="macro">!</span>(
+    <span class="ident">tynm</span>::<span class="ident">type_namem</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="number">1</span>),
+    <span class="string">&quot;core::..::Option&lt;alloc::..::String&gt;&quot;</span>,
+);
+
+<span class="comment">// Type name with 1 module segment, starting from the least significant module.</span>
+<span class="macro">assert_eq</span><span class="macro">!</span>(
+    <span class="ident">tynm</span>::<span class="ident">type_namen</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="number">1</span>),
+    <span class="string">&quot;..::option::Option&lt;..::string::String&gt;&quot;</span>,
+);
+
+<span class="comment">// Type name with 1 module segment from both the most and least significant modules.</span>
+<span class="attribute">#[<span class="ident">rustfmt</span>::<span class="ident">skip</span>]</span>
+<span class="kw">mod</span> <span class="ident">rust_out</span> { <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">two</span> { <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">three</span> { <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Struct</span>; } } }
+<span class="macro">assert_eq</span><span class="macro">!</span>(
+    <span class="ident">tynm</span>::<span class="ident">type_namemn</span>::<span class="op">&lt;</span><span class="ident">rust_out</span>::<span class="ident">two</span>::<span class="ident">three</span>::<span class="ident">Struct</span><span class="op">&gt;</span>(<span class="number">1</span>, <span class="number">1</span>),
+    <span class="string">&quot;rust_out::..::three::Struct&quot;</span>,
+);</pre></div>
+<h1 id="motivation" class="section-header"><a href="#motivation">Motivation</a></h1>
+<p>The <a href="https://doc.rust-lang.org/std/any/fn.type_name.html"><code>std::any::type_name</code></a> function stabilized in Rust 1.38 returns the fully qualified type
+name with all module segments. This can be difficult to read in error messages, especially for
+type-parameterized types.</p>
+<p>Often, the simple type name is more readable, and enough to distinguish the type referenced in
+an error.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.TypeNameDisplay.html" title='tynm::TypeNameDisplay struct'>TypeNameDisplay</a></td><td class='docblock-short'><p>Helper struct for printing type names directly to <code>format!</code>.</p>
+</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.TypeName.html" title='tynm::TypeName enum'>TypeName</a></td><td class='docblock-short'><p>Organizes type name string into distinct parts.</p>
+</td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr class='module-item'><td><a class="fn" href="fn.type_name.html" title='tynm::type_name fn'>type_name</a></td><td class='docblock-short'><p>Returns the simple type name.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.type_namem.html" title='tynm::type_namem fn'>type_namem</a></td><td class='docblock-short'><p>Returns the type name with at most <code>m</code> most significant module path segments.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.type_namemn.html" title='tynm::type_namemn fn'>type_namemn</a></td><td class='docblock-short'><p>Returns the type name with <code>m</code> most significant, and <code>n</code> least significant module path segments.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.type_namen.html" title='tynm::type_namen fn'>type_namen</a></td><td class='docblock-short'><p>Returns the type name with at most <code>n</code> least significant module path segments.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../";window.currentCrate = "tynm";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

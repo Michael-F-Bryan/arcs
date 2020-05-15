@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `prelude` mod in crate `specs`."><meta name="keywords" content="rust, rustlang, rust-lang, prelude"><title>specs::prelude - Rust</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../specs/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a><p class='location'>Module prelude</p><div class="sidebar-elems"><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'><a href='../index.html'>specs</a></p><script>window.sidebarCurrent = {name: 'prelude', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../../src/specs/prelude.rs.html#1-27' title='goto source code'>[src]</a></span><span class='in-band'>Module <a href='../index.html'>specs</a>::<wbr><a class="mod" href=''>prelude</a></span></h1><div class='docblock'><p>Prelude module</p>
+<p>Contains all of the most common traits, structures,</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub use crate::join::<a class="trait" href="../../specs/join/trait.Join.html" title="trait specs::join::Join">Join</a>;</code></td></tr><tr><td><code>pub use crate::changeset::<a class="struct" href="../../specs/changeset/struct.ChangeSet.html" title="struct specs::changeset::ChangeSet">ChangeSet</a>;</code></td></tr><tr><td><code>pub use crate::storage::<a class="struct" href="../../specs/storage/struct.Storage.html" title="struct specs::storage::Storage">Storage</a>;</code></td></tr><tr><td><code>pub use crate::world::<a class="trait" href="../../specs/world/trait.Builder.html" title="trait specs::world::Builder">Builder</a>;</code></td></tr><tr><td><code>pub use crate::world::<a class="struct" href="../../specs/world/struct.EntityBuilder.html" title="struct specs::world::EntityBuilder">EntityBuilder</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.AsyncDispatcher.html" title='specs::prelude::AsyncDispatcher struct'>AsyncDispatcher</a></td><td class='docblock-short'><p>Like, <code>Dispatcher</code> but works asynchronously.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.BitSet.html" title='specs::prelude::BitSet struct'>BitSet</a></td><td class='docblock-short'><p>A <code>BitSet</code> is a simple set designed to track which indices are placed
+into it.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.DefaultVecStorage.html" title='specs::prelude::DefaultVecStorage struct'>DefaultVecStorage</a></td><td class='docblock-short'><p>Vector storage, like <code>VecStorage</code>, but allows safe access to the
+interior slices because unused slots are always initialized.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.DenseVecStorage.html" title='specs::prelude::DenseVecStorage struct'>DenseVecStorage</a></td><td class='docblock-short'><p>Dense vector storage. Has a redirection 2-way table
+between entities and components, allowing to leave
+no gaps within the data.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Dispatcher.html" title='specs::prelude::Dispatcher struct'>Dispatcher</a></td><td class='docblock-short'><p>The dispatcher struct, allowing
+systems to be executed in parallel.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.DispatcherBuilder.html" title='specs::prelude::DispatcherBuilder struct'>DispatcherBuilder</a></td><td class='docblock-short'><p>Builder for the <a href="struct.Dispatcher.html"><code>Dispatcher</code></a>.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Entity.html" title='specs::prelude::Entity struct'>Entity</a></td><td class='docblock-short'><p><code>Entity</code> type, as seen by the user.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.FlaggedStorage.html" title='specs::prelude::FlaggedStorage struct'>FlaggedStorage</a></td><td class='docblock-short'><p>Wrapper storage that tracks modifications, insertions, and removals of
+components through an <code>EventChannel</code>.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.HashMapStorage.html" title='specs::prelude::HashMapStorage struct'>HashMapStorage</a></td><td class='docblock-short'><p><code>HashMap</code>-based storage. Best suited for rare components.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.LazyUpdate.html" title='specs::prelude::LazyUpdate struct'>LazyUpdate</a></td><td class='docblock-short'><p>Lazy updates can be used for world updates
+that need to borrow a lot of resources
+and as such should better be done at the end.
+They work lazily in the sense that they are
+dispatched when calling <code>world.maintain()</code>.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.NullStorage.html" title='specs::prelude::NullStorage struct'>NullStorage</a></td><td class='docblock-short'><p>A null storage type, used for cases where the component
+doesn't contain any data and instead works as a simple flag.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Read.html" title='specs::prelude::Read struct'>Read</a></td><td class='docblock-short'><p>Allows to fetch a resource in a system immutably.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.ReaderId.html" title='specs::prelude::ReaderId struct'>ReaderId</a></td><td class='docblock-short'><p>A reader ID which represents a subscription to the events pushed to the
+<code>EventChannel</code>.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.ResourceId.html" title='specs::prelude::ResourceId struct'>ResourceId</a></td><td class='docblock-short'><p>The id of a <a href="trait.Resource.html"><code>Resource</code></a>, which simply wraps a type id and a &quot;dynamic ID&quot;.
+The &quot;dynamic ID&quot; is usually just left <code>0</code>, and, unless such documentation
+says otherwise, other libraries will assume that it is always <code>0</code>; non-zero
+IDs are only used for special resource types that are specifically defined
+in a more dynamic way, such that resource types can essentially be created
+at run time, without having different static types.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.StaticAccessor.html" title='specs::prelude::StaticAccessor struct'>StaticAccessor</a></td><td class='docblock-short'><p>The static accessor that is used for <code>SystemData</code>.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.VecStorage.html" title='specs::prelude::VecStorage struct'>VecStorage</a></td><td class='docblock-short'><p>Vector storage. Uses a simple <code>Vec</code>. Supposed to have maximum
+performance for the components mostly present in entities.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.World.html" title='specs::prelude::World struct'>World</a></td><td class='docblock-short'><p>A <a href="../../specs/prelude/trait.Resource.html" title="Resource">Resource</a> container, which provides methods to insert, access and manage
+the contained resources.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Write.html" title='specs::prelude::Write struct'>Write</a></td><td class='docblock-short'><p>Allows to fetch a resource in a system mutably.</p>
+</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.ComponentEvent.html" title='specs::prelude::ComponentEvent enum'>ComponentEvent</a></td><td class='docblock-short'><p>Component storage events received from a <code>FlaggedStorage</code> or any storage
+that implements <code>Tracked</code>.</p>
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.Accessor.html" title='specs::prelude::Accessor trait'>Accessor</a></td><td class='docblock-short'><p>A trait for accessing read/write multiple resources from a system. This can
+be used to create dynamic systems that don't specify what they fetch at
+compile-time.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.Component.html" title='specs::prelude::Component trait'>Component</a></td><td class='docblock-short'><p>Abstract component type.
+Doesn't have to be Copy or even Clone.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.ParJoin.html" title='specs::prelude::ParJoin trait'>ParJoin</a></td><td class='docblock-short'><p>The purpose of the <code>ParJoin</code> trait is to provide a way
+to access multiple storages in parallel at the same time with
+the merged bit set.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.ParallelIterator.html" title='specs::prelude::ParallelIterator trait'>ParallelIterator</a></td><td class='docblock-short'><p>Parallel version of the standard iterator trait.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.Resource.html" title='specs::prelude::Resource trait'>Resource</a></td><td class='docblock-short'><p>A resource is a data slot which lives in the <code>World</code> can only be accessed
+according to Rust's typical borrowing model (one writer xor multiple
+readers).</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.RunNow.html" title='specs::prelude::RunNow trait'>RunNow</a></td><td class='docblock-short'><p>Trait for fetching data and running systems. Automatically implemented for
+systems.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.System.html" title='specs::prelude::System trait'>System</a></td><td class='docblock-short'><p>A <code>System</code>, executed with a set of required <a href="trait.Resource.html"><code>Resource</code></a>s.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.SystemData.html" title='specs::prelude::SystemData trait'>SystemData</a></td><td class='docblock-short'><p>A static system data that can specify its dependencies at statically (at
+compile-time). Most system data is a <code>SystemData</code>, the <code>DynamicSystemData</code>
+type is only needed for very special setups.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.Tracked.html" title='specs::prelude::Tracked trait'>Tracked</a></td><td class='docblock-short'><p><code>UnprotectedStorage</code>s that track modifications, insertions, and
+removals of components.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.WorldExt.html" title='specs::prelude::WorldExt trait'>WorldExt</a></td><td class='docblock-short'><p>This trait provides some extension methods to make working with shred's
+<a href="../../specs/world/struct.World.html" title="World">World</a> easier.</p>
+</td></tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table><tr class='module-item'><td><a class="type" href="type.Entities.html" title='specs::prelude::Entities type'>Entities</a></td><td class='docblock-short'><p>A wrapper for a read <code>Entities</code> resource.
+Note that this is just <code>Read&lt;Entities&gt;</code>, so
+you can easily use it in your system:</p>
+</td></tr><tr class='module-item'><td><a class="type" href="type.ReadExpect.html" title='specs::prelude::ReadExpect type'>ReadExpect</a></td><td class='docblock-short'><p>Allows to fetch a resource in a system immutably.
+<strong>This will panic if the resource does not exist.</strong>
+Usage of <code>Read</code> or <code>Option&lt;Read&gt;</code> is therefore recommended.</p>
+</td></tr><tr class='module-item'><td><a class="type" href="type.ReadStorage.html" title='specs::prelude::ReadStorage type'>ReadStorage</a></td><td class='docblock-short'><p>A storage with read access.</p>
+</td></tr><tr class='module-item'><td><a class="type" href="type.WriteExpect.html" title='specs::prelude::WriteExpect type'>WriteExpect</a></td><td class='docblock-short'><p>Allows to fetch a resource in a system mutably.
+<strong>This will panic if the resource does not exist.</strong>
+Usage of <code>Write</code> or <code>Option&lt;Write&gt;</code> is therefore recommended.</p>
+</td></tr><tr class='module-item'><td><a class="type" href="type.WriteStorage.html" title='specs::prelude::WriteStorage type'>WriteStorage</a></td><td class='docblock-short'><p>A storage with read and write access.</p>
+</td></tr></table><h2 id='derives' class='section-header'><a href="#derives">Derive Macros</a></h2>
+<table><tr class='module-item'><td><a class="derive" href="derive.SystemData.html" title='specs::prelude::SystemData derive'>SystemData</a></td><td class='docblock-short'><p>Used to <code>#[derive]</code> the trait <code>SystemData</code>.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "specs";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

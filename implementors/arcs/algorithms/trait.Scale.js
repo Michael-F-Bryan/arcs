@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["arcs"] = [{"text":"impl <a class=\"trait\" href=\"arcs/algorithms/trait.Scale.html\" title=\"trait arcs::algorithms::Scale\">Scale</a> for <a class=\"struct\" href=\"arcs/components/struct.Viewport.html\" title=\"struct arcs::components::Viewport\">Viewport</a>","synthetic":false,"types":["arcs::components::viewport::Viewport"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
