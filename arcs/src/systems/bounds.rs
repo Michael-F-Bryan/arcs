@@ -1,4 +1,6 @@
-use crate::{algorithms::Bounded, components::DrawingObject, BoundingBox, DrawingSpace};
+use crate::{
+    algorithms::Bounded, components::DrawingObject, BoundingBox, DrawingSpace,
+};
 use specs::prelude::*;
 
 /// Lets us keep track of a [`DrawingObject`]'s rough location in *Drawing
