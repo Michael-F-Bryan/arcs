@@ -22,8 +22,8 @@ pub use styles::{LineStyle, PointStyle, WindowStyle};
 pub use viewport::Viewport;
 pub(crate) use vtable::ComponentVtable;
 
-use specs::World;
 use crate::DrawingSpace;
+use specs::World;
 
 /// Get an iterator over the [`ComponentVtable`] for all known
 /// [`specs::Component`] types.
