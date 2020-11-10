@@ -35,7 +35,7 @@ pub trait ScaleNonUniform {
 
 impl<A: AffineTransformable> ScaleNonUniform for A {
     fn scale_non_uniform(&mut self, factor_x: f64, factor_y: f64) {
-        self.transform(Transform2D::create_scale(factor_x, factor_y));
+        self.transform(Transform2D::scale(factor_x, factor_y));
     }
 }
 
@@ -90,10 +90,9 @@ mod tests {
         // Or compose an `Affine` and pass it directly to the `transform`
         // method: keep in mind that transforms get composed *in reverse
         // execution order*
-        let combined_transform =
-            Transform2D::create_translation(-base.x, -base.y)
-                .post_scale(factor_x, factor_y)
-                .post_translate(base);
+        let combined_transform = Transform2D::translation(-base.x, -base.y)
+            .then_scale(factor_x, factor_y)
+            .then_translate(base);
 
         let transformed = original.transformed(combined_transform);
 

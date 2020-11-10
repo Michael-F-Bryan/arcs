@@ -8,7 +8,9 @@ pub trait Length {
 }
 
 impl<'a, L: Length + ?Sized> Length for &'a L {
-    fn length(&self) -> f64 { (*self).length() }
+    fn length(&self) -> f64 {
+        (*self).length()
+    }
 }
 
 impl<Space> Length for Line<Space> {
@@ -21,7 +23,9 @@ impl<Space> Length for Line<Space> {
     ///
     /// assert_eq!(line.length(), 5.0);
     /// ```
-    fn length(&self) -> f64 { self.displacement().length() }
+    fn length(&self) -> f64 {
+        self.displacement().length()
+    }
 }
 
 impl<Space> Length for Vector2D<f64, Space> {
@@ -34,7 +38,9 @@ impl<Space> Length for Vector2D<f64, Space> {
     ///
     /// assert_eq!(vector.length(), 5.0);
     /// ```
-    fn length(&self) -> f64 { euclid::Vector2D::length(self) }
+    fn length(&self) -> f64 {
+        euclid::Vector2D::length(*self)
+    }
 }
 
 impl<Space> Length for Arc<Space> {
@@ -54,7 +60,9 @@ impl<Space> Length for Arc<Space> {
     ///
     /// assert_eq!(arc.length(), 2.0 * radius * PI);
     /// ```
-    fn length(&self) -> f64 { self.radius() * self.sweep_angle().radians.abs() }
+    fn length(&self) -> f64 {
+        self.radius() * self.sweep_angle().radians.abs()
+    }
 }
 
 #[cfg(test)]

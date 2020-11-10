@@ -18,9 +18,9 @@ use euclid::default::Transform2D;
 /// use euclid::{Transform2D, approxeq::ApproxEq};
 ///
 /// let point = Point::new(10.0, 10.0);
-/// let transform_matrix = Transform2D::create_translation(-1.0, 1.0) // move the point
-///     .post_rotate(Angle::degrees(180.0)) // then rotate 180 degrees
-///     .post_scale(-1.0, 1.0); // then flip about y-axis
+/// let transform_matrix = Transform2D::translation(-1.0, 1.0) // move the point
+///     .then_rotate(Angle::degrees(180.0)) // then rotate 180 degrees
+///     .then_scale(-1.0, 1.0); // then flip about y-axis
 ///
 /// let got = point.transformed(transform_matrix);
 ///
@@ -54,18 +54,18 @@ impl<'t, T: AffineTransformable + ?Sized> AffineTransformable for &'t mut T {
 
 impl<Space> AffineTransformable for euclid::Vector2D<f64, Space> {
     fn transform(&mut self, transform: Transform2D<f64>) {
-        *self = transform
-            .pre_transform(&euclid::Transform2D::<f64, Space, _>::identity())
-            .post_transform(&euclid::Transform2D::<f64, _, Space>::identity())
+        *self = euclid::Transform2D::<f64, Space, _>::identity()
+            .then(&transform)
+            .then(&euclid::Transform2D::<f64, _, Space>::identity())
             .transform_vector(*self);
     }
 }
 
 impl<Space> AffineTransformable for euclid::Point2D<f64, Space> {
     fn transform(&mut self, transform: Transform2D<f64>) {
-        *self = transform
-            .pre_transform(&euclid::Transform2D::<f64, Space, _>::identity())
-            .post_transform(&euclid::Transform2D::<f64, _, Space>::identity())
+        *self = euclid::Transform2D::<f64, Space, _>::identity()
+            .then(&transform)
+            .then(&euclid::Transform2D::<f64, _, Space>::identity())
             .transform_point(*self);
     }
 }

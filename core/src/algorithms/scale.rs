@@ -93,9 +93,9 @@ mod tests {
         // method: keep in mind that transforms get composed *in reverse
         // execution order*
         let combined_transform =
-            Transform::create_translation(-mid_point.x, -mid_point.y)
-                .post_scale(scale_factor, scale_factor)
-                .post_translate(mid_point);
+            Transform::translation(-mid_point.x, -mid_point.y)
+                .then_scale(scale_factor, scale_factor)
+                .then_translate(mid_point);
 
         let transformed = original.transformed(combined_transform);
 

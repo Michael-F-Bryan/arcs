@@ -19,7 +19,7 @@ travis-ci = { repository = "Michael-F-Bryan/arcs", branch = "master" }
 anyhow = "1"
 arcs-core = { path = "../core", features = ["ecs"] }
 cgmath = "0.17.0"
-euclid = "0.20"
+euclid = "0.22"
 kurbo = "0.6"
 lazy_static = "1"
 log = "0.4"

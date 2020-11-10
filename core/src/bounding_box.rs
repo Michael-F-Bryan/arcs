@@ -58,12 +58,12 @@ impl<S> BoundingBox<S> {
     ) -> Self {
         debug_assert!(
             width >= Length::zero(),
-            "{} should not be negative",
+            "{:?} should not be negative",
             width
         );
         debug_assert!(
             height >= Length::zero(),
-            "{} should not be negative",
+            "{:?} should not be negative",
             height
         );
 
@@ -74,10 +74,14 @@ impl<S> BoundingBox<S> {
     }
 
     /// How wide is the [`BoundingBox`] in the X direction.
-    pub fn width(self) -> Length<f64, S> { Length::new(self.diagonal().x) }
+    pub fn width(self) -> Length<f64, S> {
+        Length::new(self.diagonal().x)
+    }
 
     /// How high is the [`BoundingBox`] in the Y direction.
-    pub fn height(self) -> Length<f64, S> { Length::new(self.diagonal().y) }
+    pub fn height(self) -> Length<f64, S> {
+        Length::new(self.diagonal().y)
+    }
 
     /// Calculate the box's area.
     pub fn area(self) -> f64 {
@@ -115,7 +119,9 @@ impl<S> BoundingBox<S> {
     }
 
     /// The bottom-left corner.
-    pub fn bottom_left(self) -> Point2D<f64, S> { self.bottom_left }
+    pub fn bottom_left(self) -> Point2D<f64, S> {
+        self.bottom_left
+    }
 
     /// The bottom-right corner.
     pub fn bottom_right(self) -> Point2D<f64, S> {
@@ -123,7 +129,9 @@ impl<S> BoundingBox<S> {
     }
 
     /// The top-right corner.
-    pub fn top_right(self) -> Point2D<f64, S> { self.top_right }
+    pub fn top_right(self) -> Point2D<f64, S> {
+        self.top_right
+    }
 
     /// The top-left corner.
     pub fn top_left(self) -> Point2D<f64, S> {
@@ -131,16 +139,24 @@ impl<S> BoundingBox<S> {
     }
 
     /// The minimum X value.
-    pub fn min_x(self) -> f64 { self.bottom_left.x }
+    pub fn min_x(self) -> f64 {
+        self.bottom_left.x
+    }
 
     /// The minimum Y value.
-    pub fn min_y(self) -> f64 { self.bottom_left.y }
+    pub fn min_y(self) -> f64 {
+        self.bottom_left.y
+    }
 
     /// The maximum X value.
-    pub fn max_x(self) -> f64 { self.top_right.x }
+    pub fn max_x(self) -> f64 {
+        self.top_right.x
+    }
 
     /// The maximum Y value.
-    pub fn max_y(self) -> f64 { self.top_right.y }
+    pub fn max_y(self) -> f64 {
+        self.top_right.y
+    }
 
     /// Does this [`BoundingBox`] fully contain another?
     pub fn fully_contains(self, other: BoundingBox<S>) -> bool {
@@ -159,7 +175,9 @@ impl<S> BoundingBox<S> {
 
 impl<Space> Copy for BoundingBox<Space> {}
 impl<Space> Clone for BoundingBox<Space> {
-    fn clone(&self) -> Self { *self }
+    fn clone(&self) -> Self {
+        *self
+    }
 }
 
 #[cfg(feature = "ecs")]
