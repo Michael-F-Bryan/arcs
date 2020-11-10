@@ -106,10 +106,13 @@ struct RenderSystem<'window, B> {
 
 impl<'window, B> RenderSystem<'window, B> {
     /// Calculate the area of the drawing displayed by the viewport.
-    fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox<DrawingSpace> {
+    fn viewport_dimensions(
+        &self,
+        viewport: &Viewport,
+    ) -> BoundingBox<DrawingSpace> {
         let window_size = viewport
             .pixels_per_drawing_unit
-            .inv()
+            .inverse()
             .transform_size(self.window_size);
 
         BoundingBox::from_centre_and_size(viewport.centre, window_size)
@@ -133,7 +136,7 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
                     styles,
                     viewport,
                 );
-            },
+            }
             Geometry::Line(ref line) => {
                 self.render_line(
                     ent,
@@ -142,7 +145,7 @@ impl<'window, B: RenderContext> RenderSystem<'window, B> {
                     styles,
                     viewport,
                 );
-            },
+            }
             _ => unimplemented!(),
         }
     }

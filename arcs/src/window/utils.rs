@@ -24,7 +24,7 @@ pub fn transform_to_drawing_space(
 ) -> Transform2D<f64, CanvasSpace, DrawingSpace> {
     // See https://gamedev.stackexchange.com/a/51435
 
-    let drawing_units_per_pixel = viewport.pixels_per_drawing_unit.inv();
+    let drawing_units_per_pixel = viewport.pixels_per_drawing_unit.inverse();
 
     // calculate the new basis vectors
     let x_axis = Vector2D::new(1.0, 0.0);
@@ -41,7 +41,7 @@ pub fn transform_to_drawing_space(
     //   | y_basis.x  y_basis.y  0 |
     //   | origin.x   origin.y   1 |
 
-    Transform2D::from_row_arrays([
+    Transform2D::from_arrays([
         x_axis_basis.to_array(),
         y_axis_basis.to_array(),
         new_origin.to_array(),
@@ -118,11 +118,11 @@ mod tests {
         let (_, viewport, window) = known_example();
 
         assert_eq!(
-            transform_to_drawing_space(&viewport, window).to_row_major_array(),
+            transform_to_drawing_space(&viewport, window).to_array(),
             [0.25, 0.0, 0.0, -0.25, 200.0, 200.0]
         );
         assert_eq!(
-            transform_to_canvas_space(&viewport, window).to_row_major_array(),
+            transform_to_canvas_space(&viewport, window).to_array(),
             [4.0, 0.0, 0.0, -4.0, -800.0, 800.0]
         );
     }

@@ -20,7 +20,7 @@ pub trait Translate<Space> {
 
 impl<Space, A: AffineTransformable> Translate<Space> for A {
     fn translate(&mut self, displacement: Vector2D<f64, Space>) {
-        self.transform(Transform2D::create_translation(
+        self.transform(Transform2D::translation(
             displacement.x,
             displacement.y,
         ));
