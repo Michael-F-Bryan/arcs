@@ -98,13 +98,13 @@ impl Window {
 /// This is a temporary object "closing over" the [`Window`] and some
 /// [`RenderContext`].
 #[derive(Debug)]
-struct RenderSystem<'window, B> {
+struct RenderSystem<'window, B: RenderContext> {
     backend: B,
     window_size: Size2D<f64, CanvasSpace>,
     window: &'window Window,
 }
 
-impl<'window, B> RenderSystem<'window, B> {
+impl<'window, B: RenderContext> RenderSystem<'window, B> {
     /// Calculate the area of the drawing displayed by the viewport.
     fn viewport_dimensions(&self, viewport: &Viewport) -> BoundingBox<DrawingSpace> {
         let window_size = viewport
@@ -113,6 +113,12 @@ impl<'window, B> RenderSystem<'window, B> {
             .transform_size(self.window_size);
 
         BoundingBox::from_centre_and_size(viewport.centre, window_size)
+    }
+}
+
+impl<'window, B: RenderContext> Drop for RenderSystem<'window, B> {
+    fn drop(&mut self) {
+        self.backend.finish().unwrap();
     }
 }
 
